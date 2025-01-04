@@ -48,7 +48,7 @@
 
 ![Windows](https://img.shields.io/badge/-Windows_x64-blue.svg?style=for-the-badge&logo=windows)
 ![Linux/BSD](https://img.shields.io/badge/-Linux/BSD-red.svg?style=for-the-badge&logo=linux)
-![Arch Linux](https://img.shields.io/badge/-Arch_Linux-black.svg?style=for-the-badge&logo=archlinux)
+<a href="#installation-on-arch-linux" target="_blank"> <img src="https://img.shields.io/badge/-Arch_Linux-black.svg?style=for-the-badge&logo=archlinux" alt="Arch Linux"> </a>
 ![MacOS](https://img.shields.io/badge/-MacOS-lightblue.svg?style=for-the-badge&logo=apple)
 ![Android](https://img.shields.io/badge/-Android-green.svg?style=for-the-badge&logo=android)
 
@@ -56,12 +56,58 @@ The app can run wherever python can run. So all you need to have is python insta
 On android you can use [termux](https://github.com/termux/termux-app).
 If you have any difficulty consult for help on the [discord channel](https://discord.gg/HBEmAwvbHV)
 
-### Installation on nixos
+### Installation on NixOS
 
 ![Static Badge](https://img.shields.io/badge/NixOs-black?style=flat&logo=nixos)
 
 ```bash
 nix profile install github:Benexl/fastanime
+```
+
+### Installation on Arch Linux
+
+> [!CAUTION]  
+> Avoid mixing installation methods. If you install FastAnime using the installation script, do not install it from the AUR. Similarly, if you use the AUR, avoid using the installation script. 
+> 
+> If you want to switch between methods, first uninstall the existing installation using the `--uninstall` command from the installation script, as explained below.  
+
+#### **Using the Installation Script**  
+
+To install FastAnime via the installation script, run: 
+
+```bash
+bash <(curl -L https://raw.githubusercontent.com/Benexl/FastAnime/refs/heads/master/install.sh) 
+```
+
+To uninstall FastAnime installed via the script, use:  
+
+```bash
+bash <(curl -L https://raw.githubusercontent.com/Benexl/FastAnime/refs/heads/master/install.sh) --uninstall
+```
+
+#### **Using the AUR Package**  
+
+FastAnime is available in the [AUR](https://aur.archlinux.org/) repository:  
+
+- [FastAnime](https://aur.archlinux.org/packages/fastanime) - Stable Build  
+- [FastAnime-Git](https://aur.archlinux.org/packages/fastanime-git) - Latest GitHub Build  
+
+You can install these packages using an AUR helper like `paru` or `yay`.  
+
+**With `paru`:** 
+
+```bash
+paru -S fastanime
+#or
+paru -S fastanime-git
+
+```
+**With `yay`:** 
+
+```bash 
+yay -S fastanime
+#or
+yay -S fastanime-git
 ```
 
 ### Installation using your favourite package manager
