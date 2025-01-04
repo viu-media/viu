@@ -52,7 +52,6 @@ install_gum() {
     fi
 }
 
-# Install paru
 install_paru() {
     echo "Installing paru..."
     sudo pacman -S --needed --noconfirm base-devel
@@ -63,7 +62,6 @@ install_paru() {
     rm -rf /tmp/paru
 }
 
-# Install yay
 install_yay() {
     echo "Installing yay..."
     sudo pacman -S --needed --noconfirm git base-devel
