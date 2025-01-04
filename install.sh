@@ -7,7 +7,6 @@ if [[ $EUID -eq 0 ]]; then
     exit 1
 fi
 
-# Define directories and resources
 REPO_URL="https://github.com/Benex254/FastAnime.git"
 BUILD_DIR="/tmp/fastanime-build"
 INSTALLED_RESOURCES=(
@@ -44,7 +43,6 @@ OPTIONAL_DEPENDENCIES=(
     "feh"
 )
 
-# Install gum if not present
 install_gum() {
     if ! command -v gum >/dev/null 2>&1; then
         echo "Installing gum..."
@@ -76,7 +74,6 @@ install_yay() {
     rm -rf /tmp/yay
 }
 
-# Install dependencies using the chosen AUR helper
 install_dependencies() {
     local dependencies=("$@")
     echo "Installing dependencies: ${dependencies[*]}"
@@ -90,9 +87,10 @@ install_dependencies() {
     done
 }
 
-# Uninstall function
 uninstall_fastanime() {
     echo "Uninstalling FastAnime and its resources..."
+    
+    # remove fastanime directory ...
     for RESOURCE in "${INSTALLED_RESOURCES[@]}"; do
         if [[ -f "$RESOURCE" ]]; then
             sudo rm -f "$RESOURCE"
@@ -100,12 +98,18 @@ uninstall_fastanime() {
         fi
     done
 
-    echo "Removing Python package..."
-    sudo pip uninstall -y fastanime || echo "Python package not found."
+    if command -v fastanime >/dev/null 2>&1; then
+        FASTANIME_BIN=$(which fastanime)
+        sudo rm -f "$FASTANIME_BIN"
+        echo "Removed: $FASTANIME_BIN"
+    fi
+
+    # Conflict Dir With FastAnime Aur Package
+    sudo rm /usr/lib/python3.13/site-packages/fastanime -rf
+    sudo rm /usr/lib/python3.13/site-packages/fastanime-2.8.6.dist-info -rf
     echo "FastAnime has been successfully uninstalled!"
 }
 
-# Main install script
 main_install() {
     install_gum
 
@@ -159,7 +163,6 @@ main_install() {
     echo "You can now run FastAnime from the terminal by typing: fastanime"
 }
 
-# Handle script arguments
 case "$1" in
     --uninstall)
         uninstall_fastanime
@@ -168,4 +171,3 @@ case "$1" in
         main_install
         ;;
 esac
-
