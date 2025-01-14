@@ -24,6 +24,8 @@ class FastAnimeRuntimeState(object):
     selected_anime_anilist: "AnilistBaseMediaDataSchema"
     selected_anime_id_anilist: int
     selected_anime_title_anilist: str
+    selected_anime_media_action: str = "Stream"
+    selected_anime_download_episodes: list[int]
     # current_anilist_data: "AnilistDataSchema | AnilistMediaList"
     anilist_results_data: "Any"
     current_page: int

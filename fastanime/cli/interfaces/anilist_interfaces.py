@@ -961,8 +961,19 @@ def anime_provider_search_results_menu(
     fastanime_runtime_state.progress_tracking = config.watch_history.get(
         str(fastanime_runtime_state.selected_anime_id_anilist), {}
     ).get("progress_tracking", "prompt")
-    set_prefered_progress_tracking(config, fastanime_runtime_state)
-    fetch_anime_episode(config, fastanime_runtime_state)
+    if fastanime_runtime_state.selected_anime_media_action == "Stream":
+        set_prefered_progress_tracking(config, fastanime_runtime_state)
+        fetch_anime_episode(config, fastanime_runtime_state)
+    elif fastanime_runtime_state.selected_anime_media_action == "Download":
+        download_options_menu(config, fastanime_runtime_state)
+    else:
+        print("Unknown media action")
+        if not config.use_rofi:
+            input("Enter to continue...")
+        else:
+            if not Rofi.confirm("Unknown media action!!Enter to continue..."):
+                exit(1)
+        media_actions_menu(config, fastanime_runtime_state)
 
 
 #
@@ -1337,6 +1348,8 @@ def media_actions_menu(
             config: [TODO:description]
             fastanime_runtime_state: [TODO:description]
         """
+
+        fastanime_runtime_state.selected_anime_media_action = "Stream"
         anime_provider_search_results_menu(config, fastanime_runtime_state)
 
     def _select_episode_to_stream(
@@ -1349,6 +1362,7 @@ def media_actions_menu(
             fastanime_runtime_state: [TODO:description]
         """
         config.continue_from_history = False
+        fastanime_runtime_state.selected_anime_media_action = "Stream"
         anime_provider_search_results_menu(config, fastanime_runtime_state)
 
     def _set_progress_tracking(
@@ -1409,10 +1423,25 @@ def media_actions_menu(
         }
         anilist_results_menu(config, fastanime_runtime_state)
 
+    def _download_anime(
+        config: "Config", fastanime_runtime_state: "FastAnimeRuntimeState"
+    ):
+        """helper function to go to the next menu containing download options respecting your config
+
+        Args:
+            config: [TODO:description]
+            fastanime_runtime_state: [TODO:description]
+        """
+
+        fastanime_runtime_state.selected_anime_media_action = "Download"
+
+        anime_provider_search_results_menu(config, fastanime_runtime_state)
+
     icons = config.icons
     options = {
         f"{'📽️ ' if icons else ''}Stream ({progress}/{episodes_total})": _stream_anime,
         f"{'📽️ ' if icons else ''}Episodes": _select_episode_to_stream,
+        f"{' ' if icons else ''}Download": _download_anime,
         f"{'📼 ' if icons else ''}Watch Trailer": _watch_trailer,
         f"{'✨ ' if icons else ''}Score Anime": _score_anime,
         f"{'✨ ' if icons else ''}Progress Tracking": _set_progress_tracking,
