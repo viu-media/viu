@@ -835,6 +835,40 @@ def fetch_anime_episode(
 
 
 #
+#   ---- ANIME DOWNLOAD MENU ----
+#
+
+
+def download_options_menu(
+    config: "Config", fastanime_runtime_state: "FastAnimeRuntimeState"
+):
+    options = ["Download all", "Download selected", "Back"]
+    download_option: str = ""
+    if config.use_fzf:
+        download_option = fzf.run(
+            options,
+            "Enter your preferred download option for the current anime",
+        )
+    elif config.use_rofi:
+        download_option = Rofi.run(
+            options,
+            "Enter your preferred download option for the current anime",
+        )
+    else:
+        download_option = fuzzy_inquirer(
+            options,
+            "Enter your preferred download option for the current anime",
+        )
+
+    if download_option == "Download all":
+        pass
+    elif download_option == "Download selected":
+        pass
+    elif download_option == "Back":
+        media_actions_menu(config, fastanime_runtime_state)
+        return
+
+#
 #   ---- ANIME PROVIDER SEARCH RESULTS MENU ----
 #
 
