@@ -871,6 +871,123 @@ def download_options_menu(
         media_actions_menu(config, fastanime_runtime_state)
         return
 
+def select_multiple_episodes(
+    config: "Config", fastanime_runtime_state: "FastAnimeRuntimeState"
+):
+    """A menu that handles selection of episodes. Can be used to select multiple episodes
+
+    Args:
+        config: [TODO:description]
+        fastanime_runtime_state: [TODO:description]
+    """
+    # user config
+    translation_type: str = config.translation_type.lower()
+
+    # runtime configuration
+    anime_title: str = fastanime_runtime_state.provider_anime_title
+    provider_anime: "Anime" = fastanime_runtime_state.provider_anime
+
+    available_episodes = sorted(
+        provider_anime["availableEpisodesDetail"][translation_type], key=float
+    )
+
+    selected_episodes: list[str] = (
+        []
+    )  # Use str instead of int to deal with special/recap episodes
+    selected_entry: str = ""
+
+    choices = [
+        "Select till top",
+        *list(map(lambda x: f"[ ] {x}", available_episodes)),  # Convert to [ ] <num>
+        "Select till end",
+        "Select all in between",
+        "Download",
+        "Back",
+    ]
+
+    preview = None
+    # if config.preview:
+    #     from .utils import get_fzf_episode_preview
+    #
+    #     e = fastanime_runtime_state.selected_anime_anilist["episodes"]
+    #     if e:
+    #         eps = range(0, e + 1)
+    #     else:
+    #         eps = available_episodes
+    #
+    #     preview = get_fzf_episode_preview(
+    #         fastanime_runtime_state.selected_anime_anilist, eps
+    #     )
+    #     # eps = [f"[ ] {ep}" for ep in eps]
+
+    preselect_index = 1
+
+    while selected_entry != "Download":
+
+        if config.use_fzf:
+            selected_entry = fzf.run(
+                choices,
+                prompt="Select Episode",
+                header=anime_title,
+                preview=preview,
+                preselect=preselect_index,
+            )
+        elif config.use_rofi:
+            selected_entry = Rofi.run(
+                choices, "Select Episode", preselect=preselect_index
+            )
+        else:
+            selected_entry = fuzzy_inquirer(
+                choices,
+                "Select Episode",
+            )
+
+        if selected_entry == "Back":
+            return []
+
+        elif selected_entry == "Select till top" and selected_episodes != []:
+            # Select all episodes from the top to the first selected episode
+            for i in range(1, int(choices.index(f"[*] {selected_episodes[0]}"))):
+                selected_episodes.append(choices[i][4:])
+            preselect_index = choices.index("Select till top")
+
+        elif selected_entry == "Select till end" and selected_episodes != []:
+            # Select all episodes from the last selected episode to the end
+            for i in range(
+                choices.index(f"[*] {selected_episodes[-1]}") + 1,
+                choices.index(selected_entry),
+            ):
+                selected_episodes.append(choices[i][4:])
+            preselect_index = choices.index("Select till end")
+
+        elif selected_entry == "Select all in between" and selected_episodes != []:
+            # Select all episodes in between the first and last selected episodes
+            for i in range(
+                choices.index(f"[*] {selected_episodes[0]}") + 1,
+                choices.index(f"[*] {selected_episodes[-1]}"),
+            ):
+                selected_episodes.append(choices[i][4:])
+            preselect_index = choices.index("Select all in between")
+        elif selected_entry.startswith("[ ] "):
+            selected_episodes.append(selected_entry[4:])
+            preselect_index = choices.index(selected_entry) + 1
+
+        elif selected_entry.startswith("[*] "):
+            selected_episodes.remove(selected_entry[4:])
+            preselect_index = choices.index(selected_entry) + 1
+
+        # Remake the choices list
+        selected_episodes = list(set(selected_episodes))  # Remove duplicates
+        selected_episodes.sort(key=float)
+        for i in range(1, len(available_episodes)):
+            if choices[i][4:] in selected_episodes:
+                choices[i] = f"[*] {choices[i][4:]}"
+            else:
+                choices[i] = f"[ ] {choices[i][4:]}"
+
+    return selected_episodes
+
+
 #
 #   ---- ANIME PROVIDER SEARCH RESULTS MENU ----
 #
