@@ -1617,7 +1617,7 @@ def media_actions_menu(
     options = {
         f"{'📽️ ' if icons else ''}Stream ({progress}/{episodes_total})": _stream_anime,
         f"{'📽️ ' if icons else ''}Episodes": _select_episode_to_stream,
-        f"{' ' if icons else ''}Download": _download_anime,
+        f"{'  ' if icons else ''}Download": _download_anime,
         f"{'📼 ' if icons else ''}Watch Trailer": _watch_trailer,
         f"{'✨ ' if icons else ''}Score Anime": _score_anime,
         f"{'✨ ' if icons else ''}Progress Tracking": _set_progress_tracking,
