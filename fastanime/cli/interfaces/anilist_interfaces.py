@@ -385,8 +385,6 @@ def provider_anime_episode_servers_menu(
     current_episode_number: str = (
         fastanime_runtime_state.provider_current_episode_number
     )
-    provider_anime_title: str = fastanime_runtime_state.provider_anime_title
-    anime_id_anilist: int = fastanime_runtime_state.selected_anime_id_anilist
     provider_anime: "Anime" = fastanime_runtime_state.provider_anime
 
     server_name = ""
