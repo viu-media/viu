@@ -863,13 +863,35 @@ def download_options_menu(
             "Enter your preferred download option for the current anime",
         )
 
+    selected_episodes: list[str] = []
     if download_option == "Download all":
-        pass
+
+        # User config
+        translation_type: str = config.translation_type.lower()
+
+        selected_episodes = sorted(
+            fastanime_runtime_state.provider_anime["availableEpisodesDetail"][
+                translation_type
+            ],
+            key=float,
+        )
+
     elif download_option == "Download selected":
-        pass
+        selected_episodes = select_multiple_episodes(config, fastanime_runtime_state)
+
+        if selected_episodes == []:
+            download_options_menu(config, fastanime_runtime_state)
+            return
+
     elif download_option == "Back":
         media_actions_menu(config, fastanime_runtime_state)
         return
+
+    else:
+        print("Invalid option")
+        download_options_menu(config, fastanime_runtime_state)
+        return
+
 
 def select_multiple_episodes(
     config: "Config", fastanime_runtime_state: "FastAnimeRuntimeState"
@@ -1119,7 +1141,7 @@ def anime_provider_search_results_menu(
         set_prefered_progress_tracking(config, fastanime_runtime_state)
         fetch_anime_episode(config, fastanime_runtime_state)
     elif fastanime_runtime_state.selected_anime_media_action == "Download":
-        download_options_menu(config, fastanime_runtime_state)
+        fetch_anime_episode(config, fastanime_runtime_state)
     else:
         print("Unknown media action")
         if not config.use_rofi:
