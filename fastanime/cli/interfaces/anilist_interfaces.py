@@ -507,7 +507,29 @@ def provider_anime_episode_servers_menu(
     fastanime_runtime_state.provider_current_server = selected_server
     fastanime_runtime_state.provider_current_server_name = server_name
 
-    # play video
+    if fastanime_runtime_state.selected_anime_media_action == "Stream":
+        # play video
+        provider_anime_play_stream(config, fastanime_runtime_state)
+    elif fastanime_runtime_state.selected_anime_media_action == "Download":
+        provider_anime_download_stream(config, fastanime_runtime_state)
+
+
+def provider_anime_play_stream(
+    config: Config, fastanime_runtime_state: FastAnimeRuntimeState
+):
+
+    # user config
+    anime_provider = config.anime_provider
+
+    current_episode_number: str = (
+        fastanime_runtime_state.provider_current_episode_number
+    )
+    provider_anime_title: str = fastanime_runtime_state.provider_anime_title
+    anime_id_anilist: int = fastanime_runtime_state.selected_anime_id_anilist
+
+    current_stream_link = fastanime_runtime_state.provider_current_episode_stream_link
+    selected_server = fastanime_runtime_state.provider_current_server
+
     print(
         "[bold magenta]Now playing:[/]",
         provider_anime_title,
@@ -1010,6 +1032,10 @@ def select_multiple_episodes(
     return selected_episodes
 
 
+def provider_anime_download_stream(
+    config: "Config", fastanime_runtime_state: "FastAnimeRuntimeState"
+):
+    pass
 #
 #   ---- ANIME PROVIDER SEARCH RESULTS MENU ----
 #
