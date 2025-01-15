@@ -831,7 +831,10 @@ def fetch_anime_episode(
         return media_actions_menu(config, fastanime_runtime_state)
 
     fastanime_runtime_state.provider_anime = provider_anime
-    provider_anime_episodes_menu(config, fastanime_runtime_state)
+    if fastanime_runtime_state.selected_anime_media_action == "Stream":
+        provider_anime_episodes_menu(config, fastanime_runtime_state)
+    elif fastanime_runtime_state.selected_anime_media_action == "Download":
+        download_options_menu(config, fastanime_runtime_state)
 
 
 #
