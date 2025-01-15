@@ -914,6 +914,13 @@ def download_options_menu(
         download_options_menu(config, fastanime_runtime_state)
         return
 
+    for episode in selected_episodes:
+        fastanime_runtime_state.provider_current_episode_number = episode
+
+        # Next interface
+        # Handles downloading from fastanime_runtime_state.selected_anime_media_action
+        provider_anime_episode_servers_menu(config, fastanime_runtime_state)
+
 
 def select_multiple_episodes(
     config: "Config", fastanime_runtime_state: "FastAnimeRuntimeState"
