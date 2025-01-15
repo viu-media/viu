@@ -51,7 +51,7 @@ class RofiApi:
 
         return choice
 
-    def run(self, options: list[str], prompt_text: str) -> str:
+    def run(self, options: list[str], prompt_text: str, preselect: int = 0) -> str:
         rofi_input = "\n".join(options)
 
         if not self.ROFI_EXECUTABLE:
@@ -60,6 +60,8 @@ class RofiApi:
         args = [self.ROFI_EXECUTABLE]
         if self.rofi_theme:
             args.extend(["-no-config", "-theme", self.rofi_theme])
+        if preselect:
+            args.extend(["-selected-row", str(preselect)])
         args.extend(["-p", prompt_text, "-i", "-dmenu"])
         result = subprocess.run(
             args,

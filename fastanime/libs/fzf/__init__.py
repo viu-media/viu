@@ -143,6 +143,7 @@ class FZF:
         preview: str | None = None,
         expect: str | None = None,
         validator: Callable | None = None,
+        preselect: int | None = None,
     ) -> str:
         """a helper method that wraps common use cases over the fzf utility
 
@@ -178,6 +179,9 @@ class FZF:
             _commands.append(f"--preview={preview}")
         if expect:
             _commands.append(f"--expect={expect}")
+        if preselect:
+            _commands.append("--sync")
+            _commands.append(f"--bind=start:pos({preselect + 1})")
 
         result = self._run_fzf(_commands, fzf_input)  # pyright:ignore
         if not result:
