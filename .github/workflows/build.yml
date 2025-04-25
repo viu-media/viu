@@ -1,4 +1,4 @@
-name: debug_build
+name: Run build
 on:
   workflow_run:
     workflows: ["Test Workflow"]

@@ -1,4 +1,4 @@
-name: Test Workflow
+name: Run Tests
 on:
   push:
     branches:
@@ -38,3 +38,15 @@ jobs:
 
       - name: Run tests
         run: uv run pytest tests
+
+      - name: Install pytest-cov
+        run: uv install pytest-cov
+
+      - name: Run tests with coverage
+        run: uv run pytest --cov=fast-anime tests
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: .coverage
