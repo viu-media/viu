@@ -13,7 +13,7 @@
 --cycle
 --info=hidden
 --height=100%
---bind=right:accept,ctrl-/:toggle-preview,ctrl-space:toggle-wrap+toggle-preview-wrap
+--bind=right:accept,ctrl-/:toggle-preview,ctrl-space:toggle-preview-wrap
 --no-margin
 +m
 -i
