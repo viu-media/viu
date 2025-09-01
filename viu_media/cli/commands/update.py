@@ -1,6 +1,4 @@
 """Update command for Viu CLI."""
-
-import sys
 from typing import TYPE_CHECKING
 
 import click
