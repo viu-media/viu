@@ -2,8 +2,7 @@
   description = "Viu Project Flake";
 
   inputs = {
-    # The nixpkgs unstable latest commit breaks the plyer python package
-    nixpkgs.url = "github:nixos/nixpkgs/3ff0e34b1383648053bba8ed03f201d3466f90c9";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -17,21 +16,21 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        inherit (pkgs) lib python3Packages;
+        inherit (pkgs) lib python312Packages;
 
         version = "3.1.0";
       in
       {
-        packages.default = python3Packages.buildPythonApplication {
+        packages.default = python312Packages.buildPythonApplication {
           pname = "viu";
           inherit version;
           pyproject = true;
 
           src = self;
 
-          build-system = with python3Packages; [ hatchling ];
+          build-system = with python312Packages; [ hatchling ];
 
-          dependencies = with python3Packages; [
+          dependencies = with python312Packages; [
             click
             inquirerpy
             requests
