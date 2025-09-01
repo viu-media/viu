@@ -173,21 +173,33 @@ class AnimePahe(BaseAnimeProvider):
             yield map_to_server(episode, translation_type, quality, stream_link)
 
     @lru_cache()
-    def _get_episode_info(
-        self, params: EpisodeStreamsParams
-    ) -> Optional[AnimeEpisodeInfo]:
-        anime_info = self._get_anime(
-            AnimeParams(id=params.anime_id, query=params.query)
-        )
+    def _get_episode_info(self, params: EpisodeStreamsParams) -> Optional[AnimeEpisodeInfo]:
+        # Load merged (multi-page) anime info
+        anime_info = self._get_anime(AnimeParams(id=params.anime_id, query=params.query))
         if not anime_info:
             logger.error(f"No anime info for {params.anime_id}")
-            return
+            return None
         if not anime_info.episodes_info:
             logger.error(f"No episodes info for {params.anime_id}")
-            return
-        for episode in anime_info.episodes_info:
-            if episode.episode == params.episode:
-                return episode
+            return None
+
+        # Use position (1-based) in the merged list first; then fall back to label matching.
+        try:
+            index = int(float(params.episode)) - 1  # handles "31" or "31.0"
+        except (ValueError, TypeError):
+            index = None
+
+        if index is not None and 0 <= index < len(anime_info.episodes_info):
+            return anime_info.episodes_info[index]
+
+        # Fallback: direct label match (string compare)
+        for ep in anime_info.episodes_info:
+            if str(ep.episode) == str(params.episode):
+                return ep
+
+        logger.error(f"Episode {params.episode} doesn't exist for anime {params.anime_id}")
+        return None
+
 
 
 if __name__ == "__main__":
