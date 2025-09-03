@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict
 class ProviderName(Enum):
     ALLANIME = "allanime"
     ANIMEPAHE = "animepahe"
+    ANIMEUNITY = "animeunity"
 
 
 class ProviderServer(Enum):
@@ -27,6 +28,9 @@ class ProviderServer(Enum):
 
     # AnimePaheServer values
     KWIK = "kwik"
+
+    # AnimeUnityServer values
+    VIXCLOUD = "vixcloud"
 
 
 class MediaTranslationType(Enum):
