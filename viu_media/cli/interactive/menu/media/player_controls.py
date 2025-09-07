@@ -249,7 +249,8 @@ def _change_quality(ctx: Context, state: State) -> MenuAction:
             return InternalDirective.BACK
 
         new_quality = selector.choose(
-            "Select a different server:", list(["360", "480", "720", "1080"])
+            "Select a different quality:",
+            [link.quality for link in state.provider.server.links],
         )
         if new_quality:
             ctx.config.stream.quality = new_quality  # type:ignore
