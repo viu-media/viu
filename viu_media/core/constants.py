@@ -13,7 +13,7 @@ USER_NAME = os.environ.get("USERNAME", "User")
 
 __version__ = metadata.version("viu_media")
 
-AUTHOR = "Benexl"
+AUTHOR = "viu-media"
 GIT_REPO = "github.com"
 GIT_PROTOCOL = "https://"
 REPO_HOME = f"https://{GIT_REPO}/{AUTHOR}/Viu"

@@ -6,7 +6,7 @@ First off, thank you for considering contributing to Viu! We welcome any help, w
 
 There are many ways to contribute to the Viu project:
 
-*   **Reporting Bugs:** If you find a bug, please create an issue in our [issue tracker](https://github.com/Benexl/Viu/issues).
+*   **Reporting Bugs:** If you find a bug, please create an issue in our [issue tracker](https://github.com/viu-media/Viu/issues).
 *   **Suggesting Enhancements:** Have an idea for a new feature or an improvement to an existing one? We'd love to hear it.
 *   **Writing Code:** Help us fix bugs or implement new features.
 *   **Improving Documentation:** Enhance our README, add examples, or clarify our contribution guidelines.
@@ -16,7 +16,7 @@ There are many ways to contribute to the Viu project:
 
 We follow the standard GitHub Fork & Pull Request workflow.
 
-1.  **Create an Issue:** Before starting work on a new feature or a significant bug fix, please [create an issue](https://github.com/Benexl/Viu/issues/new/choose) to discuss your idea. This allows us to give feedback and prevent duplicate work. For small bugs or documentation typos, you can skip this step.
+1.  **Create an Issue:** Before starting work on a new feature or a significant bug fix, please [create an issue](https://github.com/viu-media/Viu/issues/new/choose) to discuss your idea. This allows us to give feedback and prevent duplicate work. For small bugs or documentation typos, you can skip this step.
 
 2.  **Fork the Repository:** Create your own fork of the Viu repository.
 

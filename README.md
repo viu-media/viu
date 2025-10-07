@@ -10,10 +10,10 @@
 
 [![PyPI - Version](https://img.shields.io/pypi/v/viu-media)](https://pypi.org/project/viu-media/)
 [![PyPI - Downloads](https://img.shields.io/pypi/dm/viu-media)](https://pypi.org/project/viu-media/)
-[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Benexl/Viu/test.yml?label=Tests)](https://github.com/Benexl/Viu/actions)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/viu-media/Viu/test.yml?label=Tests)](https://github.com/viu-media/Viu/actions)
 [![Discord](https://img.shields.io/discord/1250887070906323096?label=Discord&logo=discord)](https://discord.gg/HBEmAwvbHV)
-[![GitHub Issues](https://img.shields.io/github/issues/Benexl/Viu)](https://github.com/Benexl/Viu/issues)
-[![PyPI - License](https://img.shields.io/pypi/l/viu)](https://github.com/Benexl/Viu/blob/master/LICENSE)
+[![GitHub Issues](https://img.shields.io/github/issues/viu-media/Viu)](https://github.com/viu-media/Viu/issues)
+[![PyPI - License](https://img.shields.io/pypi/l/viu)](https://github.com/viu-media/Viu/blob/master/LICENSE)
 
 </div>
 
@@ -74,16 +74,16 @@ uv tool install "viu-media[notifications]" # For desktop notifications
   #### Nix / NixOS
   ##### Ephemeral / One-Off Run (No Installation)
   ```bash
-  nix run github:Benexl/viu
+  nix run github:viu-media/viu
   ```
   ##### Imperative Installation
   ```bash
-  nix profile install github:Benexl/viu
+  nix profile install github:viu-media/viu
   ```
   ##### Declarative Installation
   ###### in your flake.nix
   ```nix
-  viu.url = "github:Benexl/viu";
+  viu.url = "github:viu-media/viu";
   ```
   ###### in your system or home-manager packages
   ```nix
@@ -116,7 +116,7 @@ uv tool install "viu-media[notifications]" # For desktop notifications
   
   Requires [Git](https://git-scm.com/), [Python 3.10+](https://www.python.org/), and [uv](https://astral.sh/blog/uv).
   ```bash
-  git clone https://github.com/Benexl/Viu.git --depth 1
+  git clone https://github.com/viu-media/Viu.git --depth 1
   cd Viu
   uv tool install .
   viu --version

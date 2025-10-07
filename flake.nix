@@ -68,8 +68,8 @@
 
           meta = {
             description = "Your browser anime experience from the terminal";
-            homepage = "https://github.com/Benexl/Viu";
-            changelog = "https://github.com/Benexl/Viu/releases/tag/v${version}";
+            homepage = "https://github.com/viu-media/Viu";
+            changelog = "https://github.com/viu-media/Viu/releases/tag/v${version}";
             mainProgram = "viu";
             license = lib.licenses.unlicense;
             maintainers = with lib.maintainers; [ theobori ];
