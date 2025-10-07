@@ -48,6 +48,7 @@ class FzfSelector(BaseSelector):
             input=fzf_input,
             stdout=subprocess.PIPE,
             text=True,
+            encoding="utf-8",
         )
         if result.returncode != 0:
             return None
@@ -74,6 +75,7 @@ class FzfSelector(BaseSelector):
             input=fzf_input,
             stdout=subprocess.PIPE,
             text=True,
+            encoding="utf-8",
         )
         if result.returncode != 0:
             return []
@@ -137,6 +139,7 @@ class FzfSelector(BaseSelector):
             input="",
             stdout=subprocess.PIPE,
             text=True,
+            encoding="utf-8",
         )
         if result.returncode != 0:
             return None
