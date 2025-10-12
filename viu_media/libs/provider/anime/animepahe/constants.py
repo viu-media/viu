@@ -19,7 +19,7 @@ REQUEST_HEADERS = {
     "TE": "trailers",
 }
 SERVER_HEADERS = {
-    "Host": "kwik.si",
+    "Host": "kwik.cx",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.5",
     "Accept-Encoding": "Utf-8",
