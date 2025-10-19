@@ -583,7 +583,7 @@ class MediaTag(Enum):
     FAIRY_TALE = "Fairy Tale"
     HENSHIN = "Henshin"
     ISEKAI = "Isekai"
-    REVERSE_ISEKAI = "Reverse Isekai
+    REVERSE_ISEKAI = "Reverse Isekai"
     KAIJU = "Kaiju"
     MAGIC = "Magic"
     MYTHOLOGY = "Mythology"
