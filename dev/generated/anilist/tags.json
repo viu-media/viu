@@ -1196,6 +1196,12 @@
         "isAdult": false
       },
       {
+        "name": "Reverse Isekai",
+        "description": "A subgenre of Isekai in which characters from a fantasy universe are transported to or reincarnated into Earth.",
+        "category": "Theme-Fantasy",
+        "isAdult": false  
+      },
+      {
         "name": "Iyashikei",
         "description": "Primary aim is to heal the audience through serene depictions of characters' daily lives.",
         "category": "Theme-Slice of Life",
