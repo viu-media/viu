@@ -23,6 +23,14 @@
   </a>
 </p>
 
+[viu-showcase.webm](https://github.com/user-attachments/assets/5da0ec87-7780-4310-9ca2-33fae7cadd5f)
+
+<details>
+<summary>Rofi</summary>
+  
+  [viu-showcase-rofi.webm](https://github.com/user-attachments/assets/01f197d9-5ac9-45e6-a00b-8e8cd5ab459c)
+
+</details>
 
 ## Core Features
 
