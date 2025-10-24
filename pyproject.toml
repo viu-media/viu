@@ -49,8 +49,8 @@ torrents = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
   "pre-commit>=4.0.1",
   "pyinstaller>=6.11.1",
   "pyright>=1.1.384",
