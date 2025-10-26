@@ -15,6 +15,7 @@ class MediaStatus(Enum):
     NOT_YET_RELEASED = "NOT_YET_RELEASED"
     CANCELLED = "CANCELLED"
     HIATUS = "HIATUS"
+    UNKNOWN = "UNKNOWN"
 
 
 class MediaType(Enum):

@@ -6,6 +6,7 @@ from ..types import (
     MediaImage,
     MediaItem,
     MediaSearchResult,
+    MediaStatus,
     MediaTitle,
     PageInfo,
     Studio,
@@ -17,9 +18,9 @@ if TYPE_CHECKING:
 
 # Jikan uses specific strings for status, we can map them to our generic enum.
 JIKAN_STATUS_MAP = {
-    "Finished Airing": "FINISHED",
-    "Currently Airing": "RELEASING",
-    "Not yet aired": "NOT_YET_RELEASED",
+    "Finished Airing": MediaStatus.FINISHED,
+    "Currently Airing": MediaStatus.RELEASING,
+    "Not yet aired": MediaStatus.NOT_YET_RELEASED,
 }
 
 
@@ -42,7 +43,11 @@ def _to_generic_title(jikan_titles: list[dict]) -> MediaTitle:
         elif type_ == "Japanese":
             native = title_
 
-    return MediaTitle(romaji=romaji, english=english, native=native)
+    return MediaTitle(
+        romaji=romaji,
+        english=english or romaji or native or "NOT AVAILABLE",
+        native=native,
+    )
 
 
 def _to_generic_image(jikan_images: dict) -> MediaImage:
@@ -69,7 +74,7 @@ def _to_generic_media_item(data: dict) -> MediaItem:
         id_mal=data["mal_id"],
         title=_to_generic_title(data.get("titles", [])),
         cover_image=_to_generic_image(data.get("images", {})),
-        status=JIKAN_STATUS_MAP.get(data.get("status", ""), None),
+        status=JIKAN_STATUS_MAP.get(data.get("status", ""), MediaStatus.UNKNOWN),
         episodes=data.get("episodes"),
         duration=data.get("duration"),
         average_score=score,
@@ -81,7 +86,7 @@ def _to_generic_media_item(data: dict) -> MediaItem:
             Studio(id=s["mal_id"], name=s["name"]) for s in data.get("studios", [])
         ],
         # Jikan doesn't provide streaming episodes
-        streaming_episodes=[],
+        streaming_episodes={},
         # Jikan doesn't provide user list status in its search results.
         user_status=None,
     )
