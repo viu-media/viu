@@ -8,7 +8,7 @@ if getattr(sys, "frozen", False):
     sys.path.insert(0, application_path)
 
 # Import and run the main application
-from viu import Cli
+from viu_media import Cli
 
 if __name__ == "__main__":
     Cli()
