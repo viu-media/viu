@@ -1,33 +1,10 @@
-default_language_version:
-  python: python3.12
-
 repos:
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.14.2
     hooks:
-      - id: isort
-        name: isort (python)
-        args: ["--profile", "black"]
-
-  - repo: https://github.com/PyCQA/autoflake
-    rev: v2.2.1
-    hooks:
-      - id: autoflake
-        args:
-          [
-            "--in-place",
-            "--remove-unused-variables",
-            "--remove-all-unused-imports",
-          ]
-  # - repo: https://github.com/astral-sh/ruff-pre-commit
-  #   rev: v0.4.10
-  #   hooks:
-  #     - id: ruff
-  #       args: [--fix]
-
-  - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.4.2
-    hooks:
-      - id: black
-        name: black
-        #language_version: python3.10
+      # Run the linter.
+      - id: ruff-check
+        args: [--fix]
+      # Run the formatter.
+      - id: ruff-format
