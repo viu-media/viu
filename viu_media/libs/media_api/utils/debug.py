@@ -30,8 +30,6 @@ def test_media_api(api_client: BaseApiClient):
     """
     from ....core.constants import APP_ASCII_ART
     from ..params import (
-        MediaAiringScheduleParams,
-        MediaCharactersParams,
         MediaRecommendationParams,
         MediaRelationsParams,
         MediaSearchParams,
