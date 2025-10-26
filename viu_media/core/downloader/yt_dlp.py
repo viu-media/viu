@@ -130,10 +130,11 @@ class YtDLPDownloader(BaseDownloader):
                 }
             )
 
-        with yt_dlp.YoutubeDL(opts) as ydl:
+        # TODO: Confirm this type issues
+        with yt_dlp.YoutubeDL(opts) as ydl:  # type: ignore
             info = ydl.extract_info(params.url, download=True)
             if info:
-                _video_path = info["requested_downloads"][0]["filepath"]
+                _video_path = info["requested_downloads"][0]["filepath"]  # type: ignore
                 if _video_path.endswith(".unknown_video"):
                     print("Normalizing path...")
                     _vid_path = _video_path.replace(".unknown_video", ".mp4")
