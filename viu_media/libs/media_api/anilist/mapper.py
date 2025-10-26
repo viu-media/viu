@@ -33,6 +33,7 @@ from ..types import (
     Studio,
     UserListItem,
     UserMediaListStatus,
+    MediaType,
     UserProfile,
 )
 from .types import (
@@ -539,7 +540,7 @@ def _to_generic_media_item_from_notification_partial(
         title=_to_generic_media_title(data["title"]),
         cover_image=_to_generic_media_image(data["coverImage"]),
         # Provide default/empty values for fields not in notification payload
-        type="ANIME",
+        type=MediaType.ANIME,
         status=MediaStatus.RELEASING,  # Assume releasing for airing notifications
         format=None,
         description=None,
