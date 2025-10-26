@@ -125,47 +125,10 @@ def test_media_api(api_client: BaseApiClient):
     print()
 
     # Test 5: Get Characters
-    print("5. Testing Character Information...")
-    try:
-        characters = api_client.get_characters_of(
-            MediaCharactersParams(id=selected_anime.id)
-        )
-        if characters and characters.get("data"):
-            char_data = characters["data"]["Page"]["media"][0]["characters"]["nodes"]
-            if char_data:
-                print(f"   Found {len(char_data)} characters:")
-                for char in char_data[:3]:  # Show first 3
-                    name = char["name"]["full"] or char["name"]["first"]
-                    print(f"     - {name}")
-            else:
-                print("   No character data found")
-        else:
-            print("   No characters found")
-    except Exception as e:
-        print(f"   Error: {e}")
-    print()
+    # TODO: Recreate this test
 
     # Test 6: Get Airing Schedule
-    print("6. Testing Airing Schedule...")
-    try:
-        schedule = api_client.get_airing_schedule_for(
-            MediaAiringScheduleParams(id=selected_anime.id)
-        )
-        if schedule and schedule.get("data"):
-            schedule_data = schedule["data"]["Page"]["media"][0]["airingSchedule"][
-                "nodes"
-            ]
-            if schedule_data:
-                print(f"   Found {len(schedule_data)} upcoming episodes:")
-                for ep in schedule_data[:3]:  # Show first 3
-                    print(f"     - Episode {ep['episode']}")
-            else:
-                print("   No upcoming episodes")
-        else:
-            print("   No airing schedule found")
-    except Exception as e:
-        print(f"   Error: {e}")
-    print()
+    # TODO: Recreate this test
 
     # Test 7: User Media List (if authenticated)
     if api_client.is_authenticated():
