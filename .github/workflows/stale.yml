@@ -1,8 +1,11 @@
-name: Mark stale issues and pull requests
+name: Mark Stale Issues and Pull Requests
 
 on:
   schedule:
+    # Runs every day at 6:30 UTC
     - cron: "30 6 * * *"
+  # Allows you to run this workflow manually from the Actions tab for testing
+  workflow_dispatch:
 
 jobs:
   stale:
@@ -15,20 +18,40 @@ jobs:
       - uses: actions/stale@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          stale-issue-message: "Greetings @{{author}},
-            This bug report is like an ancient scroll detailing a legendary beast. We need to know if this creature is still roaming the lands in the latest version of `viu`. Have you seen any signs of it recently?
 
-            Your reconnaissance is vital! If you can confirm the beast is still a threat, our heroes will prepare for battle. If we don't get an update within **7 days**, we'll assume it has vanished and archive the scroll to focus on new adventures.
+          stale-issue-message: |
+            Greetings @{{author}},
 
-            Thanks for being our trusted scout!"
-          stale-pr-message:
-            "Hello @{{author}}, it looks like this powerful contribution has been left in the middle of its training arc! 💪
+            This bug report is like an ancient scroll detailing a legendary beast. Our small guild of developers is often on many quests at once, so our response times can be slower than a tortoise in a time-stop spell. We deeply appreciate your patience!
+
+            **Seeking Immediate Help or Discussion?**
+            Our **[Discord Tavern](https://discord.gg/HBEmAwvbHV)** is the best place to get a quick response from the community for general questions or setup help!
+
+            **Want to Be the Hero?**
+            You could try to tame this beast yourself! With modern grimoires (like AI coding assistants) and our **[Contribution Guide](https://github.com/viu-media/Viu/blob/master/CONTRIBUTIONS.md)**, you might just be the hero we're waiting for. We would be thrilled to review your solution!
+
+            ---
+            To keep our quest board tidy, we need to know if this creature is still roaming the lands in the latest version of `viu`. If we don't get an update within **7 days**, we'll assume it has vanished and archive the scroll.
+
+            Thanks for being our trusted scout!
+
+          stale-pr-message: |
+            Hello @{{author}}, it looks like this powerful contribution has been left in the middle of its training arc! 💪
+
+            Our review dojo is managed by just a few senseis who are sometimes away on long missions, so thank you for your patience as we work through the queue.
 
             We were excited to see this new technique being developed. Are you still planning to complete its training, or have you embarked on a different quest? If you need a sparring partner (reviewer) or some guidance from a senpai, just let us know!
 
-            To keep our dojo tidy, we'll be archiving unfinished techniques. If we don't hear back within **7 days**, we'll assume it's time to close this PR for now. You can always resume your training and reopen it when you're ready to unleash its full potential.
+            To keep our dojo tidy, we'll be archiving unfinished techniques. If we don't hear back within **7 days**, we'll assume it's time to close this PR for now. You can always resume your training and reopen it when you're ready.
 
-            Thank you for your incredible effort!"
-          stale-issue-label: "no-issue-activity"
-          stale-pr-label: "no-pr-activity"
+            Thank you for your incredible effort!
+
+          # --- Labels and Timing ---
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+
+          # How many days of inactivity before an issue/PR is marked as stale.
           days-before-stale: 14
+
+          # How many days of inactivity to wait before closing a stale issue/PR.
+          days-before-close: 7
