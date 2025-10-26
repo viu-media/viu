@@ -308,6 +308,8 @@ def _change_provider(ctx: Context, state: State) -> MenuAction:
             "Select Provider", [provider.value for provider in ProviderName]
         )
         ctx.config.general.provider = ProviderName(new_provider)
+        # force a reset of the provider
+        ctx._provider = None
         return InternalDirective.RELOAD
 
     return action
