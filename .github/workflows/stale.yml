@@ -1,0 +1,34 @@
+name: Mark stale issues and pull requests
+
+on:
+  schedule:
+    - cron: "30 6 * * *"
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/stale@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: "Greetings @{{author}},
+            This bug report is like an ancient scroll detailing a legendary beast. We need to know if this creature is still roaming the lands in the latest version of `viu`. Have you seen any signs of it recently?
+
+            Your reconnaissance is vital! If you can confirm the beast is still a threat, our heroes will prepare for battle. If we don't get an update within **14 days**, we'll assume it has vanished and archive the scroll to focus on new adventures.
+
+            Thanks for being our trusted scout!"
+          stale-pr-message:
+            "Hello @{{author}}, it looks like this powerful contribution has been left in the middle of its training arc! 💪
+
+            We were excited to see this new technique being developed. Are you still planning to complete its training, or have you embarked on a different quest? If you need a sparring partner (reviewer) or some guidance from a senpai, just let us know!
+
+            To keep our dojo tidy, we'll be archiving unfinished techniques. If we don't hear back within **14 days**, we'll assume it's time to close this PR for now. You can always resume your training and reopen it when you're ready to unleash its full potential.
+
+            Thank you for your incredible effort!"
+          stale-issue-label: "no-issue-activity"
+          stale-pr-label: "no-pr-activity"
+          days-before-stale: 14
