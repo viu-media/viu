@@ -113,6 +113,7 @@ def _create_tar_backup(
     api: str,
 ):
     """Create a tar-based backup."""
+    # TODO: Add support for bz2/xz compression if needed
     mode = "w:gz" if compress else "w"
 
     with tarfile.open(output_path, mode) as tar:
