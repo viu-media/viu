@@ -1,3 +1,4 @@
+# pyright: reportAttributeAccessIssue=false, reportPossiblyUnboundVariable=false
 """
 HTML parsing utilities with optional lxml support.
 
