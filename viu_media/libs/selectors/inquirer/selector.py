@@ -1,4 +1,4 @@
-from InquirerPy.prompts import FuzzyPrompt
+from InquirerPy.prompts import FuzzyPrompt  # pyright: ignore[reportPrivateImportUsage]
 from rich.prompt import Confirm, Prompt
 
 from ..base import BaseSelector
