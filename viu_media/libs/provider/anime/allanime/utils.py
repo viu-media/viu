@@ -88,4 +88,5 @@ def decode_hex_string(hex_string):
     # Decode each hex pair
     decoded_chars = [hex_to_char.get(pair.lower(), pair) for pair in hex_pairs]
 
-    return "".join(decoded_chars)
+    # TODO: Better type handling
+    return "".join(decoded_chars)  # type: ignore
