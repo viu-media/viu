@@ -6,6 +6,7 @@
 
 from enum import Enum
 
+
 class MediaTag(Enum):
     #
     # TECHNICAL

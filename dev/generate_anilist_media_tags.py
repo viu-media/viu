@@ -1,9 +1,10 @@
 #!/usr/bin/env -S uv run --script
-import httpx
 import json
-from viu_media.core.utils.graphql import execute_graphql
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
+
+import httpx
+from viu_media.core.utils.graphql import execute_graphql
 
 DEV_DIR = Path(__file__).resolve().parent
 media_tags_type_py = (
@@ -25,6 +26,7 @@ template = """\
 
 
 from enum import Enum
+
 
 class MediaTag(Enum):\
 """
