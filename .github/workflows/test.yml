@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["3.11", "3.12"] 
+        python-version: ["3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v4
@@ -41,5 +41,7 @@ jobs:
       - name: Run type checking
         run: uv run pyright
 
-      - name: Run tests
-        run: uv run pytest tests
+      # TODO: write tests
+
+      # - name: Run tests
+      #   run: uv run pytest tests
