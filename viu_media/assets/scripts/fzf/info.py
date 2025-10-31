@@ -79,5 +79,5 @@ for L_grp, R_grp in zip(left, right):
     console.print(Rule(style=f"rgb({SEPARATOR_COLOR})"))
     console.print(table)
 
-console.print(Rule(title="Description", style=f"rgb({SEPARATOR_COLOR})"))
+console.print(Rule(style=f"rgb({SEPARATOR_COLOR})"))
 console.print(Markdown("""{SYNOPSIS}"""))
