@@ -306,10 +306,12 @@ def get_anime_preview(
     for key, value in replacements.items():
         preview_script = preview_script.replace(f"{{{key}}}", value)
 
-    (APP_CACHE_DIR / "preview_script.py").write_text(preview_script, encoding="utf-8")
+    (APP_CACHE_DIR / "search-results-preview-script.py").write_text(
+        preview_script, encoding="utf-8"
+    )
 
     preview_script_final = (
-        f"{sys.executable} {APP_CACHE_DIR / 'preview_script.py'} {{}}"
+        f"{sys.executable} {APP_CACHE_DIR / 'search-results-preview-script.py'} {{}}"
     )
     return preview_script_final
 
