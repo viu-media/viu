@@ -202,7 +202,7 @@ if PREVIEW_MODE == "image" or PREVIEW_MODE == "full":
         print("🖼️  Loading image...")
 
 console.print(Rule(style=f"rgb({SEPARATOR_COLOR})"))
-if PREVIEW_MODE == "info" or PREVIEW_MODE == "full":
+if PREVIEW_MODE == "text" or PREVIEW_MODE == "full":
     preview_info_path = INFO_CACHE_DIR / f"{hash}.py"
     if preview_info_path.exists():
         subprocess.run(
