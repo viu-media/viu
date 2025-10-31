@@ -31,20 +31,18 @@ logger = logging.getLogger(__name__)
 
 
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
-TEMPLATE_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "info.template.sh").read_text(
+TEMPLATE_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "info.py").read_text(encoding="utf-8")
+TEMPLATE_EPISODE_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "episode_info.py").read_text(
     encoding="utf-8"
 )
-TEMPLATE_EPISODE_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "episode-info.template.sh").read_text(
+TEMPLATE_REVIEW_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "review_info.py").read_text(
     encoding="utf-8"
 )
-TEMPLATE_REVIEW_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "review-info.template.sh").read_text(
+TEMPLATE_CHARACTER_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "character_info.py").read_text(
     encoding="utf-8"
 )
-TEMPLATE_CHARACTER_INFO_SCRIPT = (
-    FZF_SCRIPTS_DIR / "character-info.template.sh"
-).read_text(encoding="utf-8")
 TEMPLATE_AIRING_SCHEDULE_INFO_SCRIPT = (
-    FZF_SCRIPTS_DIR / "airing-schedule-info.template.sh"
+    FZF_SCRIPTS_DIR / "airing_schedule_info.py"
 ).read_text(encoding="utf-8")
 
 
@@ -103,29 +101,29 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
             raise RuntimeError("PreviewCacheWorker is not running")
 
         for media_item, title_str in zip(media_items, titles):
-            hash_id = self._get_cache_hash(title_str)
+            selection_title = self._get_selection_title(title_str)
 
             # Submit image download task if needed
             if config.general.preview in ("full", "image") and media_item.cover_image:
-                image_path = self.images_cache_dir / f"{hash_id}.png"
+                image_path = self.images_cache_dir / f"{selection_title}.png"
                 if not image_path.exists():
                     self.submit_function(
                         self._download_and_save_image,
                         media_item.cover_image.large,
-                        hash_id,
+                        selection_title,
                     )
 
             # Submit info generation task if needed
             if config.general.preview in ("full", "text"):
                 info_text = self._generate_info_text(media_item, config)
-                self.submit_function(self._save_info_text, info_text, hash_id)
+                self.submit_function(self._save_info_text, info_text, selection_title)
 
-    def _download_and_save_image(self, url: str, hash_id: str) -> None:
+    def _download_and_save_image(self, url: str, selection_title: str) -> None:
         """Download an image and save it to cache."""
         if not self._http_client:
             raise RuntimeError("HTTP client not initialized")
 
-        image_path = self.images_cache_dir / f"{hash_id}.png"
+        image_path = self.images_cache_dir / f"{selection_title}.png"
 
         try:
             with self._http_client.stream("GET", url) as response:
@@ -135,7 +133,7 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
                     for chunk in response.iter_bytes():
                         f.write(chunk)
 
-                logger.debug(f"Successfully cached image: {hash_id}")
+                logger.debug(f"Successfully cached image: {selection_title}")
 
         except Exception as e:
             logger.error(f"Failed to download image {url}: {e}")
@@ -216,22 +214,22 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
 
         return info_script
 
-    def _save_info_text(self, info_text: str, hash_id: str) -> None:
+    def _save_info_text(self, info_text: str, selection_title: str) -> None:
         """Save info text to cache."""
         try:
-            info_path = self.info_cache_dir / hash_id
+            info_path = self.info_cache_dir / f"{selection_title}.py"
             with AtomicWriter(info_path) as f:
                 f.write(info_text)
-            logger.debug(f"Successfully cached info: {hash_id}")
+            logger.debug(f"Successfully cached info: {selection_title}")
         except IOError as e:
-            logger.error(f"Failed to write info cache for {hash_id}: {e}")
+            logger.error(f"Failed to write info cache for {selection_title}: {e}")
             raise
 
-    def _get_cache_hash(self, text: str) -> str:
+    def _get_selection_title(self, text: str) -> str:
         """Generate a cache hash for the given text."""
         from hashlib import sha256
 
-        return sha256(text.encode("utf-8")).hexdigest()
+        return f"search-results-{sha256(text.encode('utf-8')).hexdigest()}"
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         """Handle task completion with enhanced logging."""

@@ -1,7 +1,7 @@
 import logging
-import os
 import re
 from hashlib import sha256
+import sys
 from typing import Dict, List, Optional
 
 import httpx
@@ -117,7 +117,7 @@ def _get_episode_image(episode: str, media_item: MediaItem) -> str:
 
 logger = logging.getLogger(__name__)
 
-os.environ["SHELL"] = "bash"
+# os.environ["SHELL"] = sys.executable
 
 PREVIEWS_CACHE_DIR = APP_CACHE_DIR / "previews"
 IMAGES_CACHE_DIR = PREVIEWS_CACHE_DIR / "images"
@@ -127,21 +127,11 @@ CHARACTERS_CACHE_DIR = PREVIEWS_CACHE_DIR / "characters"
 AIRING_SCHEDULE_CACHE_DIR = PREVIEWS_CACHE_DIR / "airing_schedule"
 
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
-TEMPLATE_PREVIEW_SCRIPT = (FZF_SCRIPTS_DIR / "preview.template.sh").read_text(
-    encoding="utf-8"
-)
-TEMPLATE_REVIEW_PREVIEW_SCRIPT = (
-    FZF_SCRIPTS_DIR / "review-preview.template.sh"
-).read_text(encoding="utf-8")
-TEMPLATE_CHARACTER_PREVIEW_SCRIPT = (
-    FZF_SCRIPTS_DIR / "character-preview.template.sh"
-).read_text(encoding="utf-8")
-TEMPLATE_AIRING_SCHEDULE_PREVIEW_SCRIPT = (
-    FZF_SCRIPTS_DIR / "airing-schedule-preview.template.sh"
-).read_text(encoding="utf-8")
-DYNAMIC_PREVIEW_SCRIPT = (FZF_SCRIPTS_DIR / "dynamic-preview.template.sh").read_text(
-    encoding="utf-8"
-)
+TEMPLATE_PREVIEW_SCRIPT = (FZF_SCRIPTS_DIR / "preview.py").read_text(encoding="utf-8")
+TEMPLATE_REVIEW_PREVIEW_SCRIPT = ""
+TEMPLATE_CHARACTER_PREVIEW_SCRIPT = ""
+TEMPLATE_AIRING_SCHEDULE_PREVIEW_SCRIPT = ""
+DYNAMIC_PREVIEW_SCRIPT = ""
 
 EPISODE_PATTERN = re.compile(r"^Episode\s+(\d+)\s-\s.*")
 
@@ -300,30 +290,28 @@ def get_anime_preview(
         logger.error(f"Failed to start background caching: {e}")
         # Continue with script generation even if caching fails
 
-    # Prepare values to inject into the template
-    path_sep = "\\" if PLATFORM == "win32" else "/"
-
     # Format the template with the dynamic values
     replacements = {
         "PREVIEW_MODE": config.general.preview,
-        "IMAGE_CACHE_PATH": str(IMAGES_CACHE_DIR),
-        "INFO_CACHE_PATH": str(INFO_CACHE_DIR),
-        "PATH_SEP": path_sep,
+        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
+        "INFO_CACHE_DIR": str(INFO_CACHE_DIR),
         "IMAGE_RENDERER": config.general.image_renderer,
         # Color codes
-        "C_TITLE": ansi.get_true_fg(HEADER_COLOR, bold=True),
-        "C_KEY": ansi.get_true_fg(HEADER_COLOR, bold=True),
-        "C_VALUE": ansi.get_true_fg(HEADER_COLOR, bold=True),
-        "C_RULE": ansi.get_true_fg(SEPARATOR_COLOR, bold=True),
-        "RESET": ansi.RESET,
-        "PREFIX": "",
-        "SCALE_UP": " --scale-up" if config.general.preview_scale_up else "",
+        "HEADER_COLOR": ",".join(HEADER_COLOR),
+        "SEPARATOR_COLOR": ",".join(SEPARATOR_COLOR),
+        "PREFIX": "search-results",
+        "SCALE_UP": str(config.general.preview_scale_up),
     }
 
     for key, value in replacements.items():
         preview_script = preview_script.replace(f"{{{key}}}", value)
 
-    return preview_script
+    (APP_CACHE_DIR / "preview_script.py").write_text(preview_script, encoding="utf-8")
+
+    preview_script_final = (
+        f"{sys.executable} {APP_CACHE_DIR / 'preview_script.py'} {{}}"
+    )
+    return preview_script_final
 
 
 def get_episode_preview(
