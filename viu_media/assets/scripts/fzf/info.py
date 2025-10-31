@@ -35,11 +35,9 @@ left = [
         "Start Date",
         "End Date",
     ),
-    (
-        "Studios",
-        "Synonymns",
-        "Tags",
-    ),
+    ("Studios",),
+    ("Synonymns",),
+    ("Tags",),
 ]
 right = [
     (
@@ -65,11 +63,9 @@ right = [
         "{START_DATE}",
         "{END_DATE}",
     ),
-    (
-        "{STUDIOS}",
-        "{SYNONYMNS}",
-        "{TAGS}",
-    ),
+    ("{STUDIOS}",),
+    ("{SYNONYMNS}",),
+    ("{TAGS}",),
 ]
 
 
