@@ -9,6 +9,11 @@ console = Console(force_terminal=True, color_system="truecolor")
 HEADER_COLOR = sys.argv[1]
 SEPARATOR_COLOR = sys.argv[2]
 
+
+def rule(title: str | None = None):
+    console.print(Rule(style=f"rgb({SEPARATOR_COLOR})"))
+
+
 console.print("{TITLE}", justify="center")
 
 left = [
@@ -76,8 +81,9 @@ for L_grp, R_grp in zip(left, right):
     for L, R in zip(L_grp, R_grp):
         table.add_row(f"[bold rgb({HEADER_COLOR})]{L}: [/]", f"{R}")
 
-    console.print(Rule(style=f"rgb({SEPARATOR_COLOR})"))
+    rule()
     console.print(table)
 
-console.print(Rule(style=f"rgb({SEPARATOR_COLOR})"))
+
+rule()
 console.print(Markdown("""{SYNOPSIS}"""))
