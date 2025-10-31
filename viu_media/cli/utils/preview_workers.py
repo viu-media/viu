@@ -161,7 +161,9 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
                 if media_item.next_airing
                 else "N/A"
             ),
-            "EPISODES": formatter.shell_safe(str(media_item.episodes)),
+            "EPISODES": formatter.shell_safe(
+                str(media_item.episodes) if media_item.episodes else "??"
+            ),
             "DURATION": formatter.shell_safe(
                 formatter.format_media_duration(media_item.duration)
             ),
