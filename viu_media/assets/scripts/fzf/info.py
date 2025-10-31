@@ -25,8 +25,8 @@ left = [
     ),
     (
         "Episodes",
-        "Next Episode",
         "Duration",
+        "Next Episode",
     ),
     (
         "Genres",
@@ -53,8 +53,8 @@ right = [
     ),
     (
         "{EPISODES}",
-        "{NEXT_EPISODE}",
         "{DURATION}",
+        "{NEXT_EPISODE}",
     ),
     (
         "{GENRES}",
