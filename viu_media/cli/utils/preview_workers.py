@@ -188,7 +188,12 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
                 )
             ),
             "SYNONYMNS": formatter.shell_safe(
-                formatter.format_list_with_commas(media_item.synonymns)
+                formatter.format_list_with_commas(
+                    [media_item.title.romaji] + media_item.synonymns
+                    if media_item.title.romaji
+                    and media_item.title.romaji not in media_item.synonymns
+                    else media_item.synonymns
+                )
             ),
             "USER_STATUS": formatter.shell_safe(
                 media_item.user_status.status.value
