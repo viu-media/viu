@@ -79,7 +79,7 @@ for L_grp, R_grp in zip(left, right):
     table.add_column(justify="left", no_wrap=True)
     table.add_column(justify="right", overflow="fold")
     for L, R in zip(L_grp, R_grp):
-        table.add_row(f"[bold rgb({HEADER_COLOR})]{L}: [/]", f"{R}")
+        table.add_row(f"[bold rgb({HEADER_COLOR})]{L} [/]", f"{R}")
 
     rule()
     console.print(table)
