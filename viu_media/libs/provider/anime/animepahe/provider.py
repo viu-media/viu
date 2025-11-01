@@ -131,15 +131,17 @@ class AnimePahe(BaseAnimeProvider):
         res_dicts = [extract_attributes(item) for item in resolutionMenuItems]
         quality = None
         translation_type = None
-        stream_link = None
+        stream_links = []
 
         # TODO: better document the scraping process
         for res_dict in res_dicts:
             # the actual attributes are data attributes in the original html 'prefixed with data-'
             embed_url = res_dict["src"]
+            logger.debug(f"Found embed url: {embed_url}")
             data_audio = "dub" if res_dict["audio"] == "eng" else "sub"
 
             if data_audio != params.translation_type:
+                logger.debug(f"Found {data_audio} but wanted {params.translation_type}")
                 continue
 
             if not embed_url:
@@ -155,22 +157,26 @@ class AnimePahe(BaseAnimeProvider):
             )
             embed_response.raise_for_status()
             embed_page = embed_response.text
+            logger.debug("Processing embed page for JS decoding")
 
             decoded_js = process_animepahe_embed_page(embed_page)
             if not decoded_js:
                 logger.error("failed to decode embed page")
                 continue
+            logger.debug(f"Decoded JS: {decoded_js[:100]}...")
             juicy_stream = JUICY_STREAM_REGEX.search(decoded_js)
             if not juicy_stream:
                 logger.error("failed to find juicy stream")
                 continue
+            logger.debug(f"Found juicy stream: {juicy_stream.group(1)}")
             juicy_stream = juicy_stream.group(1)
             quality = res_dict["resolution"]
+            logger.debug(f"Found quality: {quality}")
             translation_type = data_audio
-            stream_link = juicy_stream
+            stream_links.append((quality, juicy_stream))
 
-        if translation_type and quality and stream_link:
-            yield map_to_server(episode, translation_type, quality, stream_link)
+        if translation_type and stream_links:
+            yield map_to_server(episode, translation_type, stream_links)
 
     @lru_cache()
     def _get_episode_info(
