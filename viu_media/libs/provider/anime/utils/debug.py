@@ -69,6 +69,9 @@ def test_anime_provider(AnimeProvider: Type[BaseAnimeProvider]):
     for i, stream in enumerate(episode_streams):
         print(f"{i + 1}: {stream.name}")
     stream = episode_streams[int(input("Select your preferred server: ")) - 1]
+    for i, link in enumerate(stream.links):
+        print(f"{i + 1}: {link.quality}")
+    link = stream.links[int(input("Select your preferred quality: ")) - 1]
     if executable := shutil.which("mpv"):
         cmd = executable
     elif executable := shutil.which("xdg-open"):
@@ -84,4 +87,4 @@ def test_anime_provider(AnimeProvider: Type[BaseAnimeProvider]):
         "Episode: ",
         stream.episode_title if stream.episode_title else episode_number,
     )
-    subprocess.run([cmd, stream.links[0].link])
+    subprocess.run([cmd, link.link])
