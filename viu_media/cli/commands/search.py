@@ -176,6 +176,22 @@ def stream_anime(
             if not server_name:
                 raise ViuError("Server not selected")
             server = servers[server_name]
+    quality = [
+        ep_stream.link
+        for ep_stream in server.links
+        if ep_stream.quality == config.stream.quality
+    ]
+    if not quality:
+        feedback.warning("Preferred quality not found, selecting quality...")
+        stream_link = selector.choose(
+            "Select Quality", [link.quality for link in server.links]
+        )
+        if not stream_link:
+            raise ViuError("Quality not selected")
+        stream_link = next(
+            (link.link for link in server.links if link.quality == stream_link), None
+        )
+
     stream_link = server.links[0].link
     if not stream_link:
         raise ViuError(
