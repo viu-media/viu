@@ -296,8 +296,7 @@ class DownloadService:
                         message=message,
                         app_name="Viu",
                         app_icon=app_icon,
-                        timeout=self.app_config.general.desktop_notification_duration
-                        * 60,
+                        timeout=self.app_config.general.desktop_notification_duration,
                     )
                 except:  # noqa: E722
                     pass
@@ -318,7 +317,7 @@ class DownloadService:
                     message=message,
                     app_name="Viu",
                     app_icon=app_icon,
-                    timeout=self.app_config.general.desktop_notification_duration * 60,
+                    timeout=self.app_config.general.desktop_notification_duration,
                 )
             except:  # noqa: E722
                 pass

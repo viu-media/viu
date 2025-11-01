@@ -41,7 +41,7 @@ class FeedbackService:
                     message=message,
                     app_name=CLI_NAME,
                     app_icon=str(ICON_PATH),
-                    timeout=self.app_config.general.desktop_notification_duration * 60,
+                    timeout=self.app_config.general.desktop_notification_duration,
                 )
                 return
             except:  # noqa: E722
@@ -67,7 +67,7 @@ class FeedbackService:
                     message=message,
                     app_name=CLI_NAME,
                     app_icon=str(ICON_PATH),
-                    timeout=self.app_config.general.desktop_notification_duration * 60,
+                    timeout=self.app_config.general.desktop_notification_duration,
                 )
                 return
             except:  # noqa: E722
@@ -94,7 +94,7 @@ class FeedbackService:
                     message=message,
                     app_name=CLI_NAME,
                     app_icon=str(ICON_PATH),
-                    timeout=self.app_config.general.desktop_notification_duration * 60,
+                    timeout=self.app_config.general.desktop_notification_duration,
                 )
                 return
             except:  # noqa: E722
@@ -120,7 +120,7 @@ class FeedbackService:
                     message=message,
                     app_name=CLI_NAME,
                     app_icon=str(ICON_PATH),
-                    timeout=self.app_config.general.desktop_notification_duration * 60,
+                    timeout=self.app_config.general.desktop_notification_duration,
                 )
                 return
             except:  # noqa: E722
@@ -176,7 +176,7 @@ class FeedbackService:
                     message="No current way to display info in rofi, use fzf and the terminal instead",
                     app_name=CLI_NAME,
                     app_icon=str(ICON_PATH),
-                    timeout=self.app_config.general.desktop_notification_duration * 60,
+                    timeout=self.app_config.general.desktop_notification_duration,
                 )
                 return
             except:  # noqa: E722
