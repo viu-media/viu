@@ -25,7 +25,7 @@ ANILIST_AUTH = (
 )
 
 try:
-    APP_DIR = Path(str(resources.files(CLI_NAME.lower())))
+    APP_DIR = Path(str(resources.files(PROJECT_NAME.lower())))
 
 except ModuleNotFoundError:
     from pathlib import Path
