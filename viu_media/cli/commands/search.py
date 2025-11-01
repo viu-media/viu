@@ -30,7 +30,6 @@ if TYPE_CHECKING:
 @click.option(
     "--anime-title",
     "-t",
-    required=True,
     shell_complete=anime_titles_shell_complete,
     multiple=True,
     help="Specify which anime to download",
@@ -51,6 +50,10 @@ def search(config: AppConfig, **options: "Unpack[Options]"):
     )
     from ...libs.provider.anime.provider import create_provider
     from ...libs.selectors.selector import create_selector
+
+    if not options["anime_title"]:
+        raw = click.prompt("What are you in the mood for? (comma-separated)")
+        options["anime_title"] = [a.strip() for a in raw.split(",") if a.strip()]
 
     feedback = FeedbackService(config)
     provider = create_provider(config.general.provider)
