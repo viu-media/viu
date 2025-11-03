@@ -30,7 +30,6 @@ if TYPE_CHECKING:
 @click.option(
     "--anime-title",
     "-t",
-    required=True,
     shell_complete=anime_titles_shell_complete,
     multiple=True,
     help="Specify which anime to download",
@@ -51,6 +50,10 @@ def search(config: AppConfig, **options: "Unpack[Options]"):
     )
     from ...libs.provider.anime.provider import create_provider
     from ...libs.selectors.selector import create_selector
+
+    if not options["anime_title"]:
+        raw = click.prompt("What are you in the mood for? (comma-separated)")
+        options["anime_title"] = [a.strip() for a in raw.split(",") if a.strip()]
 
     feedback = FeedbackService(config)
     provider = create_provider(config.general.provider)
@@ -173,6 +176,22 @@ def stream_anime(
             if not server_name:
                 raise ViuError("Server not selected")
             server = servers[server_name]
+    quality = [
+        ep_stream.link
+        for ep_stream in server.links
+        if ep_stream.quality == config.stream.quality
+    ]
+    if not quality:
+        feedback.warning("Preferred quality not found, selecting quality...")
+        stream_link = selector.choose(
+            "Select Quality", [link.quality for link in server.links]
+        )
+        if not stream_link:
+            raise ViuError("Quality not selected")
+        stream_link = next(
+            (link.link for link in server.links if link.quality == stream_link), None
+        )
+
     stream_link = server.links[0].link
     if not stream_link:
         raise ViuError(

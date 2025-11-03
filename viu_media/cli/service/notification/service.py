@@ -101,7 +101,7 @@ class NotificationService:
                     message=message,
                     app_name="Viu",
                     app_icon=app_icon,  # plyer supports file paths or URLs depending on platform
-                    timeout=self.app_config.general.desktop_notification_duration * 60,
+                    timeout=self.app_config.general.desktop_notification_duration,
                 )
                 logger.info(f"Displayed notification: {message}")
                 self._mark_seen(
