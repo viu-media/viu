@@ -1,5 +1,6 @@
 # GeneralConfig
 
+GENERAL_WELCOME_SCREEN = "Whether to enable the welcome screen, that runs once per day"
 GENERAL_PYGMENT_STYLE = "The pygment style to use"
 GENERAL_PREFERRED_SPINNER = "The spinner to use"
 GENERAL_API_CLIENT = "The media database API to use (e.g., 'anilist', 'jikan')."

@@ -2,6 +2,7 @@ from ..constants import APP_DATA_DIR, DEFAULTS_DIR, PLATFORM, USER_VIDEOS_DIR
 from ..utils import detect
 
 # GeneralConfig
+GENERAL_WELCOME_SCREEN = True
 GENERAL_PYGMENT_STYLE = "github-dark"
 GENERAL_PREFERRED_SPINNER = "smiley"
 GENERAL_API_CLIENT = "anilist"

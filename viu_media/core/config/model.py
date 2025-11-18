@@ -156,6 +156,9 @@ class GeneralConfig(BaseModel):
         default=defaults.GENERAL_API_CLIENT,
         description=desc.GENERAL_API_CLIENT,
     )
+    welcome_screen: bool = Field(
+        default=defaults.GENERAL_WELCOME_SCREEN, description=desc.GENERAL_WELCOME_SCREEN
+    )
     provider: ProviderName = Field(
         default=ProviderName.ALLANIME,
         description=desc.GENERAL_PROVIDER,
