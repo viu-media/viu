@@ -354,18 +354,14 @@ def get_episode_preview(
     # Format the template with the dynamic values
     replacements = {
         "PREVIEW_MODE": config.general.preview,
-        "IMAGE_CACHE_PATH": str(IMAGES_CACHE_DIR),
-        "INFO_CACHE_PATH": str(INFO_CACHE_DIR),
-        "PATH_SEP": path_sep,
+        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
+        "INFO_CACHE_DIR": str(INFO_CACHE_DIR),
         "IMAGE_RENDERER": config.general.image_renderer,
         # Color codes
-        "C_TITLE": ansi.get_true_fg(HEADER_COLOR, bold=True),
-        "C_KEY": ansi.get_true_fg(HEADER_COLOR, bold=True),
-        "C_VALUE": ansi.get_true_fg(HEADER_COLOR, bold=True),
-        "C_RULE": ansi.get_true_fg(SEPARATOR_COLOR, bold=True),
-        "RESET": ansi.RESET,
-        "PREFIX": f"{media_item.title.english}_Episode_",
-        "SCALE_UP": " --scale-up" if config.general.preview_scale_up else "",
+        "HEADER_COLOR": ",".join(HEADER_COLOR),
+        "SEPARATOR_COLOR": ",".join(SEPARATOR_COLOR),
+        "PREFIX": f"episode-{media_item.title.english}",
+        "SCALE_UP": str(config.general.preview_scale_up),
     }
 
     for key, value in replacements.items():
