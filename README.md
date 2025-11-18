@@ -32,6 +32,11 @@
 
 </details>
 
+> [!IMPORTANT]
+> This project scrapes public-facing websites for its streaming / downloading capabilities and primarily acts as an anilist, jikan and many other media apis tui client. The developer(s) of this application have no affiliation with these content providers. This application hosts zero content and is intended for educational and personal use only. Use at your own risk.
+> 
+> [**Read the Full Disclaimer**](DISCLAIMER.md)
+
 ## Core Features
 
 *   📺 **Interactive TUI:** Browse, search, and manage your AniList library in a rich terminal interface powered by `fzf`, `rofi`, or a built-in selector.
@@ -327,10 +332,3 @@ You can run the background worker as a systemd service for persistence.
 ## Contributing
 
 Contributions are welcome! Whether it's reporting a bug, proposing a feature, or writing code, your help is appreciated. Please read our [**Contributing Guidelines**](CONTRIBUTIONS.md) to get started.
-
-## Disclaimer
-
-> [!IMPORTANT]
-> This project scrapes public-facing websites. The developer(s) of this application have no affiliation with these content providers. This application hosts zero content and is intended for educational and personal use only. Use at your own risk.
-> 
-> [**Read the Full Disclaimer**](DISCLAIMER.md)
