@@ -145,6 +145,59 @@ This messages can be disabled by switching off the welcome_screen option in the 
 
                 open(SUPPORT_PROJECT_URL)
 
+    if config.general.show_new_release:
+        import time
+
+        from ..core.constants import APP_CACHE_DIR
+
+        last_release_file = APP_CACHE_DIR / ".last_release"
+        should_print_release_notes = False
+        if last_release_file.exists():
+            last_release = last_release_file.read_text(encoding="utf-8")
+            current_version = list(map(int, __version__.replace("v", "").split(".")))
+            last_saved_version = list(
+                map(int, last_release.replace("v", "").split("."))
+            )
+            if (
+                (current_version[0] > last_saved_version[0])
+                or (
+                    current_version[1] > last_saved_version[1]
+                    and current_version[0] == last_saved_version[0]
+                )
+                or (
+                    current_version[2] > last_saved_version[2]
+                    and current_version[0] == last_saved_version[0]
+                    and current_version[1] == last_saved_version[1]
+                )
+            ):
+                should_print_release_notes = True
+
+        else:
+            should_print_release_notes = True
+        if should_print_release_notes:
+            last_release_file.write_text(__version__, encoding="utf-8")
+            from .service.feedback import FeedbackService
+            from .utils.update import check_for_updates, print_release_json, update_app
+            from rich.prompt import Confirm
+
+            feedback = FeedbackService(config)
+            feedback.info("Getting release notes...")
+            is_latest, release_json = check_for_updates()
+            if Confirm.ask(
+                "Would you also like to update your config with the latest options and config notes"
+            ):
+                import subprocess
+
+                cmd = ["viu", "config", "--update"]
+                print(f"running '{' '.join(cmd)}'...")
+                subprocess.run(cmd)
+
+            if is_latest:
+                print_release_json(release_json)
+            else:
+                print_release_json(release_json)
+                print("It seems theres another update waiting for you as well 😁")
+
     if config.general.check_for_updates:
         import time
 
