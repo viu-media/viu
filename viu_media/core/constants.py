@@ -9,7 +9,8 @@ CLI_NAME_LOWER = "viu"
 PROJECT_NAME = "viu-media"
 APP_NAME = os.environ.get(f"{CLI_NAME}_APP_NAME", CLI_NAME_LOWER)
 
-USER_NAME = os.environ.get("USERNAME", "User")
+USER_NAME = os.environ.get("USERNAME", os.environ.get("USER", "User"))
+
 
 __version__ = metadata.version("viu_media")
 
@@ -85,3 +86,4 @@ USER_VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
 USER_CONFIG = APP_DATA_DIR / "config.toml"
 
 LOG_FILE = LOG_FOLDER / "app.log"
+SUPPORT_PROJECT_URL = "https://buymeacoffee.com/benexl"

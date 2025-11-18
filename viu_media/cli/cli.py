@@ -109,12 +109,48 @@ def cli(ctx: click.Context, **options: "Unpack[Options]"):
     )
     ctx.obj = config
 
+    if config.general.welcome_screen:
+        import time
+
+        from ..core.constants import APP_CACHE_DIR, USER_NAME, SUPPORT_PROJECT_URL
+
+        last_welcomed_at_file = APP_CACHE_DIR / ".last_welcome"
+        should_welcome = False
+        if last_welcomed_at_file.exists():
+            try:
+                last_welcomed_at = float(
+                    last_welcomed_at_file.read_text(encoding="utf-8")
+                )
+                # runs once a day
+                if (time.time() - last_welcomed_at) > 24 * 3600:
+                    should_welcome = True
+
+            except Exception as e:
+                logger.warning(f"Failed to check for update: {e}")
+
+        else:
+            should_welcome = True
+        if should_welcome:
+            last_welcomed_at_file.write_text(str(time.time()), encoding="utf-8")
+
+            from rich.prompt import Confirm
+
+            if Confirm.ask(f"""\
+[green]How are you {USER_NAME} 🙂?
+If you like the project and are able to support it please consider buying me a coffee at {SUPPORT_PROJECT_URL}.
+If you would like to proceed to {SUPPORT_PROJECT_URL} select yes, otherwise enjoy your browser anime experience 😁.[/]
+This messages can be disabled by switching off the welcome_screen option in the config and is only shown once every 24hrs.
+"""):
+                from webbrowser import open
+
+                open(SUPPORT_PROJECT_URL)
+
     if config.general.check_for_updates:
         import time
 
         from ..core.constants import APP_CACHE_DIR
 
-        last_updated_at_file = APP_CACHE_DIR / "last_update"
+        last_updated_at_file = APP_CACHE_DIR / ".last_update"
         should_check_for_update = False
         if last_updated_at_file.exists():
             try:
