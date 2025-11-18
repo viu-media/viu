@@ -6,6 +6,8 @@ from typing import Dict, List, Optional
 
 import httpx
 
+from viu_media.core.utils import formatter
+
 from ...core.config import AppConfig
 from ...core.constants import APP_CACHE_DIR, PLATFORM, SCRIPTS_DIR
 from ...core.utils.file import AtomicWriter
@@ -359,7 +361,7 @@ def get_episode_preview(
         "HEADER_COLOR": ",".join(HEADER_COLOR),
         "SEPARATOR_COLOR": ",".join(SEPARATOR_COLOR),
         "PREFIX": "episode",
-        "KEY": f"{media_item.title.english}",
+        "KEY": f"{media_item.title.english.replace(formatter.DOUBLE_QUOTE, formatter.SINGLE_QUOTE)}",
         "SCALE_UP": str(config.general.preview_scale_up),
     }
 

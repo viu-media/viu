@@ -307,7 +307,9 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
         streaming_episodes = media_item.streaming_episodes
 
         for episode_str in episodes:
-            hash_id = self._get_cache_hash(f"{media_item.title.english}-{episode_str}")
+            hash_id = self._get_cache_hash(
+                f"{media_item.title.english.replace(formatter.DOUBLE_QUOTE, formatter.SINGLE_QUOTE)}-{episode_str}"
+            )
 
             # Find episode data
             episode_data = streaming_episodes.get(episode_str)

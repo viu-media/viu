@@ -5,6 +5,8 @@ from typing import Dict, List, Optional, Union
 from ...libs.media_api.types import AiringSchedule
 
 COMMA_REGEX = re.compile(r"([0-9]{3})(?=\d)")
+SINGLE_QUOTE = "'"
+DOUBLE_QUOTE = '"'
 
 
 def format_media_duration(total_minutes: Optional[int]) -> str:
