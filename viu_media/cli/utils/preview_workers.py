@@ -238,7 +238,7 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
         """Generate a cache hash for the given text."""
         from hashlib import sha256
 
-        return f"search-results-{sha256(text.encode('utf-8')).hexdigest()}"
+        return f"search-result-{sha256(text.encode('utf-8')).hexdigest()}"
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         """Handle task completion with enhanced logging."""
@@ -307,9 +307,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
         streaming_episodes = media_item.streaming_episodes
 
         for episode_str in episodes:
-            hash_id = self._get_cache_hash(
-                f"{media_item.title.english}_Episode_{episode_str}"
-            )
+            hash_id = self._get_cache_hash(f"{media_item.title.english}-{episode_str}")
 
             # Find episode data
             episode_data = streaming_episodes.get(episode_str)
@@ -404,7 +402,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
         """Generate a cache hash for the given text."""
         from hashlib import sha256
 
-        return sha256(text.encode("utf-8")).hexdigest()
+        return "episode-" + sha256(text.encode("utf-8")).hexdigest()
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         """Handle task completion with enhanced logging."""

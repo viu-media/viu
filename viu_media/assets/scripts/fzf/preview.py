@@ -26,8 +26,10 @@ SCALE_UP = "{SCALE_UP}" == "True"
 
 # fzf passes the title with quotes, so we need to trim them
 TITLE = sys.argv[1]
+KEY = "{KEY}"
+KEY = KEY + "-" if KEY else KEY
 
-hash = f"{PREFIX}-{sha256(TITLE.encode('utf-8')).hexdigest()}"
+hash = f"{PREFIX}-{sha256((KEY + TITLE).encode('utf-8')).hexdigest()}"
 
 
 def fzf_image_preview(file_path: str):

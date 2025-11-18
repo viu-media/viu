@@ -299,7 +299,8 @@ def get_anime_preview(
         # Color codes
         "HEADER_COLOR": ",".join(HEADER_COLOR),
         "SEPARATOR_COLOR": ",".join(SEPARATOR_COLOR),
-        "PREFIX": "search-results",
+        "PREFIX": "search-result",
+        "KEY": "",
         "SCALE_UP": str(config.general.preview_scale_up),
     }
 
@@ -348,9 +349,6 @@ def get_episode_preview(
         logger.error(f"Failed to start episode background caching: {e}")
         # Continue with script generation even if caching fails
 
-    # Prepare values to inject into the template
-    path_sep = "\\" if PLATFORM == "win32" else "/"
-
     # Format the template with the dynamic values
     replacements = {
         "PREVIEW_MODE": config.general.preview,
@@ -360,7 +358,8 @@ def get_episode_preview(
         # Color codes
         "HEADER_COLOR": ",".join(HEADER_COLOR),
         "SEPARATOR_COLOR": ",".join(SEPARATOR_COLOR),
-        "PREFIX": f"episode-{media_item.title.english}",
+        "PREFIX": "episode",
+        "KEY": f"{media_item.title.english}",
         "SCALE_UP": str(config.general.preview_scale_up),
     }
 
