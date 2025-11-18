@@ -31,7 +31,9 @@ logger = logging.getLogger(__name__)
 
 
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
-TEMPLATE_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "info.py").read_text(encoding="utf-8")
+TEMPLATE_MEDIA_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "media_info.py").read_text(
+    encoding="utf-8"
+)
 TEMPLATE_EPISODE_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "episode_info.py").read_text(
     encoding="utf-8"
 )
@@ -142,7 +144,7 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
     def _generate_info_text(self, media_item: MediaItem, config: AppConfig) -> str:
         """Generate formatted info text for a media item."""
         # Import here to avoid circular imports
-        info_script = TEMPLATE_INFO_SCRIPT
+        info_script = TEMPLATE_MEDIA_INFO_SCRIPT
         description = formatter.clean_html(
             media_item.description or "No description available."
         )
