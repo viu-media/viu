@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 import click
 
+
 from ...core.config import AppConfig
 from ...core.exceptions import ViuError
 from ..utils.completion import anime_titles_shell_complete
@@ -49,6 +50,7 @@ def search(config: AppConfig, **options: "Unpack[Options]"):
         SearchParams,
     )
     from ...libs.provider.anime.provider import create_provider
+    from viu_media.core.utils.normalizer import normalize_title
     from ...libs.selectors.selector import create_selector
 
     if not options["anime_title"]:
@@ -67,7 +69,10 @@ def search(config: AppConfig, **options: "Unpack[Options]"):
         with feedback.progress(f"Fetching anime search results for {anime_title}"):
             search_results = provider.search(
                 SearchParams(
-                    query=anime_title, translation_type=config.stream.translation_type
+                    query=normalize_title(
+                        anime_title, config.general.provider.value, True
+                    ).lower(),
+                    translation_type=config.stream.translation_type,
                 )
             )
         if not search_results:
