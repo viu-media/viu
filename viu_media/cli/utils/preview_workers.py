@@ -404,7 +404,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
         """Generate a cache hash for the given text."""
         from hashlib import sha256
 
-        return "episode-" + sha256(text.encode("utf-8")).hexdigest()
+        return "episode-" + sha256(text.encode("utf-8")).hexdigest() + ".py"
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         """Handle task completion with enhanced logging."""
