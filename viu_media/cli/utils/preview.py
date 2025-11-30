@@ -124,12 +124,10 @@ logger = logging.getLogger(__name__)
 PREVIEWS_CACHE_DIR = APP_CACHE_DIR / "previews"
 IMAGES_CACHE_DIR = PREVIEWS_CACHE_DIR / "images"
 INFO_CACHE_DIR = PREVIEWS_CACHE_DIR / "info"
-REVIEWS_CACHE_DIR = PREVIEWS_CACHE_DIR / "reviews"
 AIRING_SCHEDULE_CACHE_DIR = PREVIEWS_CACHE_DIR / "airing_schedule"
 
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
 TEMPLATE_PREVIEW_SCRIPT = (FZF_SCRIPTS_DIR / "preview.py").read_text(encoding="utf-8")
-TEMPLATE_REVIEW_PREVIEW_SCRIPT = ""
 TEMPLATE_AIRING_SCHEDULE_PREVIEW_SCRIPT = ""
 DYNAMIC_PREVIEW_SCRIPT = ""
 
@@ -417,6 +415,48 @@ def get_character_preview(choice_map: Dict[str, Character], config: AppConfig) -
     return preview_script
 
 
+def get_review_preview(choice_map: Dict[str, MediaReview], config: AppConfig) -> str:
+    """
+    Generate the generic loader script for review previews and start background caching.
+    """
+
+    IMAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    INFO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+    HEADER_COLOR = config.fzf.preview_header_color.split(",")
+    SEPARATOR_COLOR = config.fzf.preview_separator_color.split(",")
+
+    # Start managed background caching for episodes
+    try:
+        preview_manager = _get_preview_manager()
+        worker = preview_manager.get_review_worker()
+        worker.cache_review_previews(choice_map, config)
+        logger.debug("Started background caching for review previews")
+    except Exception as e:
+        logger.error(f"Failed to start episode background caching: {e}")
+
+    # Use the generic loader script
+    preview_script = TEMPLATE_PREVIEW_SCRIPT
+
+    replacements = {
+        "PREVIEW_MODE": config.general.preview,
+        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
+        "INFO_CACHE_DIR": str(INFO_CACHE_DIR),
+        "IMAGE_RENDERER": config.general.image_renderer,
+        # Color codes
+        "HEADER_COLOR": ",".join(HEADER_COLOR),
+        "SEPARATOR_COLOR": ",".join(SEPARATOR_COLOR),
+        "PREFIX": "review",
+        "KEY": "",
+        "SCALE_UP": str(config.general.preview_scale_up),
+    }
+
+    for key, value in replacements.items():
+        preview_script = preview_script.replace(f"{{{key}}}", value)
+
+    return preview_script
+
+
 def get_dynamic_anime_preview(config: AppConfig) -> str:
     """
     Generate dynamic anime preview script for search functionality.
@@ -475,9 +515,7 @@ def _get_preview_manager() -> PreviewWorkerManager:
     """Get or create the global preview worker manager."""
     global _preview_manager
     if _preview_manager is None:
-        _preview_manager = PreviewWorkerManager(
-            IMAGES_CACHE_DIR, INFO_CACHE_DIR, REVIEWS_CACHE_DIR
-        )
+        _preview_manager = PreviewWorkerManager(IMAGES_CACHE_DIR, INFO_CACHE_DIR)
     return _preview_manager
 
 
@@ -501,41 +539,6 @@ def get_preview_worker_status() -> dict:
     if _preview_manager:
         return _preview_manager.get_status()
     return {"preview_worker": None, "episode_worker": None}
-
-
-def get_review_preview(choice_map: Dict[str, MediaReview], config: AppConfig) -> str:
-    """
-    Generate the generic loader script for review previews and start background caching.
-    """
-
-    REVIEWS_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    preview_manager = _get_preview_manager()
-    worker = preview_manager.get_review_worker()
-    worker.cache_review_previews(choice_map, config)
-    logger.debug("Started background caching for review previews")
-
-    # Use the generic loader script
-    preview_script = TEMPLATE_REVIEW_PREVIEW_SCRIPT
-    path_sep = "\\" if PLATFORM == "win32" else "/"
-
-    # Inject the correct cache path and color codes
-    replacements = {
-        "PREVIEW_MODE": config.general.preview,
-        "INFO_CACHE_DIR": str(REVIEWS_CACHE_DIR),
-        "PATH_SEP": path_sep,
-        "C_TITLE": ansi.get_true_fg(config.fzf.header_color.split(","), bold=True),
-        "C_KEY": ansi.get_true_fg(config.fzf.header_color.split(","), bold=True),
-        "C_VALUE": ansi.get_true_fg(config.fzf.header_color.split(","), bold=True),
-        "C_RULE": ansi.get_true_fg(
-            config.fzf.preview_separator_color.split(","), bold=True
-        ),
-        "RESET": ansi.RESET,
-    }
-
-    for key, value in replacements.items():
-        preview_script = preview_script.replace(f"{{{key}}}", value)
-
-    return preview_script
 
 
 def get_airing_schedule_preview(

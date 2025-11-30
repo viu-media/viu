@@ -6,6 +6,7 @@ including image downloads and info text generation with proper lifecycle managem
 """
 
 import logging
+from pathlib import Path
 from typing import Dict, List, Optional
 
 import httpx
@@ -421,9 +422,12 @@ class ReviewCacheWorker(ManagedBackgroundWorker):
     Specialized background worker for caching fully-rendered media review previews.
     """
 
-    def __init__(self, reviews_cache_dir, max_workers: int = 10):
+    def __init__(
+        self, images_cache_dir: Path, info_cache_dir: Path, max_workers: int = 10
+    ):
         super().__init__(max_workers=max_workers, name="ReviewCacheWorker")
-        self.reviews_cache_dir = reviews_cache_dir
+        self.images_cache_dir = images_cache_dir
+        self.info_cache_dir = info_cache_dir
 
     def cache_review_previews(
         self, choice_map: Dict[str, MediaReview], config: AppConfig
@@ -471,7 +475,7 @@ class ReviewCacheWorker(ManagedBackgroundWorker):
     def _save_preview_content(self, content: str, hash_id: str) -> None:
         """Saves the final preview content to the cache."""
         try:
-            info_path = self.reviews_cache_dir / hash_id
+            info_path = self.info_cache_dir / hash_id
             with AtomicWriter(info_path) as f:
                 f.write(content)
             logger.debug(f"Successfully cached review preview: {hash_id}")
@@ -482,7 +486,7 @@ class ReviewCacheWorker(ManagedBackgroundWorker):
     def _get_cache_hash(self, text: str) -> str:
         from hashlib import sha256
 
-        return sha256(text.encode("utf-8")).hexdigest()
+        return "review-" + sha256(text.encode("utf-8")).hexdigest() + ".py"
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         super()._on_task_completed(task, future)
@@ -757,7 +761,7 @@ class PreviewWorkerManager:
     caching workers with automatic lifecycle management.
     """
 
-    def __init__(self, images_cache_dir, info_cache_dir, reviews_cache_dir):
+    def __init__(self, images_cache_dir, info_cache_dir):
         """
         Initialize the preview worker manager.
 
@@ -768,7 +772,6 @@ class PreviewWorkerManager:
         """
         self.images_cache_dir = images_cache_dir
         self.info_cache_dir = info_cache_dir
-        self.reviews_cache_dir = reviews_cache_dir
         self._preview_worker: Optional[PreviewCacheWorker] = None
         self._episode_worker: Optional[EpisodeCacheWorker] = None
         self._review_worker: Optional[ReviewCacheWorker] = None
@@ -812,7 +815,9 @@ class PreviewWorkerManager:
                 # Clean up old worker
                 thread_manager.shutdown_worker("review_cache_worker")
 
-            self._review_worker = ReviewCacheWorker(self.reviews_cache_dir)
+            self._review_worker = ReviewCacheWorker(
+                self.images_cache_dir, self.info_cache_dir
+            )
             self._review_worker.start()
             thread_manager.register_worker("review_cache_worker", self._review_worker)
 
