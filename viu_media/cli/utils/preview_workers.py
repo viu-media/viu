@@ -617,7 +617,7 @@ class CharacterCacheWorker(ManagedBackgroundWorker):
     def _get_cache_hash(self, text: str) -> str:
         from hashlib import sha256
 
-        return sha256(text.encode("utf-8")).hexdigest()
+        return "character-" + sha256(text.encode("utf-8")).hexdigest() + ".py"
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         super()._on_task_completed(task, future)
