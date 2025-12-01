@@ -303,11 +303,10 @@ def get_anime_preview(
     for key, value in replacements.items():
         preview_script = preview_script.replace(f"{{{key}}}", value)
 
-    (PREVIEWS_CACHE_DIR / "search-result-preview-script.py").write_text(
-        preview_script, encoding="utf-8"
-    )
+    preview_file = PREVIEWS_CACHE_DIR / "search-result-preview-script.py"
+    preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{sys.executable} {PREVIEWS_CACHE_DIR / 'search-result-preview-script.py'} {{}}"
+    preview_script_final = f"{sys.executable} {preview_file} {{}}"
     return preview_script_final
 
 
@@ -362,12 +361,10 @@ def get_episode_preview(
     for key, value in replacements.items():
         preview_script = preview_script.replace(f"{{{key}}}", value)
 
-    (PREVIEWS_CACHE_DIR / "episode-preview-script.py").write_text(
-        preview_script, encoding="utf-8"
-    )
-    preview_script_final = (
-        f"{sys.executable} {PREVIEWS_CACHE_DIR / 'episode-preview-script.py'} {{}}"
-    )
+    preview_file = PREVIEWS_CACHE_DIR / "episode-preview-script.py"
+    preview_file.write_text(preview_script, encoding="utf-8")
+
+    preview_script_final = f"{sys.executable} {preview_file} {{}}"
     return preview_script_final
 
 
@@ -410,7 +407,11 @@ def get_character_preview(choice_map: Dict[str, Character], config: AppConfig) -
     for key, value in replacements.items():
         preview_script = preview_script.replace(f"{{{key}}}", value)
 
-    return preview_script
+    preview_file = PREVIEWS_CACHE_DIR / "character-preview-script.py"
+    preview_file.write_text(preview_script, encoding="utf-8")
+
+    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    return preview_script_final
 
 
 def get_review_preview(choice_map: Dict[str, MediaReview], config: AppConfig) -> str:
@@ -452,7 +453,11 @@ def get_review_preview(choice_map: Dict[str, MediaReview], config: AppConfig) ->
     for key, value in replacements.items():
         preview_script = preview_script.replace(f"{{{key}}}", value)
 
-    return preview_script
+    preview_file = PREVIEWS_CACHE_DIR / "review-preview-script.py"
+    preview_file.write_text(preview_script, encoding="utf-8")
+
+    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    return preview_script_final
 
 
 def get_airing_schedule_preview(
@@ -496,7 +501,11 @@ def get_airing_schedule_preview(
     for key, value in replacements.items():
         preview_script = preview_script.replace(f"{{{key}}}", value)
 
-    return preview_script
+    preview_file = PREVIEWS_CACHE_DIR / "airing-schedule-preview-script.py"
+    preview_file.write_text(preview_script, encoding="utf-8")
+
+    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    return preview_script_final
 
 
 def get_dynamic_anime_preview(config: AppConfig) -> str:
