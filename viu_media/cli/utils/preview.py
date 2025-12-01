@@ -139,10 +139,13 @@ def _ensure_ansi_utils_in_cache():
     """Copy _ansi_utils.py to the info cache directory so cached scripts can import it."""
     source = FZF_SCRIPTS_DIR / "_ansi_utils.py"
     dest = INFO_CACHE_DIR / "_ansi_utils.py"
-    
-    if source.exists() and (not dest.exists() or source.stat().st_mtime > dest.stat().st_mtime):
+
+    if source.exists() and (
+        not dest.exists() or source.stat().st_mtime > dest.stat().st_mtime
+    ):
         try:
             import shutil
+
             shutil.copy2(source, dest)
             logger.debug(f"Copied _ansi_utils.py to {INFO_CACHE_DIR}")
         except Exception as e:

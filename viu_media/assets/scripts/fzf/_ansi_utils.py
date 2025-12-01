@@ -71,23 +71,25 @@ def print_table_row(
     """
     r, g, b = parse_color(header_color)
     key_styled = rgb_color(r, g, b, key, bold=True)
-    
+
     # Ensure minimum width to avoid textwrap errors
     safe_value_width = max(20, value_width)
-    
+
     # Wrap value if it's too long
     value_lines = textwrap.wrap(str(value), width=safe_value_width) if value else [""]
-    
+
     if not value_lines:
         value_lines = [""]
-    
+
     # Print first line with right-aligned value
     first_line = value_lines[0]
     print(f"{key_styled:<{key_width + 20}}  {first_line:>{safe_value_width}}")
-    
+
     # Print remaining wrapped lines (left-aligned, indented)
     for line in value_lines[1:]:
         print(f"{' ' * (key_width + 2)}{line}")
+
+
 def strip_markdown(text: str) -> str:
     """
     Strip markdown formatting from text.
