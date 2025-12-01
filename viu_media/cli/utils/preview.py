@@ -505,7 +505,8 @@ def get_airing_schedule_preview(
     preview_file.write_text(preview_script, encoding="utf-8")
 
     preview_script_final = f"{sys.executable} {preview_file} {{}}"
-    return preview_script_final
+    # NOTE: disabled cause not very useful
+    return ""
 
 
 def get_dynamic_anime_preview(config: AppConfig) -> str:
