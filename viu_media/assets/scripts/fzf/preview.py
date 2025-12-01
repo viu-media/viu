@@ -24,7 +24,6 @@ SEPARATOR_COLOR = "{SEPARATOR_COLOR}"
 PREFIX = "{PREFIX}"
 SCALE_UP = "{SCALE_UP}" == "True"
 
-# fzf passes the title with quotes, so we need to trim them
 TITLE = sys.argv[1]
 KEY = """{KEY}"""
 KEY = KEY + "-" if KEY else KEY
