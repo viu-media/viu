@@ -393,7 +393,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
     def _save_info_text(self, info_text: str, hash_id: str) -> None:
         """Save episode info text to cache."""
         try:
-            info_path = self.info_cache_dir / hash_id + ".py"
+            info_path = self.info_cache_dir / (hash_id + ".py")
             with AtomicWriter(info_path) as f:
                 f.write(info_text)
             logger.debug(f"Successfully cached episode info: {hash_id}")
