@@ -1,41 +1,31 @@
 import sys
-from rich.console import Console
-from rich.table import Table
-from rich.rule import Rule
-from rich.markdown import Markdown
-
-console = Console(force_terminal=True, color_system="truecolor")
+import shutil
+from _ansi_utils import print_rule, print_table_row, strip_markdown, wrap_text
 
 HEADER_COLOR = sys.argv[1]
 SEPARATOR_COLOR = sys.argv[2]
 
+# Get terminal dimensions
+term_width = shutil.get_terminal_size((80, 24)).columns
 
-def rule(title: str | None = None):
-    console.print(Rule(style=f"rgb({SEPARATOR_COLOR})"))
+# Print title centered
+print("{ANIME_TITLE}".center(term_width))
 
-
-console.print("{ANIME_TITLE}", justify="center")
-
-left = [
-    ("Total Episodes",),
-    ("Upcoming Episodes",),
-]
-right = [
-    ("{TOTAL_EPISODES}",),
-    ("{UPCOMING_EPISODES}",),
+rows = [
+    ("Total Episodes", "{TOTAL_EPISODES}"),
 ]
 
+print_rule(SEPARATOR_COLOR)
+for key, value in rows:
+    print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
 
-for L_grp, R_grp in zip(left, right):
-    table = Table.grid(expand=True)
-    table.add_column(justify="left", no_wrap=True)
-    table.add_column(justify="right", overflow="fold")
-    for L, R in zip(L_grp, R_grp):
-        table.add_row(f"[bold rgb({HEADER_COLOR})]{L} [/]", f"{R}")
+rows = [
+    ("Upcoming Episodes", "{UPCOMING_EPISODES}"),
+]
 
-    rule()
-    console.print(table)
+print_rule(SEPARATOR_COLOR)
+for key, value in rows:
+    print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
 
-
-rule()
-console.print(Markdown("""{SCHEDULE_TABLE}"""))
+print_rule(SEPARATOR_COLOR)
+print(wrap_text(strip_markdown("""{SCHEDULE_TABLE}"""), term_width))

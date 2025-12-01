@@ -135,6 +135,20 @@ EPISODE_PATTERN = re.compile(r"^Episode\s+(\d+)\s-\s.*")
 _preview_manager: Optional[PreviewWorkerManager] = None
 
 
+def _ensure_ansi_utils_in_cache():
+    """Copy _ansi_utils.py to the info cache directory so cached scripts can import it."""
+    source = FZF_SCRIPTS_DIR / "_ansi_utils.py"
+    dest = INFO_CACHE_DIR / "_ansi_utils.py"
+    
+    if source.exists() and (not dest.exists() or source.stat().st_mtime > dest.stat().st_mtime):
+        try:
+            import shutil
+            shutil.copy2(source, dest)
+            logger.debug(f"Copied _ansi_utils.py to {INFO_CACHE_DIR}")
+        except Exception as e:
+            logger.warning(f"Failed to copy _ansi_utils.py to cache: {e}")
+
+
 def create_preview_context():
     """
     Create a context manager for preview operations.
@@ -270,6 +284,7 @@ def get_anime_preview(
     # Ensure cache directories exist on startup
     IMAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     INFO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    _ensure_ansi_utils_in_cache()
 
     HEADER_COLOR = config.fzf.preview_header_color.split(",")
     SEPARATOR_COLOR = config.fzf.preview_separator_color.split(",")
@@ -527,6 +542,7 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
     # Ensure cache directories exist
     IMAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     INFO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    _ensure_ansi_utils_in_cache()
 
     HEADER_COLOR = config.fzf.preview_header_color.split(",")
     SEPARATOR_COLOR = config.fzf.preview_separator_color.split(",")

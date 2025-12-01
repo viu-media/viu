@@ -244,11 +244,12 @@ def fzf_image_preview(file_path: str):
 
 def fzf_text_info_render():
     """Renders the text-based info via the cached python script."""
-    from rich.console import Console
-    from rich.rule import Rule
+    import shutil
 
-    console = Console(force_terminal=True, color_system="truecolor")
-    console.print(Rule(style=f"rgb({SEPARATOR_COLOR})"))
+    # Print simple separator line
+    width = shutil.get_terminal_size((80, 24)).columns
+    r, g, b = map(int, SEPARATOR_COLOR.split(","))
+    print(f"\x1b[38;2;{r};{g};{b}m" + "─" * width + "\x1b[0m")
 
     if PREVIEW_MODE == "text" or PREVIEW_MODE == "full":
         preview_info_path = INFO_CACHE_DIR / f"{hash_id}.py"
@@ -257,7 +258,8 @@ def fzf_text_info_render():
                 [sys.executable, str(preview_info_path), HEADER_COLOR, SEPARATOR_COLOR]
             )
         else:
-            console.print("📝 Loading details...", style="dim")
+            # Print dim text
+            print("\x1b[2m📝 Loading details...\x1b[0m")
 
 
 def main():
