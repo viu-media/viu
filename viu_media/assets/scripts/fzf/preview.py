@@ -195,7 +195,9 @@ def fzf_text_preview(file_path: str):
 
 
 console = Console(force_terminal=True, color_system="truecolor")
-if PREVIEW_MODE == "image" or PREVIEW_MODE == "full":
+if (PREVIEW_MODE == "image" or PREVIEW_MODE == "full") and (
+    PREFIX not in ("character", "review", "airing-schedule")
+):
     preview_image_path = IMAGE_CACHE_DIR / f"{hash}.png"
     if preview_image_path.exists():
         fzf_image_preview(str(preview_image_path))
