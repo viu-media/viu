@@ -393,7 +393,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
     def _save_info_text(self, info_text: str, hash_id: str) -> None:
         """Save episode info text to cache."""
         try:
-            info_path = self.info_cache_dir / hash_id
+            info_path = self.info_cache_dir / hash_id + ".py"
             with AtomicWriter(info_path) as f:
                 f.write(info_text)
             logger.debug(f"Successfully cached episode info: {hash_id}")
@@ -405,7 +405,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
         """Generate a cache hash for the given text."""
         from hashlib import sha256
 
-        return "episode-" + sha256(text.encode("utf-8")).hexdigest() + ".py"
+        return "episode-" + sha256(text.encode("utf-8")).hexdigest()
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         """Handle task completion with enhanced logging."""
