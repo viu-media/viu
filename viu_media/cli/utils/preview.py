@@ -6,6 +6,7 @@ from typing import Dict, List, Optional
 
 import httpx
 
+from viu_media.cli.interactive.menu.media.dynamic_search import SEARCH_CACHE_DIR
 from viu_media.core.utils import formatter
 
 from ...core.config import AppConfig
@@ -546,7 +547,19 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
     # Ensure cache directories exist
     IMAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     INFO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    _ensure_ansi_utils_in_cache()
+    source = FZF_SCRIPTS_DIR / "_ansi_utils.py"
+    dest = PREVIEWS_CACHE_DIR / "_ansi_utils.py"
+
+    if source.exists() and (
+        not dest.exists() or source.stat().st_mtime > dest.stat().st_mtime
+    ):
+        try:
+            import shutil
+
+            shutil.copy2(source, dest)
+            logger.debug(f"Copied _ansi_utils.py to {INFO_CACHE_DIR}")
+        except Exception as e:
+            logger.warning(f"Failed to copy _ansi_utils.py to cache: {e}")
 
     HEADER_COLOR = config.fzf.preview_header_color.split(",")
     SEPARATOR_COLOR = config.fzf.preview_separator_color.split(",")
