@@ -14,17 +14,17 @@ import unicodedata
 def display_width(text: str) -> int:
     """
     Calculate the actual display width of text, accounting for wide characters.
-    
+
     Args:
         text: Text to measure
-        
+
     Returns:
         Display width in terminal columns
     """
     width = 0
     for char in text:
         # East Asian Width property: 'F' (Fullwidth) and 'W' (Wide) take 2 columns
-        if unicodedata.east_asian_width(char) in ('F', 'W'):
+        if unicodedata.east_asian_width(char) in ("F", "W"):
             width += 2
         else:
             width += 1
@@ -98,7 +98,7 @@ def print_table_row(
 
     # Calculate display widths accounting for wide characters
     key_display_width = display_width(key)
-    
+
     # Calculate actual value width based on terminal and key display width
     actual_value_width = max(20, term_width - key_display_width - 2)
 
@@ -111,7 +111,7 @@ def print_table_row(
     # Print first line with properly aligned value
     first_line = value_lines[0]
     first_line_display_width = display_width(first_line)
-    
+
     # Use manual spacing to right-align based on display width
     spacing = term_width - key_display_width - first_line_display_width - 2
     if spacing > 0:
