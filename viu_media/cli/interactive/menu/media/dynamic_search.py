@@ -1,5 +1,6 @@
 import json
 import logging
+import sys
 
 from .....core.constants import APP_CACHE_DIR, SCRIPTS_DIR
 from .....libs.media_api.params import MediaSearchParams
@@ -11,9 +12,7 @@ logger = logging.getLogger(__name__)
 SEARCH_CACHE_DIR = APP_CACHE_DIR / "search"
 SEARCH_RESULTS_FILE = SEARCH_CACHE_DIR / "current_search_results.json"
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
-SEARCH_TEMPLATE_SCRIPT = (FZF_SCRIPTS_DIR / "search.template.sh").read_text(
-    encoding="utf-8"
-)
+SEARCH_TEMPLATE_SCRIPT = (FZF_SCRIPTS_DIR / "search.py").read_text(encoding="utf-8")
 
 
 @session.menu
@@ -29,8 +28,8 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
     from .....libs.media_api.anilist import gql
 
     search_query = gql.SEARCH_MEDIA.read_text(encoding="utf-8")
-    # Properly escape the GraphQL query for JSON
-    search_query_escaped = json.dumps(search_query)
+    # Escape the GraphQL query as a JSON string literal for Python script
+    search_query_json = json.dumps(search_query).replace('"', "")
 
     # Prepare the search script
     auth_header = ""
@@ -42,14 +41,21 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
 
     replacements = {
         "GRAPHQL_ENDPOINT": "https://graphql.anilist.co",
-        "GRAPHQL_QUERY": search_query_escaped,
-        "CACHE_DIR": str(SEARCH_CACHE_DIR),
+        "GRAPHQL_QUERY": search_query_json,
         "SEARCH_RESULTS_FILE": str(SEARCH_RESULTS_FILE),
         "AUTH_HEADER": auth_header,
     }
 
     for key, value in replacements.items():
         search_command = search_command.replace(f"{{{key}}}", str(value))
+
+    # Write the filled template to a cache file
+    search_script_file = SEARCH_CACHE_DIR / "search-script.py"
+    search_script_file.write_text(search_command, encoding="utf-8")
+
+    # Make the search script executable by calling it with python3
+    # fzf will pass the query as {q} which becomes the first argument
+    search_command_final = f"{sys.executable} {search_script_file} {{q}}"
 
     try:
         # Prepare preview functionality
@@ -62,13 +68,13 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
 
                 choice = ctx.selector.search(
                     prompt="Search Anime",
-                    search_command=search_command,
+                    search_command=search_command_final,
                     preview=preview_command,
                 )
         else:
             choice = ctx.selector.search(
                 prompt="Search Anime",
-                search_command=search_command,
+                search_command=search_command_final,
             )
     except NotImplementedError:
         feedback.error("Dynamic search is not supported by your current selector")

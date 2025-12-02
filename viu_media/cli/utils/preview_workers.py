@@ -6,6 +6,7 @@ including image downloads and info text generation with proper lifecycle managem
 """
 
 import logging
+from pathlib import Path
 from typing import Dict, List, Optional
 
 import httpx
@@ -31,20 +32,20 @@ logger = logging.getLogger(__name__)
 
 
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
-TEMPLATE_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "info.template.sh").read_text(
+TEMPLATE_MEDIA_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "media_info.py").read_text(
     encoding="utf-8"
 )
-TEMPLATE_EPISODE_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "episode-info.template.sh").read_text(
+TEMPLATE_EPISODE_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "episode_info.py").read_text(
     encoding="utf-8"
 )
-TEMPLATE_REVIEW_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "review-info.template.sh").read_text(
+TEMPLATE_REVIEW_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "review_info.py").read_text(
     encoding="utf-8"
 )
-TEMPLATE_CHARACTER_INFO_SCRIPT = (
-    FZF_SCRIPTS_DIR / "character-info.template.sh"
-).read_text(encoding="utf-8")
+TEMPLATE_CHARACTER_INFO_SCRIPT = (FZF_SCRIPTS_DIR / "character_info.py").read_text(
+    encoding="utf-8"
+)
 TEMPLATE_AIRING_SCHEDULE_INFO_SCRIPT = (
-    FZF_SCRIPTS_DIR / "airing-schedule-info.template.sh"
+    FZF_SCRIPTS_DIR / "airing_schedule_info.py"
 ).read_text(encoding="utf-8")
 
 
@@ -103,29 +104,29 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
             raise RuntimeError("PreviewCacheWorker is not running")
 
         for media_item, title_str in zip(media_items, titles):
-            hash_id = self._get_cache_hash(title_str)
+            selection_title = self._get_selection_title(title_str)
 
             # Submit image download task if needed
             if config.general.preview in ("full", "image") and media_item.cover_image:
-                image_path = self.images_cache_dir / f"{hash_id}.png"
+                image_path = self.images_cache_dir / f"{selection_title}.png"
                 if not image_path.exists():
                     self.submit_function(
                         self._download_and_save_image,
                         media_item.cover_image.large,
-                        hash_id,
+                        selection_title,
                     )
 
             # Submit info generation task if needed
             if config.general.preview in ("full", "text"):
                 info_text = self._generate_info_text(media_item, config)
-                self.submit_function(self._save_info_text, info_text, hash_id)
+                self.submit_function(self._save_info_text, info_text, selection_title)
 
-    def _download_and_save_image(self, url: str, hash_id: str) -> None:
+    def _download_and_save_image(self, url: str, selection_title: str) -> None:
         """Download an image and save it to cache."""
         if not self._http_client:
             raise RuntimeError("HTTP client not initialized")
 
-        image_path = self.images_cache_dir / f"{hash_id}.png"
+        image_path = self.images_cache_dir / f"{selection_title}.png"
 
         try:
             with self._http_client.stream("GET", url) as response:
@@ -135,7 +136,7 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
                     for chunk in response.iter_bytes():
                         f.write(chunk)
 
-                logger.debug(f"Successfully cached image: {hash_id}")
+                logger.debug(f"Successfully cached image: {selection_title}")
 
         except Exception as e:
             logger.error(f"Failed to download image {url}: {e}")
@@ -144,7 +145,7 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
     def _generate_info_text(self, media_item: MediaItem, config: AppConfig) -> str:
         """Generate formatted info text for a media item."""
         # Import here to avoid circular imports
-        info_script = TEMPLATE_INFO_SCRIPT
+        info_script = TEMPLATE_MEDIA_INFO_SCRIPT
         description = formatter.clean_html(
             media_item.description or "No description available."
         )
@@ -159,11 +160,13 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
                 media_item.format.value if media_item.format else "UNKNOWN"
             ),
             "NEXT_EPISODE": formatter.shell_safe(
-                f"Episode {media_item.next_airing.episode} on {formatter.format_date(media_item.next_airing.airing_at, '%A, %d %B %Y at %X)')}"
+                f"Episode {media_item.next_airing.episode} on {formatter.format_date(media_item.next_airing.airing_at, '%A, %d %B %Y at %X')}"
                 if media_item.next_airing
                 else "N/A"
             ),
-            "EPISODES": formatter.shell_safe(str(media_item.episodes)),
+            "EPISODES": formatter.shell_safe(
+                str(media_item.episodes) if media_item.episodes else "??"
+            ),
             "DURATION": formatter.shell_safe(
                 formatter.format_media_duration(media_item.duration)
             ),
@@ -190,7 +193,12 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
                 )
             ),
             "SYNONYMNS": formatter.shell_safe(
-                formatter.format_list_with_commas(media_item.synonymns)
+                formatter.format_list_with_commas(
+                    [media_item.title.romaji] + media_item.synonymns
+                    if media_item.title.romaji
+                    and media_item.title.romaji not in media_item.synonymns
+                    else media_item.synonymns
+                )
             ),
             "USER_STATUS": formatter.shell_safe(
                 media_item.user_status.status.value
@@ -216,22 +224,22 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
 
         return info_script
 
-    def _save_info_text(self, info_text: str, hash_id: str) -> None:
+    def _save_info_text(self, info_text: str, selection_title: str) -> None:
         """Save info text to cache."""
         try:
-            info_path = self.info_cache_dir / hash_id
+            info_path = self.info_cache_dir / f"{selection_title}.py"
             with AtomicWriter(info_path) as f:
                 f.write(info_text)
-            logger.debug(f"Successfully cached info: {hash_id}")
+            logger.debug(f"Successfully cached info: {selection_title}")
         except IOError as e:
-            logger.error(f"Failed to write info cache for {hash_id}: {e}")
+            logger.error(f"Failed to write info cache for {selection_title}: {e}")
             raise
 
-    def _get_cache_hash(self, text: str) -> str:
+    def _get_selection_title(self, text: str) -> str:
         """Generate a cache hash for the given text."""
         from hashlib import sha256
 
-        return sha256(text.encode("utf-8")).hexdigest()
+        return f"search-result-{sha256(text.encode('utf-8')).hexdigest()}"
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         """Handle task completion with enhanced logging."""
@@ -301,7 +309,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
 
         for episode_str in episodes:
             hash_id = self._get_cache_hash(
-                f"{media_item.title.english}_Episode_{episode_str}"
+                f"{media_item.title.english.replace(formatter.DOUBLE_QUOTE, formatter.SINGLE_QUOTE)}-{episode_str}"
             )
 
             # Find episode data
@@ -352,7 +360,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
         replacements = {
             "TITLE": formatter.shell_safe(title),
             "NEXT_EPISODE": formatter.shell_safe(
-                f"Episode {media_item.next_airing.episode} on {formatter.format_date(media_item.next_airing.airing_at, '%A, %d %B %Y at %X)')}"
+                f"Episode {media_item.next_airing.episode} on {formatter.format_date(media_item.next_airing.airing_at, '%A, %d %B %Y at %X')}"
                 if media_item.next_airing
                 else "N/A"
             ),
@@ -385,7 +393,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
     def _save_info_text(self, info_text: str, hash_id: str) -> None:
         """Save episode info text to cache."""
         try:
-            info_path = self.info_cache_dir / hash_id
+            info_path = self.info_cache_dir / (hash_id + ".py")
             with AtomicWriter(info_path) as f:
                 f.write(info_text)
             logger.debug(f"Successfully cached episode info: {hash_id}")
@@ -397,7 +405,7 @@ class EpisodeCacheWorker(ManagedBackgroundWorker):
         """Generate a cache hash for the given text."""
         from hashlib import sha256
 
-        return sha256(text.encode("utf-8")).hexdigest()
+        return "episode-" + sha256(text.encode("utf-8")).hexdigest()
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         """Handle task completion with enhanced logging."""
@@ -414,9 +422,12 @@ class ReviewCacheWorker(ManagedBackgroundWorker):
     Specialized background worker for caching fully-rendered media review previews.
     """
 
-    def __init__(self, reviews_cache_dir, max_workers: int = 10):
+    def __init__(
+        self, images_cache_dir: Path, info_cache_dir: Path, max_workers: int = 10
+    ):
         super().__init__(max_workers=max_workers, name="ReviewCacheWorker")
-        self.reviews_cache_dir = reviews_cache_dir
+        self.images_cache_dir = images_cache_dir
+        self.info_cache_dir = info_cache_dir
 
     def cache_review_previews(
         self, choice_map: Dict[str, MediaReview], config: AppConfig
@@ -464,7 +475,7 @@ class ReviewCacheWorker(ManagedBackgroundWorker):
     def _save_preview_content(self, content: str, hash_id: str) -> None:
         """Saves the final preview content to the cache."""
         try:
-            info_path = self.reviews_cache_dir / hash_id
+            info_path = self.info_cache_dir / hash_id
             with AtomicWriter(info_path) as f:
                 f.write(content)
             logger.debug(f"Successfully cached review preview: {hash_id}")
@@ -475,7 +486,7 @@ class ReviewCacheWorker(ManagedBackgroundWorker):
     def _get_cache_hash(self, text: str) -> str:
         from hashlib import sha256
 
-        return sha256(text.encode("utf-8")).hexdigest()
+        return "review-" + sha256(text.encode("utf-8")).hexdigest() + ".py"
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         super()._on_task_completed(task, future)
@@ -610,7 +621,7 @@ class CharacterCacheWorker(ManagedBackgroundWorker):
     def _get_cache_hash(self, text: str) -> str:
         from hashlib import sha256
 
-        return sha256(text.encode("utf-8")).hexdigest()
+        return "character-" + sha256(text.encode("utf-8")).hexdigest() + ".py"
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         super()._on_task_completed(task, future)
@@ -734,7 +745,7 @@ class AiringScheduleCacheWorker(ManagedBackgroundWorker):
     def _get_cache_hash(self, text: str) -> str:
         from hashlib import sha256
 
-        return sha256(text.encode("utf-8")).hexdigest()
+        return "airing-schedule-" + sha256(text.encode("utf-8")).hexdigest() + ".py"
 
     def _on_task_completed(self, task: WorkerTask, future) -> None:
         super()._on_task_completed(task, future)
@@ -750,7 +761,7 @@ class PreviewWorkerManager:
     caching workers with automatic lifecycle management.
     """
 
-    def __init__(self, images_cache_dir, info_cache_dir, reviews_cache_dir):
+    def __init__(self, images_cache_dir, info_cache_dir):
         """
         Initialize the preview worker manager.
 
@@ -761,7 +772,6 @@ class PreviewWorkerManager:
         """
         self.images_cache_dir = images_cache_dir
         self.info_cache_dir = info_cache_dir
-        self.reviews_cache_dir = reviews_cache_dir
         self._preview_worker: Optional[PreviewCacheWorker] = None
         self._episode_worker: Optional[EpisodeCacheWorker] = None
         self._review_worker: Optional[ReviewCacheWorker] = None
@@ -805,7 +815,9 @@ class PreviewWorkerManager:
                 # Clean up old worker
                 thread_manager.shutdown_worker("review_cache_worker")
 
-            self._review_worker = ReviewCacheWorker(self.reviews_cache_dir)
+            self._review_worker = ReviewCacheWorker(
+                self.images_cache_dir, self.info_cache_dir
+            )
             self._review_worker.start()
             thread_manager.register_worker("review_cache_worker", self._review_worker)
 
