@@ -6,7 +6,6 @@ from typing import Dict, List, Optional
 
 import httpx
 
-from viu_media.cli.interactive.menu.media.dynamic_search import SEARCH_CACHE_DIR
 from viu_media.core.utils import formatter
 
 from ...core.config import AppConfig
