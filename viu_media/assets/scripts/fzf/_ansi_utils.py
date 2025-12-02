@@ -8,6 +8,27 @@ Provides RGB color formatting, table rendering, and markdown stripping.
 import re
 import shutil
 import textwrap
+import unicodedata
+
+
+def display_width(text: str) -> int:
+    """
+    Calculate the actual display width of text, accounting for wide characters.
+    
+    Args:
+        text: Text to measure
+        
+    Returns:
+        Display width in terminal columns
+    """
+    width = 0
+    for char in text:
+        # East Asian Width property: 'F' (Fullwidth) and 'W' (Wide) take 2 columns
+        if unicodedata.east_asian_width(char) in ('F', 'W'):
+            width += 2
+        else:
+            width += 1
+    return width
 
 
 def rgb_color(r: int, g: int, b: int, text: str, bold: bool = False) -> str:
@@ -75,10 +96,13 @@ def print_table_row(
     # Get actual terminal width
     term_width = shutil.get_terminal_size((80, 24)).columns
 
-    # Calculate actual value width based on terminal and key
-    actual_value_width = max(20, term_width - len(key) - 2)
+    # Calculate display widths accounting for wide characters
+    key_display_width = display_width(key)
+    
+    # Calculate actual value width based on terminal and key display width
+    actual_value_width = max(20, term_width - key_display_width - 2)
 
-    # Wrap value if it's too long
+    # Wrap value if it's too long (use character count, not display width for wrapping)
     value_lines = textwrap.wrap(str(value), width=actual_value_width) if value else [""]
 
     if not value_lines:
@@ -86,8 +110,10 @@ def print_table_row(
 
     # Print first line with properly aligned value
     first_line = value_lines[0]
-    # Use manual spacing to right-align
-    spacing = term_width - len(key) - len(first_line) - 2
+    first_line_display_width = display_width(first_line)
+    
+    # Use manual spacing to right-align based on display width
+    spacing = term_width - key_display_width - first_line_display_width - 2
     if spacing > 0:
         print(f"{key_styled}  {' ' * spacing}{first_line}")
     else:
@@ -95,7 +121,7 @@ def print_table_row(
 
     # Print remaining wrapped lines (left-aligned, indented)
     for line in value_lines[1:]:
-        print(f"{' ' * (len(key) + 2)}{line}")
+        print(f"{' ' * (key_display_width + 2)}{line}")
 
 
 def strip_markdown(text: str) -> str:
