@@ -7,7 +7,6 @@
 # filled by Python using .replace() during runtime.
 
 import json
-import os
 import sys
 from pathlib import Path
 from urllib import request
@@ -19,7 +18,7 @@ SEARCH_RESULTS_FILE = Path("{SEARCH_RESULTS_FILE}")
 AUTH_HEADER = "{AUTH_HEADER}"
 
 # The GraphQL query is injected as a properly escaped JSON string
-GRAPHQL_QUERY = {GRAPHQL_QUERY}
+GRAPHQL_QUERY = "{GRAPHQL_QUERY}"
 
 # --- Get Query from fzf ---
 # fzf passes the current query as the first argument when using --bind change:reload

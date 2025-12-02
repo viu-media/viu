@@ -29,7 +29,7 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
 
     search_query = gql.SEARCH_MEDIA.read_text(encoding="utf-8")
     # Escape the GraphQL query as a JSON string literal for Python script
-    search_query_json = json.dumps(search_query)
+    search_query_json = json.dumps(search_query).replace('"', "")
 
     # Prepare the search script
     auth_header = ""
