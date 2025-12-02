@@ -126,7 +126,7 @@ def cli(ctx: click.Context, **options: "Unpack[Options]"):
                     should_welcome = True
 
             except Exception as e:
-                logger.warning(f"Failed to check for update: {e}")
+                logger.warning(f"Failed to read welcome screen timestamp: {e}")
 
         else:
             should_welcome = True
