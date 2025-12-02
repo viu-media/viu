@@ -1,12 +1,17 @@
 import sys
-import shutil
-from _ansi_utils import print_rule, print_table_row, strip_markdown, wrap_text
+from _ansi_utils import (
+    print_rule,
+    print_table_row,
+    strip_markdown,
+    wrap_text,
+    get_terminal_width,
+)
 
 HEADER_COLOR = sys.argv[1]
 SEPARATOR_COLOR = sys.argv[2]
 
 # Get terminal dimensions
-term_width = shutil.get_terminal_size((80, 24)).columns
+term_width = get_terminal_width()
 
 # Print title centered
 print("{TITLE}".center(term_width))

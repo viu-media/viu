@@ -5,10 +5,24 @@ Lightweight stdlib-only utilities to replace Rich dependency in preview scripts.
 Provides RGB color formatting, table rendering, and markdown stripping.
 """
 
+import os
 import re
 import shutil
 import textwrap
 import unicodedata
+
+
+def get_terminal_width() -> int:
+    """
+    Get terminal width, prioritizing FZF preview environment variables.
+
+    Returns:
+        Terminal width in columns
+    """
+    fzf_cols = os.environ.get("FZF_PREVIEW_COLUMNS")
+    if fzf_cols:
+        return int(fzf_cols)
+    return shutil.get_terminal_size((80, 24)).columns
 
 
 def display_width(text: str) -> int:
@@ -72,7 +86,7 @@ def print_rule(sep_color: str) -> None:
     Args:
         sep_color: Color as 'R,G,B' string
     """
-    width = shutil.get_terminal_size((80, 24)).columns
+    width = get_terminal_width()
     r, g, b = parse_color(sep_color)
     print(rgb_color(r, g, b, "─" * width))
 
@@ -94,7 +108,7 @@ def print_table_row(
     key_styled = rgb_color(r, g, b, key, bold=True)
 
     # Get actual terminal width
-    term_width = shutil.get_terminal_size((80, 24)).columns
+    term_width = get_terminal_width()
 
     # Calculate display widths accounting for wide characters
     key_display_width = display_width(key)
@@ -183,6 +197,6 @@ def wrap_text(text: str, width: int | None = None) -> str:
         Wrapped text
     """
     if width is None:
-        width = shutil.get_terminal_size((80, 24)).columns
+        width = get_terminal_width()
 
     return textwrap.fill(text, width=width)

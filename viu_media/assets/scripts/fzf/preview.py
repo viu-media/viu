@@ -244,12 +244,13 @@ def fzf_image_preview(file_path: str):
 
 def fzf_text_info_render():
     """Renders the text-based info via the cached python script."""
-    import shutil
+    # Get terminal dimensions from FZF environment or fallback
+    cols, lines = get_terminal_dimensions()
 
-    # Print simple separator line
-    width = shutil.get_terminal_size((80, 24)).columns
+    # Print simple separator line with proper width
     r, g, b = map(int, SEPARATOR_COLOR.split(","))
-    print(f"\x1b[38;2;{r};{g};{b}m" + "─" * width + "\x1b[0m")
+    separator = f"\x1b[38;2;{r};{g};{b}m" + ("─" * cols) + "\x1b[0m"
+    print(separator, flush=True)
 
     if PREVIEW_MODE == "text" or PREVIEW_MODE == "full":
         preview_info_path = INFO_CACHE_DIR / f"{hash_id}.py"
