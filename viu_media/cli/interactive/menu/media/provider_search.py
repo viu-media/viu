@@ -28,7 +28,9 @@ def provider_search(ctx: Context, state: State) -> State | InternalDirective:
 
     provider_search_results = provider.search(
         SearchParams(
-            query=normalize_title(media_title, config.general.provider.value, True),
+            query=normalize_title(
+                media_title, config.general.provider.value, True
+            ).lower(),
             translation_type=config.stream.translation_type,
         )
     )
