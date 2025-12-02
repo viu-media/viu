@@ -9,7 +9,7 @@ import httpx
 from viu_media.core.utils import formatter
 
 from ...core.config import AppConfig
-from ...core.constants import APP_CACHE_DIR, PLATFORM, SCRIPTS_DIR
+from ...core.constants import APP_CACHE_DIR, SCRIPTS_DIR
 from ...core.utils.file import AtomicWriter
 from ...libs.media_api.types import (
     AiringScheduleResult,
@@ -17,7 +17,6 @@ from ...libs.media_api.types import (
     MediaItem,
     MediaReview,
 )
-from . import ansi
 from .preview_workers import PreviewWorkerManager
 
 
@@ -524,7 +523,7 @@ def get_airing_schedule_preview(
     preview_file = PREVIEWS_CACHE_DIR / "airing-schedule-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    # preview_script_final = f"{sys.executable} {preview_file} {{}}"
     # NOTE: disabled cause not very useful
     return ""
 
