@@ -72,22 +72,30 @@ def print_table_row(
     r, g, b = parse_color(header_color)
     key_styled = rgb_color(r, g, b, key, bold=True)
 
-    # Ensure minimum width to avoid textwrap errors
-    safe_value_width = max(20, value_width)
+    # Get actual terminal width
+    term_width = shutil.get_terminal_size((80, 24)).columns
+
+    # Calculate actual value width based on terminal and key
+    actual_value_width = max(20, term_width - len(key) - 2)
 
     # Wrap value if it's too long
-    value_lines = textwrap.wrap(str(value), width=safe_value_width) if value else [""]
+    value_lines = textwrap.wrap(str(value), width=actual_value_width) if value else [""]
 
     if not value_lines:
         value_lines = [""]
 
-    # Print first line with right-aligned value
+    # Print first line with properly aligned value
     first_line = value_lines[0]
-    print(f"{key_styled:<{key_width + 20}}  {first_line:>{safe_value_width}}")
+    # Use manual spacing to right-align
+    spacing = term_width - len(key) - len(first_line) - 2
+    if spacing > 0:
+        print(f"{key_styled}  {' ' * spacing}{first_line}")
+    else:
+        print(f"{key_styled}  {first_line}")
 
     # Print remaining wrapped lines (left-aligned, indented)
     for line in value_lines[1:]:
-        print(f"{' ' * (key_width + 2)}{line}")
+        print(f"{' ' * (len(key) + 2)}{line}")
 
 
 def strip_markdown(text: str) -> str:
