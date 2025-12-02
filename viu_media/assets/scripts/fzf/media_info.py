@@ -74,7 +74,7 @@ for key, value in rows:
     print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
 
 rows = [
-    ("Synonymns", "{SYNONYMNS}"),
+    ("Synonyms", "{SYNONYMNS}"),
 ]
 
 print_rule(SEPARATOR_COLOR)
