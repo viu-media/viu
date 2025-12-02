@@ -139,7 +139,7 @@ def cli(ctx: click.Context, **options: "Unpack[Options]"):
 [green]How are you {USER_NAME} 🙂?
 If you like the project and are able to support it please consider buying me a coffee at {SUPPORT_PROJECT_URL}.
 If you would like to proceed to {SUPPORT_PROJECT_URL} select yes, otherwise enjoy your browser anime experience 😁.[/]
-This messages can be disabled by switching off the welcome_screen option in the config and is only shown once every 24hrs.
+This message can be disabled by switching off the welcome_screen option in the config and is only shown once every 24hrs.
 """):
                 from webbrowser import open
 
