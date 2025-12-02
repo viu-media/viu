@@ -197,6 +197,7 @@ This messages can be disabled by switching off the welcome_screen option in the 
             else:
                 print_release_json(release_json)
                 print("It seems theres another update waiting for you as well 😁")
+            click.pause("Press Any Key To Proceed...")
 
     if config.general.check_for_updates:
         import time
