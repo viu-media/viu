@@ -127,7 +127,9 @@ INFO_CACHE_DIR = PREVIEWS_CACHE_DIR / "info"
 
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
 TEMPLATE_PREVIEW_SCRIPT = (FZF_SCRIPTS_DIR / "preview.py").read_text(encoding="utf-8")
-DYNAMIC_PREVIEW_SCRIPT = ""
+DYNAMIC_PREVIEW_SCRIPT = (FZF_SCRIPTS_DIR / "dynamic_preview.py").read_text(
+    encoding="utf-8"
+)
 
 EPISODE_PATTERN = re.compile(r"^Episode\s+(\d+)\s-\s.*")
 
@@ -534,13 +536,13 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
     This is different from regular anime preview because:
     1. We don't have media items upfront
     2. The preview needs to work with search results as they come in
-    3. Preview is handled entirely in shell by parsing JSON results
+    3. Preview script dynamically loads data from search results JSON
 
     Args:
         config: Application configuration
 
     Returns:
-        Preview script content for fzf dynamic search
+        Preview script command for fzf dynamic search
     """
     # Ensure cache directories exist
     IMAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
@@ -556,30 +558,27 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
     search_cache_dir = APP_CACHE_DIR / "search"
     search_results_file = search_cache_dir / "current_search_results.json"
 
-    # Prepare values to inject into the template
-    path_sep = "\\" if PLATFORM == "win32" else "/"
-
-    # Format the template with the dynamic values
+    # Prepare replacements for the template
     replacements = {
-        "PREVIEW_MODE": config.general.preview,
-        "IMAGE_CACHE_PATH": str(IMAGES_CACHE_DIR),
-        "INFO_CACHE_PATH": str(INFO_CACHE_DIR),
-        "PATH_SEP": path_sep,
-        "IMAGE_RENDERER": config.general.image_renderer,
         "SEARCH_RESULTS_FILE": str(search_results_file),
-        # Color codes
-        "C_TITLE": ansi.get_true_fg(HEADER_COLOR, bold=True),
-        "C_KEY": ansi.get_true_fg(HEADER_COLOR, bold=True),
-        "C_VALUE": ansi.get_true_fg(HEADER_COLOR, bold=True),
-        "C_RULE": ansi.get_true_fg(SEPARATOR_COLOR, bold=True),
-        "RESET": ansi.RESET,
-        "SCALE_UP": " --scale-up" if config.general.preview_scale_up else "",
+        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
+        "PREVIEW_MODE": config.general.preview,
+        "IMAGE_RENDERER": config.general.image_renderer,
+        "HEADER_COLOR": ",".join(HEADER_COLOR),
+        "SEPARATOR_COLOR": ",".join(SEPARATOR_COLOR),
+        "SCALE_UP": str(config.general.preview_scale_up),
     }
 
     for key, value in replacements.items():
         preview_script = preview_script.replace(f"{{{key}}}", value)
 
-    return preview_script
+    # Write the preview script to cache
+    preview_file = PREVIEWS_CACHE_DIR / "dynamic-search-preview-script.py"
+    preview_file.write_text(preview_script, encoding="utf-8")
+
+    # Return the command to execute the preview script
+    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    return preview_script_final
 
 
 def _get_preview_manager() -> PreviewWorkerManager:
