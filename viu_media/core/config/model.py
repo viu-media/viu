@@ -181,7 +181,9 @@ class GeneralConfig(BaseModel):
         description=desc.GENERAL_SCALE_PREVIEW,
     )
 
-    image_renderer: Literal["icat", "chafa", "imgcat"] = Field(
+    image_renderer: Literal[
+        "icat", "chafa", "imgcat", "system-sixels", "system-kitty", "system-default"
+    ] = Field(
         default_factory=defaults.GENERAL_IMAGE_RENDERER,
         description=desc.GENERAL_IMAGE_RENDERER,
     )
