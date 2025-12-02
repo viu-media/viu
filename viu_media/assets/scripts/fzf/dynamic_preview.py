@@ -15,45 +15,13 @@ from hashlib import sha256
 from pathlib import Path
 
 # Import the utility functions
-try:
-    from _ansi_utils import (
-        get_terminal_width,
-        print_rule,
-        print_table_row,
-        strip_markdown,
-        wrap_text,
-    )
-
-    ANSI_UTILS_AVAILABLE = True
-except ImportError:
-    ANSI_UTILS_AVAILABLE = False
-
-    # Fallback if _ansi_utils is not available
-    def get_terminal_width():
-        return int(os.environ.get("FZF_PREVIEW_COLUMNS", "80"))
-
-    def print_rule(sep_color):
-        r, g, b = map(int, sep_color.split(","))
-        width = get_terminal_width()
-        print(f"\x1b[38;2;{r};{g};{b}m" + ("─" * width) + "\x1b[0m")
-
-    def print_table_row(key, value, header_color, _key_width, _value_width):
-        r, g, b = map(int, header_color.split(","))
-        print(f"\x1b[38;2;{r};{g};{b};1m{key}\x1b[0m: {value}")
-
-    def strip_markdown(text):
-        import re
-
-        text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
-        text = re.sub(r"__(.+?)__", r"\1", text)
-        text = re.sub(r"\*(.+?)\*", r"\1", text)
-        text = re.sub(r"_(.+?)_", r"\1", text)
-        return text
-
-    def wrap_text(text, width):
-        import textwrap
-
-        return "\n".join(textwrap.wrap(text, width))
+from _ansi_utils import (
+    get_terminal_width,
+    print_rule,
+    print_table_row,
+    strip_markdown,
+    wrap_text,
+)
 
 
 # --- Template Variables (Injected by Python) ---
@@ -408,10 +376,7 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            if ANSI_UTILS_AVAILABLE:
-                print_table_row(key, value, HEADER_COLOR, 0, 0)
-            else:
-                print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
+            print_table_row(key, value, HEADER_COLOR, 0, 0)
 
         rows = [
             ("Episodes", str(episodes)),
@@ -420,10 +385,7 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            if ANSI_UTILS_AVAILABLE:
-                print_table_row(key, value, HEADER_COLOR, 0, 0)
-            else:
-                print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
+            print_table_row(key, value, HEADER_COLOR, 0, 0)
 
         rows = [
             ("Genres", genres),
@@ -432,10 +394,7 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            if ANSI_UTILS_AVAILABLE:
-                print_table_row(key, value, HEADER_COLOR, 0, 0)
-            else:
-                print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
+            print_table_row(key, value, HEADER_COLOR, 0, 0)
 
         rows = [
             ("Start Date", start_date),
@@ -444,10 +403,7 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            if ANSI_UTILS_AVAILABLE:
-                print_table_row(key, value, HEADER_COLOR, 0, 0)
-            else:
-                print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
+            print_table_row(key, value, HEADER_COLOR, 0, 0)
 
         rows = [
             ("Studios", studios),
@@ -455,10 +411,7 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            if ANSI_UTILS_AVAILABLE:
-                print_table_row(key, value, HEADER_COLOR, 0, 0)
-            else:
-                print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
+            print_table_row(key, value, HEADER_COLOR, 0, 0)
 
         rows = [
             ("Synonyms", synonyms),
@@ -466,10 +419,7 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            if ANSI_UTILS_AVAILABLE:
-                print_table_row(key, value, HEADER_COLOR, 0, 0)
-            else:
-                print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
+            print_table_row(key, value, HEADER_COLOR, 0, 0)
 
         print_rule(SEPARATOR_COLOR)
         print(wrap_text(description, term_width))
