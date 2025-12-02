@@ -136,10 +136,10 @@ def cli(ctx: click.Context, **options: "Unpack[Options]"):
             from rich.prompt import Confirm
 
             if Confirm.ask(f"""\
-[green]How are you {USER_NAME} 🙂?
-If you like the project and are able to support it please consider buying me a coffee at {SUPPORT_PROJECT_URL}.
-If you would like to proceed to {SUPPORT_PROJECT_URL} select yes, otherwise enjoy your browser anime experience 😁.[/]
-This message can be disabled by switching off the welcome_screen option in the config and is only shown once every 24hrs.
+[green]How are you, {USER_NAME} 🙂?
+If you enjoy the project and would like to support it, you can buy me a coffee at {SUPPORT_PROJECT_URL}.
+Would you like to open the support page? Select yes to continue — otherwise, enjoy your terminal-anime browsing experience 😁.[/]
+You can disable this message by turning off the welcome_screen option in the config. It only appears once every 24 hours.
 """):
                 from webbrowser import open
 
