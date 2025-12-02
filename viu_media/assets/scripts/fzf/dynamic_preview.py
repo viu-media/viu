@@ -23,33 +23,38 @@ try:
         strip_markdown,
         wrap_text,
     )
+
     ANSI_UTILS_AVAILABLE = True
 except ImportError:
     ANSI_UTILS_AVAILABLE = False
+
     # Fallback if _ansi_utils is not available
     def get_terminal_width():
         return int(os.environ.get("FZF_PREVIEW_COLUMNS", "80"))
-    
+
     def print_rule(sep_color):
         r, g, b = map(int, sep_color.split(","))
         width = get_terminal_width()
         print(f"\x1b[38;2;{r};{g};{b}m" + ("─" * width) + "\x1b[0m")
-    
+
     def print_table_row(key, value, header_color, _key_width, _value_width):
         r, g, b = map(int, header_color.split(","))
         print(f"\x1b[38;2;{r};{g};{b};1m{key}\x1b[0m: {value}")
-    
+
     def strip_markdown(text):
         import re
-        text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
-        text = re.sub(r'__(.+?)__', r'\1', text)
-        text = re.sub(r'\*(.+?)\*', r'\1', text)
-        text = re.sub(r'_(.+?)_', r'\1', text)
+
+        text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
+        text = re.sub(r"__(.+?)__", r"\1", text)
+        text = re.sub(r"\*(.+?)\*", r"\1", text)
+        text = re.sub(r"_(.+?)_", r"\1", text)
         return text
-    
+
     def wrap_text(text, width):
         import textwrap
-        return '\n'.join(textwrap.wrap(text, width))
+
+        return "\n".join(textwrap.wrap(text, width))
+
 
 # --- Template Variables (Injected by Python) ---
 SEARCH_RESULTS_FILE = Path("{SEARCH_RESULTS_FILE}")
@@ -76,11 +81,11 @@ def format_date(date_obj):
     """Format date object to string."""
     if not date_obj or date_obj == "null":
         return "N/A"
-    
+
     year = date_obj.get("year")
     month = date_obj.get("month")
     day = date_obj.get("day")
-    
+
     if not year:
         return "N/A"
     if month and day:
@@ -94,22 +99,22 @@ def get_media_from_results(title):
     """Find media item in search results by title."""
     if not SEARCH_RESULTS_FILE.exists():
         return None
-    
+
     try:
         with open(SEARCH_RESULTS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
-        
+
         media_list = data.get("data", {}).get("Page", {}).get("media", [])
-        
+
         for media in media_list:
             title_obj = media.get("title", {})
             eng = title_obj.get("english")
             rom = title_obj.get("romaji")
             nat = title_obj.get("native")
-            
+
             if title in (eng, rom, nat):
                 return media
-        
+
         return None
     except Exception as e:
         print(f"Error reading search results: {e}", file=sys.stderr)
@@ -121,7 +126,7 @@ def download_image(url: str, output_path: Path) -> bool:
     try:
         # Try using urllib (stdlib)
         from urllib import request
-        
+
         req = request.Request(url, headers={"User-Agent": "viu/1.0"})
         with request.urlopen(req, timeout=5) as response:
             data = response.read()
@@ -141,10 +146,10 @@ def get_terminal_dimensions():
     """Get terminal dimensions from FZF environment."""
     fzf_cols = os.environ.get("FZF_PREVIEW_COLUMNS")
     fzf_lines = os.environ.get("FZF_PREVIEW_LINES")
-    
+
     if fzf_cols and fzf_lines:
         return int(fzf_cols), int(fzf_lines)
-    
+
     try:
         rows, cols = (
             subprocess.check_output(
@@ -313,36 +318,41 @@ def main():
     if not SELECTED_TITLE:
         print("No selection")
         return
-    
+
     # Get the media data from cached search results
     media = get_media_from_results(SELECTED_TITLE)
-    
+
     if not media:
         print("Loading preview...")
         return
-    
+
     term_width = get_terminal_width()
-    
+
     # Extract media information
     title_obj = media.get("title", {})
-    title = title_obj.get("english") or title_obj.get("romaji") or title_obj.get("native") or "Unknown"
-    
+    title = (
+        title_obj.get("english")
+        or title_obj.get("romaji")
+        or title_obj.get("native")
+        or "Unknown"
+    )
+
     # Show image if in image or full mode
     if PREVIEW_MODE in ("image", "full"):
         cover_image = media.get("coverImage", {}).get("large", "")
         if cover_image:
             # Ensure image cache directory exists
             IMAGE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-            
+
             # Generate hash matching the preview worker pattern
             # Use "anime-" prefix and hash of just the title (no KEY prefix for dynamic search)
             hash_id = f"anime-{sha256(SELECTED_TITLE.encode('utf-8')).hexdigest()}"
             image_file = IMAGE_CACHE_DIR / f"{hash_id}.png"
-            
+
             # Download image if not cached
             if not image_file.exists():
                 download_image(cover_image, image_file)
-            
+
             # Try to render the image
             if image_file.exists():
                 fzf_image_preview(str(image_file))
@@ -350,44 +360,44 @@ def main():
             else:
                 print("🖼️  Loading image...")
                 print()
-    
+
     # Show text info if in text or full mode
     if PREVIEW_MODE in ("text", "full"):
         # Separator line
         r, g, b = map(int, SEPARATOR_COLOR.split(","))
         separator = f"\x1b[38;2;{r};{g};{b}m" + ("─" * term_width) + "\x1b[0m"
         print(separator, flush=True)
-        
+
         # Title centered
         print(title.center(term_width))
-        
+
         # Extract data
         status = media.get("status", "Unknown")
         format_type = media.get("format", "Unknown")
         episodes = media.get("episodes", "?")
         duration = media.get("duration")
         duration_str = f"{duration} min" if duration else "Unknown"
-        
+
         score = media.get("averageScore")
         score_str = f"{score}/100" if score else "N/A"
-        
+
         favourites = format_number(media.get("favourites", 0))
         popularity = format_number(media.get("popularity", 0))
-        
+
         genres = ", ".join(media.get("genres", [])[:5]) or "Unknown"
-        
+
         start_date = format_date(media.get("startDate"))
         end_date = format_date(media.get("endDate"))
-        
+
         studios_list = media.get("studios", {}).get("nodes", [])
         studios = ", ".join([s.get("name", "") for s in studios_list[:3]]) or "Unknown"
-        
+
         synonyms_list = media.get("synonyms", [])
         synonyms = ", ".join(synonyms_list[:3]) or "N/A"
-        
+
         description = media.get("description", "No description available.")
         description = strip_markdown(description)
-        
+
         # Print sections matching media_info.py structure
         rows = [
             ("Score", score_str),
@@ -395,72 +405,72 @@ def main():
             ("Popularity", popularity),
             ("Status", status),
         ]
-        
+
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
             if ANSI_UTILS_AVAILABLE:
                 print_table_row(key, value, HEADER_COLOR, 0, 0)
             else:
                 print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
-        
+
         rows = [
             ("Episodes", str(episodes)),
             ("Duration", duration_str),
         ]
-        
+
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
             if ANSI_UTILS_AVAILABLE:
                 print_table_row(key, value, HEADER_COLOR, 0, 0)
             else:
                 print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
-        
+
         rows = [
             ("Genres", genres),
             ("Format", format_type),
         ]
-        
+
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
             if ANSI_UTILS_AVAILABLE:
                 print_table_row(key, value, HEADER_COLOR, 0, 0)
             else:
                 print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
-        
+
         rows = [
             ("Start Date", start_date),
             ("End Date", end_date),
         ]
-        
+
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
             if ANSI_UTILS_AVAILABLE:
                 print_table_row(key, value, HEADER_COLOR, 0, 0)
             else:
                 print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
-        
+
         rows = [
             ("Studios", studios),
         ]
-        
+
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
             if ANSI_UTILS_AVAILABLE:
                 print_table_row(key, value, HEADER_COLOR, 0, 0)
             else:
                 print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
-        
+
         rows = [
             ("Synonyms", synonyms),
         ]
-        
+
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
             if ANSI_UTILS_AVAILABLE:
                 print_table_row(key, value, HEADER_COLOR, 0, 0)
             else:
                 print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
-        
+
         print_rule(SEPARATOR_COLOR)
         print(wrap_text(description, term_width))
 

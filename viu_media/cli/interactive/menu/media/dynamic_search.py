@@ -12,9 +12,7 @@ logger = logging.getLogger(__name__)
 SEARCH_CACHE_DIR = APP_CACHE_DIR / "search"
 SEARCH_RESULTS_FILE = SEARCH_CACHE_DIR / "current_search_results.json"
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
-SEARCH_TEMPLATE_SCRIPT = (FZF_SCRIPTS_DIR / "search.py").read_text(
-    encoding="utf-8"
-)
+SEARCH_TEMPLATE_SCRIPT = (FZF_SCRIPTS_DIR / "search.py").read_text(encoding="utf-8")
 
 
 @session.menu
