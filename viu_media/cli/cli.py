@@ -109,12 +109,102 @@ def cli(ctx: click.Context, **options: "Unpack[Options]"):
     )
     ctx.obj = config
 
+    if config.general.welcome_screen:
+        import time
+
+        from ..core.constants import APP_CACHE_DIR, USER_NAME, SUPPORT_PROJECT_URL
+
+        last_welcomed_at_file = APP_CACHE_DIR / ".last_welcome"
+        should_welcome = False
+        if last_welcomed_at_file.exists():
+            try:
+                last_welcomed_at = float(
+                    last_welcomed_at_file.read_text(encoding="utf-8")
+                )
+                # runs once a day
+                if (time.time() - last_welcomed_at) > 24 * 3600:
+                    should_welcome = True
+
+            except Exception as e:
+                logger.warning(f"Failed to read welcome screen timestamp: {e}")
+
+        else:
+            should_welcome = True
+        if should_welcome:
+            last_welcomed_at_file.write_text(str(time.time()), encoding="utf-8")
+
+            from rich.prompt import Confirm
+
+            if Confirm.ask(f"""\
+[green]How are you {USER_NAME} 🙂?
+If you like the project and are able to support it please consider buying me a coffee at {SUPPORT_PROJECT_URL}.
+If you would like to proceed to {SUPPORT_PROJECT_URL} select yes, otherwise enjoy your browser anime experience 😁.[/]
+This message can be disabled by switching off the welcome_screen option in the config and is only shown once every 24hrs.
+"""):
+                from webbrowser import open
+
+                open(SUPPORT_PROJECT_URL)
+
+    if config.general.show_new_release:
+        import time
+
+        from ..core.constants import APP_CACHE_DIR
+
+        last_release_file = APP_CACHE_DIR / ".last_release"
+        should_print_release_notes = False
+        if last_release_file.exists():
+            last_release = last_release_file.read_text(encoding="utf-8")
+            current_version = list(map(int, __version__.replace("v", "").split(".")))
+            last_saved_version = list(
+                map(int, last_release.replace("v", "").split("."))
+            )
+            if (
+                (current_version[0] > last_saved_version[0])
+                or (
+                    current_version[1] > last_saved_version[1]
+                    and current_version[0] == last_saved_version[0]
+                )
+                or (
+                    current_version[2] > last_saved_version[2]
+                    and current_version[0] == last_saved_version[0]
+                    and current_version[1] == last_saved_version[1]
+                )
+            ):
+                should_print_release_notes = True
+
+        else:
+            should_print_release_notes = True
+        if should_print_release_notes:
+            last_release_file.write_text(__version__, encoding="utf-8")
+            from .service.feedback import FeedbackService
+            from .utils.update import check_for_updates, print_release_json, update_app
+            from rich.prompt import Confirm
+
+            feedback = FeedbackService(config)
+            feedback.info("Getting release notes...")
+            is_latest, release_json = check_for_updates()
+            if Confirm.ask(
+                "Would you also like to update your config with the latest options and config notes"
+            ):
+                import subprocess
+
+                cmd = ["viu", "config", "--update"]
+                print(f"running '{' '.join(cmd)}'...")
+                subprocess.run(cmd)
+
+            if is_latest:
+                print_release_json(release_json)
+            else:
+                print_release_json(release_json)
+                print("It seems theres another update waiting for you as well 😁")
+            click.pause("Press Any Key To Proceed...")
+
     if config.general.check_for_updates:
         import time
 
         from ..core.constants import APP_CACHE_DIR
 
-        last_updated_at_file = APP_CACHE_DIR / "last_update"
+        last_updated_at_file = APP_CACHE_DIR / ".last_update"
         should_check_for_update = False
         if last_updated_at_file.exists():
             try:

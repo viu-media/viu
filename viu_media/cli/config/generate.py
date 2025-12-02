@@ -10,7 +10,13 @@ from pydantic.fields import ComputedFieldInfo, FieldInfo
 from pydantic_core import PydanticUndefined
 
 from ...core.config import AppConfig
-from ...core.constants import APP_ASCII_ART, CLI_NAME, DISCORD_INVITE, REPO_HOME
+from ...core.constants import (
+    APP_ASCII_ART,
+    CLI_NAME,
+    DISCORD_INVITE,
+    REPO_HOME,
+    SUPPORT_PROJECT_URL,
+)
 
 # The header for the config file.
 config_asci = "\n".join(
@@ -38,6 +44,9 @@ CONFIG_FOOTER = f"""
 # Also join the discord server
 # where the anime tech community lives :)
 # {DISCORD_INVITE}
+# If you like the project and are able to support it please consider buying me a coffee at {SUPPORT_PROJECT_URL}.
+# If you would like to connect with me join the discord server from there you can dm for hackathons, or even to tell me a joke 😂
+# Otherwise enjoy your terminal anime browser experience 😁
 #
 # ==============================================================================
 """.lstrip()
