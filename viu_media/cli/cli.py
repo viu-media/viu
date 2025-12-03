@@ -121,8 +121,8 @@ def cli(ctx: click.Context, **options: "Unpack[Options]"):
                 last_welcomed_at = float(
                     last_welcomed_at_file.read_text(encoding="utf-8")
                 )
-                # runs once a day
-                if (time.time() - last_welcomed_at) > 24 * 3600:
+                # runs once a month
+                if (time.time() - last_welcomed_at) > 30 * 24 * 3600:
                     should_welcome = True
 
             except Exception as e:
@@ -139,7 +139,7 @@ def cli(ctx: click.Context, **options: "Unpack[Options]"):
 [green]How are you, {USER_NAME} 🙂?
 If you enjoy the project and would like to support it, you can buy me a coffee at {SUPPORT_PROJECT_URL}.
 Would you like to open the support page? Select yes to continue — otherwise, enjoy your terminal-anime browsing experience 😁.[/]
-You can disable this message by turning off the welcome_screen option in the config. It only appears once every 24 hours.
+You can disable this message by turning off the welcome_screen option in the config. It only appears once a month.
 """):
                 from webbrowser import open
 
