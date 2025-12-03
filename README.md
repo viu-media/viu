@@ -49,7 +49,7 @@
 
 ## Installation
 
-Viu runs on any platform with Python 3.10+, including Windows, macOS, Linux, and Android (via Termux).
+Viu runs on any platform with Python 3.10+, including Windows, macOS, Linux, and Android (via Termux, see other installation methods).
 
 ### Prerequisites
 
@@ -111,6 +111,40 @@ uv tool install "viu-media[notifications]" # For desktop notifications
 
   # Git version (latest commit)
   yay -S viu-media-git
+  ```
+  #### Termux
+  You may have to have rust installed see this issue: https://github.com/pydantic/pydantic-core/issues/1012#issuecomment-2511269688.
+  ```bash
+pkg install python # though uv will probably install python for you, but doesn't hurt to have it :)
+pkg install rust # maybe required cause of pydantic
+
+
+# Recommended (with pip due to more control)
+pip install viu-media
+
+# you may need to install pydantic manually
+python -m pip install pydantic --extra-index-url https://termux-user-repository.github.io/pypi/ # may also be necessary incase the above fails
+
+# add yt-dlp by
+pip install yt-dlp[default,curl-cffi]
+
+# prefer without standard and manually install the things you need lxml, yt-dlp and
+pip install viu-media[standard]
+
+# you may need to manually install lxml and plyer manually eg
+python -m pip install lxml --extra-index-url https://termux-user-repository.github.io/pypi/ # may also be necessary incase the above fails
+
+# Alternative With Uv may work, no promises
+pkg install uv
+
+uv tool install viu-media
+
+# and to add yt-dlp only you can do
+uv tool install viu-media --with yt-dlp[default,curl-cffi]
+
+# or though may fail, cause of lxml and plyer, in that case try to install manually
+uv tool install viu-media[standard]
+
   ```
 
   #### Using pipx (for isolated environments)
