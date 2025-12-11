@@ -8,15 +8,11 @@ from ..types import Anime, AnimeEpisodeInfo, SearchResult, SearchResults
 from ..utils.debug import debug_provider
 from .constants import (
     ANIMEUNITY_BASE,
-    DOWNLOAD_FILENAME_REGEX,
-    DOWNLOAD_URL_REGEX,
     MAX_TIMEOUT,
-    QUALITY_REGEX,
     REPLACEMENT_WORDS,
     TOKEN_REGEX,
-    VIDEO_INFO_CLEAN_REGEX,
-    VIDEO_INFO_REGEX,
 )
+from .extractor import extract_server_info
 from .mappers import (
     map_to_anime_result,
     map_to_search_result,
@@ -161,32 +157,9 @@ class AnimeUnity(BaseAnimeProvider):
         video_response = self.client.get(url=response.text.strip(), timeout=MAX_TIMEOUT)
         video_response.raise_for_status()
 
-        video_info = VIDEO_INFO_REGEX.search(video_response.text)
-        download_url_match = DOWNLOAD_URL_REGEX.search(video_response.text)
-        if not (download_url_match and video_info):
+        if not (info := extract_server_info(video_response.text, episode.title)):
             logger.error(f"Failed to extract video info for episode {episode.id}")
             return None
-
-        info_str = VIDEO_INFO_CLEAN_REGEX.sub(r'"\1"', video_info.group(1))
-
-        # Use eval context for JS constants
-        ctx = {"null": None, "true": True, "false": False}
-        info = eval(info_str, ctx)
-
-        download_url = download_url_match.group(1)
-        info["link"] = download_url
-
-        # Extract metadata from download URL if missing in window.video
-        if filename_match := DOWNLOAD_FILENAME_REGEX.search(download_url):
-            info["name"] = filename_match.group(1)
-        else:
-            info["name"] = f"{episode.title} - Unknown"
-
-        if quality_match := QUALITY_REGEX.search(download_url):
-            # "720p" -> 720
-            info["quality"] = int(quality_match.group(1)[:-1])
-        else:
-            info["quality"] = 0  # Fallback
 
         yield map_to_server(episode, info, params.translation_type)
 
