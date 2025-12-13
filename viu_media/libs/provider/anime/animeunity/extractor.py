@@ -11,7 +11,7 @@ from .constants import (
 logger = logging.getLogger(__name__)
 
 
-def extract_server_info(html_content: str, episode_title: str) -> dict | None:
+def extract_server_info(html_content: str, episode_title: str | None) -> dict | None:
     """
     Extracts server information from the VixCloud/AnimeUnity embed page.
     Handles extraction from both window.video object and download URL.
@@ -39,7 +39,7 @@ def extract_server_info(html_content: str, episode_title: str) -> dict | None:
     if filename_match := DOWNLOAD_FILENAME_REGEX.search(download_url):
         info["name"] = filename_match.group(1)
     else:
-        info["name"] = f"{episode_title} - Unknown"
+        info["name"] = f"{episode_title or 'Unknown'}"
 
     if quality_match := QUALITY_REGEX.search(download_url):
         # "720p" -> 720
