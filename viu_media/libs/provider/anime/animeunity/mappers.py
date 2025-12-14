@@ -99,7 +99,11 @@ def map_to_server(
                 translation_type=MediaTranslationType(translation_type),
                 mp4=True,
             )
-            for quality in AVAILABLE_VIDEO_QUALITY
+            for quality in sorted(
+                list(set(AVAILABLE_VIDEO_QUALITY + [str(info["quality"])])),
+                key=lambda x: int(x),
+                reverse=True,
+            )
             if int(quality) <= info["quality"]
         ],
         episode_title=episode.title,

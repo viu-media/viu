@@ -8,12 +8,11 @@ from ..types import Anime, AnimeEpisodeInfo, SearchResult, SearchResults
 from ..utils.debug import debug_provider
 from .constants import (
     ANIMEUNITY_BASE,
-    DOWNLOAD_URL_REGEX,
     MAX_TIMEOUT,
     REPLACEMENT_WORDS,
     TOKEN_REGEX,
-    VIDEO_INFO_REGEX,
 )
+from .extractor import extract_server_info
 from .mappers import (
     map_to_anime_result,
     map_to_search_result,
@@ -158,14 +157,10 @@ class AnimeUnity(BaseAnimeProvider):
         video_response = self.client.get(url=response.text.strip(), timeout=MAX_TIMEOUT)
         video_response.raise_for_status()
 
-        video_info = VIDEO_INFO_REGEX.search(video_response.text)
-        download_url_match = DOWNLOAD_URL_REGEX.search(video_response.text)
-        if not (download_url_match and video_info):
+        if not (info := extract_server_info(video_response.text, episode.title)):
             logger.error(f"Failed to extract video info for episode {episode.id}")
             return None
 
-        info = eval(video_info.group(1).replace("null", "None"))
-        info["link"] = download_url_match.group(1)
         yield map_to_server(episode, info, params.translation_type)
 
 
