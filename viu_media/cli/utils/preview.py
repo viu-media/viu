@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 import re
 from hashlib import sha256
 import sys
@@ -308,8 +309,8 @@ def get_anime_preview(
     # Format the template with the dynamic values
     replacements = {
         "PREVIEW_MODE": config.general.preview,
-        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
-        "INFO_CACHE_DIR": str(INFO_CACHE_DIR),
+        "IMAGE_CACHE_DIR": IMAGES_CACHE_DIR.as_posix(),
+        "INFO_CACHE_DIR": INFO_CACHE_DIR.as_posix(),
         "IMAGE_RENDERER": config.general.image_renderer,
         # Color codes
         "HEADER_COLOR": ",".join(HEADER_COLOR),
@@ -325,7 +326,7 @@ def get_anime_preview(
     preview_file = PREVIEWS_CACHE_DIR / "search-result-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
     return preview_script_final
 
 
@@ -366,8 +367,8 @@ def get_episode_preview(
     # Format the template with the dynamic values
     replacements = {
         "PREVIEW_MODE": config.general.preview,
-        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
-        "INFO_CACHE_DIR": str(INFO_CACHE_DIR),
+        "IMAGE_CACHE_DIR": IMAGES_CACHE_DIR.as_posix(),
+        "INFO_CACHE_DIR": INFO_CACHE_DIR.as_posix(),
         "IMAGE_RENDERER": config.general.image_renderer,
         # Color codes
         "HEADER_COLOR": ",".join(HEADER_COLOR),
@@ -383,7 +384,7 @@ def get_episode_preview(
     preview_file = PREVIEWS_CACHE_DIR / "episode-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
     return preview_script_final
 
 
@@ -412,8 +413,8 @@ def get_character_preview(choice_map: Dict[str, Character], config: AppConfig) -
 
     replacements = {
         "PREVIEW_MODE": config.general.preview,
-        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
-        "INFO_CACHE_DIR": str(INFO_CACHE_DIR),
+        "IMAGE_CACHE_DIR": IMAGES_CACHE_DIR.as_posix(),
+        "INFO_CACHE_DIR": INFO_CACHE_DIR.as_posix(),
         "IMAGE_RENDERER": config.general.image_renderer,
         # Color codes
         "HEADER_COLOR": ",".join(HEADER_COLOR),
@@ -429,7 +430,7 @@ def get_character_preview(choice_map: Dict[str, Character], config: AppConfig) -
     preview_file = PREVIEWS_CACHE_DIR / "character-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
     return preview_script_final
 
 
@@ -458,8 +459,8 @@ def get_review_preview(choice_map: Dict[str, MediaReview], config: AppConfig) ->
 
     replacements = {
         "PREVIEW_MODE": config.general.preview,
-        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
-        "INFO_CACHE_DIR": str(INFO_CACHE_DIR),
+        "IMAGE_CACHE_DIR": IMAGES_CACHE_DIR.as_posix(),
+        "INFO_CACHE_DIR": INFO_CACHE_DIR.as_posix(),
         "IMAGE_RENDERER": config.general.image_renderer,
         # Color codes
         "HEADER_COLOR": ",".join(HEADER_COLOR),
@@ -475,7 +476,7 @@ def get_review_preview(choice_map: Dict[str, MediaReview], config: AppConfig) ->
     preview_file = PREVIEWS_CACHE_DIR / "review-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
     return preview_script_final
 
 
@@ -506,8 +507,8 @@ def get_airing_schedule_preview(
 
     replacements = {
         "PREVIEW_MODE": config.general.preview,
-        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
-        "INFO_CACHE_DIR": str(INFO_CACHE_DIR),
+        "IMAGE_CACHE_DIR": IMAGES_CACHE_DIR.as_posix(),
+        "INFO_CACHE_DIR": INFO_CACHE_DIR.as_posix(),
         "IMAGE_RENDERER": config.general.image_renderer,
         # Color codes
         "HEADER_COLOR": ",".join(HEADER_COLOR),
@@ -571,8 +572,8 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
 
     # Prepare replacements for the template
     replacements = {
-        "SEARCH_RESULTS_FILE": str(search_results_file),
-        "IMAGE_CACHE_DIR": str(IMAGES_CACHE_DIR),
+        "SEARCH_RESULTS_FILE": search_results_file.as_posix(),
+        "IMAGE_CACHE_DIR": IMAGES_CACHE_DIR.as_posix(),
         "PREVIEW_MODE": config.general.preview,
         "IMAGE_RENDERER": config.general.image_renderer,
         "HEADER_COLOR": ",".join(HEADER_COLOR),
@@ -588,7 +589,7 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
     preview_file.write_text(preview_script, encoding="utf-8")
 
     # Return the command to execute the preview script
-    preview_script_final = f"{sys.executable} {preview_file} {{}}"
+    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
     return preview_script_final
 
 
