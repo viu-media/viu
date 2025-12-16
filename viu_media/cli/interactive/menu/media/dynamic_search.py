@@ -1,6 +1,7 @@
 import json
 import logging
 import sys
+from pathlib import Path
 
 from .....core.constants import APP_CACHE_DIR, SCRIPTS_DIR
 from .....libs.media_api.params import MediaSearchParams
@@ -42,7 +43,7 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
     replacements = {
         "GRAPHQL_ENDPOINT": "https://graphql.anilist.co",
         "GRAPHQL_QUERY": search_query_json,
-        "SEARCH_RESULTS_FILE": str(SEARCH_RESULTS_FILE),
+        "SEARCH_RESULTS_FILE": SEARCH_RESULTS_FILE.as_posix(),
         "AUTH_HEADER": auth_header,
     }
 
@@ -55,7 +56,7 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
 
     # Make the search script executable by calling it with python3
     # fzf will pass the query as {q} which becomes the first argument
-    search_command_final = f"{sys.executable} {search_script_file} {{q}}"
+    search_command_final = f"{Path(sys.executable).as_posix()} {search_script_file.as_posix()} {{q}}"
 
     try:
         # Prepare preview functionality
