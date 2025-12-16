@@ -326,7 +326,9 @@ def get_anime_preview(
     preview_file = PREVIEWS_CACHE_DIR / "search-result-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    preview_script_final = (
+        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    )
     return preview_script_final
 
 
@@ -384,7 +386,9 @@ def get_episode_preview(
     preview_file = PREVIEWS_CACHE_DIR / "episode-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    preview_script_final = (
+        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    )
     return preview_script_final
 
 
@@ -430,7 +434,9 @@ def get_character_preview(choice_map: Dict[str, Character], config: AppConfig) -
     preview_file = PREVIEWS_CACHE_DIR / "character-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    preview_script_final = (
+        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    )
     return preview_script_final
 
 
@@ -476,7 +482,9 @@ def get_review_preview(choice_map: Dict[str, MediaReview], config: AppConfig) ->
     preview_file = PREVIEWS_CACHE_DIR / "review-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
-    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    preview_script_final = (
+        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    )
     return preview_script_final
 
 
@@ -547,8 +555,10 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
     # Ensure cache directories exist
     IMAGES_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     INFO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    search_cache_dir = APP_CACHE_DIR / "previews" / "dynamic-search"
+    search_cache_dir.mkdir(parents=True, exist_ok=True)
     source = FZF_SCRIPTS_DIR / "_ansi_utils.py"
-    dest = PREVIEWS_CACHE_DIR / "_ansi_utils.py"
+    dest = search_cache_dir / "_ansi_utils.py"
 
     if source.exists() and (
         not dest.exists() or source.stat().st_mtime > dest.stat().st_mtime
@@ -567,7 +577,6 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
     # Use the dynamic preview script template
     preview_script = DYNAMIC_PREVIEW_SCRIPT
 
-    search_cache_dir = APP_CACHE_DIR / "search"
     search_results_file = search_cache_dir / "current_search_results.json"
 
     # Prepare replacements for the template
@@ -585,11 +594,13 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
         preview_script = preview_script.replace(f"{{{key}}}", value)
 
     # Write the preview script to cache
-    preview_file = PREVIEWS_CACHE_DIR / "dynamic-search-preview-script.py"
+    preview_file = search_cache_dir / "dynamic-search-preview-script.py"
     preview_file.write_text(preview_script, encoding="utf-8")
 
     # Return the command to execute the preview script
-    preview_script_final = f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    preview_script_final = (
+        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+    )
     return preview_script_final
 
 

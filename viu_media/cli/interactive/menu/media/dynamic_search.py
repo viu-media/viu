@@ -10,7 +10,7 @@ from ...state import InternalDirective, MediaApiState, MenuName, State
 
 logger = logging.getLogger(__name__)
 
-SEARCH_CACHE_DIR = APP_CACHE_DIR / "search"
+SEARCH_CACHE_DIR = APP_CACHE_DIR / "previews" / "dynamic-search"
 SEARCH_RESULTS_FILE = SEARCH_CACHE_DIR / "current_search_results.json"
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
 SEARCH_TEMPLATE_SCRIPT = (FZF_SCRIPTS_DIR / "search.py").read_text(encoding="utf-8")
@@ -51,12 +51,14 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
         search_command = search_command.replace(f"{{{key}}}", str(value))
 
     # Write the filled template to a cache file
-    search_script_file = SEARCH_CACHE_DIR / "search-script.py"
+    search_script_file = SEARCH_CACHE_DIR / "search.py"
     search_script_file.write_text(search_command, encoding="utf-8")
 
     # Make the search script executable by calling it with python3
     # fzf will pass the query as {q} which becomes the first argument
-    search_command_final = f"{Path(sys.executable).as_posix()} {search_script_file.as_posix()} {{q}}"
+    search_command_final = (
+        f"{Path(sys.executable).as_posix()} {search_script_file.as_posix()} {{q}}"
+    )
 
     try:
         # Prepare preview functionality

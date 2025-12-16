@@ -9,5 +9,5 @@ if sys.platform.startswith("win"):
         sys.stderr.reconfigure(encoding="utf-8")
     except Exception:
         pass
-    
+
 __all__ = ["run_cli"]
