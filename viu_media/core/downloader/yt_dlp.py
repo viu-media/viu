@@ -91,6 +91,7 @@ class YtDLPDownloader(BaseDownloader):
             else tuple(),
             "progress_hooks": params.progress_hooks,
             "nocheckcertificate": params.no_check_certificate,
+            "logger": params.logger,
         }
         opts = opts
         if params.force_ffmpeg or params.hls_use_mpegts or params.hls_use_h264:

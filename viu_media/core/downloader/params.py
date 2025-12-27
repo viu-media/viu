@@ -9,6 +9,7 @@ class DownloadParams:
     episode_title: str
     silent: bool
     progress_hooks: list[Callable] = field(default_factory=list)
+    logger: object | None = None
     vid_format: str = "best"
     force_unknown_ext: bool = False
     verbose: bool = False
