@@ -132,6 +132,7 @@ APP_SERVICE = "Configuration for the background download service."
 APP_FZF = "Settings for the FZF selector interface."
 APP_ROFI = "Settings for the Rofi selector interface."
 APP_MPV = "Configuration for the MPV media player."
+APP_VLC = "Configuration for the VLC media player."
 APP_MEDIA_REGISTRY = "Configuration for the media registry."
 APP_SESSIONS = "Configuration for sessions."
 

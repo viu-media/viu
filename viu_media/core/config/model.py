@@ -534,6 +534,7 @@ class AppConfig(BaseModel):
         description=desc.APP_ROFI,
     )
     mpv: MpvConfig = Field(default_factory=MpvConfig, description=desc.APP_MPV)
+    vlc: VlcConfig = Field(default_factory=VlcConfig, description=desc.APP_VLC)
     media_registry: MediaRegistryConfig = Field(
         default_factory=MediaRegistryConfig, description=desc.APP_MEDIA_REGISTRY
     )
