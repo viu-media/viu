@@ -362,6 +362,9 @@ You can run the background worker as a systemd service for persistence.
     systemctl --user daemon-reload
     systemctl --user enable --now viu-worker.service
     ```
+    
+## Project using it
+**[Inazuma](https://github.com/viu-media/Inazuma)** - official gui wrapper over viu built in kivymd
 
 ## Contributing
 
