@@ -88,6 +88,7 @@ def map_to_server(
     episode: AnimeEpisodeInfo,
     translation_type: str,
     stream_links: list[tuple[str, str]],
+    headers: dict[str, str],
 ) -> Server:
     links = [
         EpisodeStream(
@@ -97,4 +98,4 @@ def map_to_server(
         )
         for link in stream_links
     ]
-    return Server(name="kwik", links=links, episode_title=episode.title)
+    return Server(name="kwik", links=links, episode_title=episode.title, headers=headers)

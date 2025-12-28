@@ -1,6 +1,7 @@
 import logging
 from functools import lru_cache
 from typing import Iterator, Optional
+from urllib.parse import urlparse
 
 from ..base import BaseAnimeProvider
 from ..params import AnimeParams, EpisodeStreamsParams, SearchParams
@@ -9,9 +10,11 @@ from ..utils.debug import debug_provider
 from .constants import (
     ANIMEPAHE_BASE,
     ANIMEPAHE_ENDPOINT,
+    CDN_PROVIDER,
     JUICY_STREAM_REGEX,
     REQUEST_HEADERS,
     SERVER_HEADERS,
+    STREAM_HEADERS,
 )
 from .extractor import process_animepahe_embed_page
 from .mappers import map_to_anime_result, map_to_search_results, map_to_server
@@ -132,6 +135,7 @@ class AnimePahe(BaseAnimeProvider):
         quality = None
         translation_type = None
         stream_links = []
+        stream_host = None
 
         # TODO: better document the scraping process
         for res_dict in res_dicts:
@@ -170,13 +174,19 @@ class AnimePahe(BaseAnimeProvider):
                 continue
             logger.debug(f"Found juicy stream: {juicy_stream.group(1)}")
             juicy_stream = juicy_stream.group(1)
+            stream_host = urlparse(juicy_stream).hostname
             quality = res_dict["resolution"]
             logger.debug(f"Found quality: {quality}")
             translation_type = data_audio
             stream_links.append((quality, juicy_stream))
 
         if translation_type and stream_links:
-            yield map_to_server(episode, translation_type, stream_links)
+            headers = {
+                "User-Agent": self.client.headers["User-Agent"],
+                "Host": stream_host or CDN_PROVIDER,
+                **STREAM_HEADERS
+            }
+            yield map_to_server(episode, translation_type, stream_links, headers=headers)
 
     @lru_cache()
     def _get_episode_info(

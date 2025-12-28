@@ -3,6 +3,8 @@ import re
 ANIMEPAHE = "animepahe.si"
 ANIMEPAHE_BASE = f"https://{ANIMEPAHE}"
 ANIMEPAHE_ENDPOINT = f"{ANIMEPAHE_BASE}/api"
+CDN_PROVIDER = "kwik.cx"
+CDN_PROVIDER_BASE = f"https://{CDN_PROVIDER}"
 
 SERVERS_AVAILABLE = ["kwik"]
 REQUEST_HEADERS = {
@@ -25,7 +27,7 @@ SERVER_HEADERS = {
     "Accept-Encoding": "Utf-8",
     "DNT": "1",
     "Connection": "keep-alive",
-    "Referer": "https://animepahe.si/",
+    "Referer": ANIMEPAHE_BASE + '/',
     "Upgrade-Insecure-Requests": "1",
     "Sec-Fetch-Dest": "iframe",
     "Sec-Fetch-Mode": "navigate",
@@ -33,5 +35,22 @@ SERVER_HEADERS = {
     "Priority": "u=4",
     "TE": "trailers",
 }
+
+STREAM_HEADERS = {
+    # "Host": "vault-16.owocdn.top", # This will have to be the actual host of the stream (behind Kwik)
+    "Accept": "*/*",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Origin": CDN_PROVIDER_BASE,
+    "Sec-GPC": "1",
+    "Connection": "keep-alive",
+    "Referer": CDN_PROVIDER_BASE + '/',
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "cross-site",
+    "TE": "trailers",
+}
+
+
 JUICY_STREAM_REGEX = re.compile(r"source='(.*)';")
 KWIK_RE = re.compile(r"Player\|(.+?)'")
