@@ -30,6 +30,9 @@ class YtDLPDownloader(BaseDownloader):
             sub_paths = []
             merged_path = None
 
+            logger.debug(f"Starting download for URL: {params.url}")
+            logger.debug(f"Using Headers: {params.headers}")
+
             if TORRENT_REGEX.match(params.url):
                 from .torrents import download_torrent_with_webtorrent_cli
 
