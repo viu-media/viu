@@ -71,7 +71,7 @@ class ConfigLoader:
 
         return app_config
 
-    def load(self, update: Dict = {}) -> AppConfig:
+    def load(self, update: Dict = {}, allow_setup=True) -> AppConfig:
         """
         Loads the configuration and returns a populated, validated AppConfig object.
 
@@ -84,7 +84,7 @@ class ConfigLoader:
         Raises:
             ConfigError: If the configuration file contains validation or parsing errors.
         """
-        if not self.config_path.exists():
+        if not self.config_path.exists() and allow_setup:
             return self._handle_first_run()
 
         try:
