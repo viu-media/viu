@@ -184,9 +184,11 @@ class AnimePahe(BaseAnimeProvider):
             headers = {
                 "User-Agent": self.client.headers["User-Agent"],
                 "Host": stream_host or CDN_PROVIDER,
-                **STREAM_HEADERS
+                **STREAM_HEADERS,
             }
-            yield map_to_server(episode, translation_type, stream_links, headers=headers)
+            yield map_to_server(
+                episode, translation_type, stream_links, headers=headers
+            )
 
     @lru_cache()
     def _get_episode_info(

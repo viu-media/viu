@@ -181,7 +181,7 @@ Get up and running in three simple steps:
     ```bash
     viu anilist auth
     ```
-    This will open your browser. Authorize the app and paste the obtained token back into the terminal.
+    This will open your browser. Authorize the app and paste the obtained token back into the terminal. Alternatively, you can pass the token directly as an argument, or provide a path to a text file containing the token.
 
 2.  **Launch the Interactive TUI:**
     ```bash

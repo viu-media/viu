@@ -323,7 +323,14 @@ def to_generic_user_list_result(data: AnilistMediaLists) -> Optional[MediaSearch
 def to_generic_user_profile(data: AnilistViewerData) -> Optional[UserProfile]:
     """Maps a raw AniList viewer response to a generic UserProfile."""
 
-    viewer_data: Optional[AnilistCurrentlyLoggedInUser] = data["data"]["Viewer"]
+    data_node = data.get("data")
+    if not data_node:
+        return None
+
+    viewer_data: Optional[AnilistCurrentlyLoggedInUser] = data_node.get("Viewer")
+
+    if not viewer_data:
+        return None
 
     return UserProfile(
         id=viewer_data["id"],
