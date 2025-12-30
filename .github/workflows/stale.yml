@@ -1,9 +1,9 @@
 name: Mark Stale Issues and Pull Requests
 
 on:
-  schedule:
-    # Runs every day at 6:30 UTC
-    - cron: "30 6 * * *"
+  # schedule:
+  # Runs every day at 6:30 UTC
+  # - cron: "30 6 * * *"
   # Allows you to run this workflow manually from the Actions tab for testing
   workflow_dispatch:
 
