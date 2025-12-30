@@ -5,6 +5,7 @@ This provides advanced features like episode navigation, quality switching, and 
 
 import json
 import logging
+import os
 import socket
 import subprocess
 import tempfile
@@ -43,7 +44,7 @@ class MPVIPCClient:
 
     def __init__(self, socket_path: str):
         self.socket_path = socket_path
-        self.socket: Optional[socket.socket] = None
+        self.socket: Optional[Any] = None
         self._request_id_counter = 0
         self._lock = threading.Lock()
 
@@ -55,13 +56,54 @@ class MPVIPCClient:
         self._response_dict: Dict[int, Any] = {}
         self._response_events: Dict[int, threading.Event] = {}
 
+    @staticmethod
+    def _is_windows_named_pipe(path: str) -> bool:
+        return path.startswith("\\\\.\\pipe\\")
+
+    @staticmethod
+    def _supports_unix_sockets() -> bool:
+        return hasattr(socket, "AF_UNIX")
+
+    @staticmethod
+    def _open_windows_named_pipe(path: str):
+        # MPV's JSON IPC on Windows uses named pipes like: \\.\pipe\mpvpipe
+        # Opening the pipe as a binary file supports read/write.
+        f = open(path, "r+b", buffering=0)
+
+        class _PipeConn:
+            def __init__(self, fileobj):
+                self._f = fileobj
+
+            def recv(self, n: int) -> bytes:
+                return self._f.read(n)
+
+            def sendall(self, data: bytes) -> None:
+                self._f.write(data)
+                self._f.flush()
+
+            def close(self) -> None:
+                self._f.close()
+
+        return _PipeConn(f)
+
     def connect(self, timeout: float = 5.0) -> None:
         """Connect to MPV IPC socket and start the reader thread."""
         start_time = time.time()
         while time.time() - start_time < timeout:
             try:
-                self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-                self.socket.connect(self.socket_path)
+                if self._supports_unix_sockets() and not self._is_windows_named_pipe(
+                    self.socket_path
+                ):
+                    self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                    self.socket.connect(self.socket_path)
+                else:
+                    if os.name != "nt" or not self._is_windows_named_pipe(self.socket_path):
+                        raise MPVIPCError(
+                            "MPV IPC requires Unix domain sockets (AF_UNIX) or a Windows named pipe path "
+                            "like \\\\.\\pipe\\mpvpipe. Got: "
+                            f"{self.socket_path}"
+                        )
+                    self.socket = self._open_windows_named_pipe(self.socket_path)
                 logger.info(f"Connected to MPV IPC socket at {self.socket_path}")
                 self._start_reader_thread()
                 return
@@ -329,8 +371,12 @@ class MpvIPCPlayer(BaseIPCPlayer):
 
     def _start_mpv_process(self, player: BasePlayer, params: PlayerParams) -> None:
         """Start MPV process with IPC enabled."""
-        temp_dir = Path(tempfile.gettempdir())
-        self.socket_path = str(temp_dir / f"mpv_ipc_{time.time()}.sock")
+        if hasattr(socket, "AF_UNIX"):
+            temp_dir = Path(tempfile.gettempdir())
+            self.socket_path = str(temp_dir / f"mpv_ipc_{time.time()}.sock")
+        else:
+            # Windows MPV IPC uses named pipes.
+            self.socket_path = f"\\\\.\\pipe\\mpv_ipc_{int(time.time() * 1000)}"
         self.mpv_process = player.play_with_ipc(params, self.socket_path)
         time.sleep(1.0)
 
@@ -480,7 +526,11 @@ class MpvIPCPlayer(BaseIPCPlayer):
                 self.mpv_process.wait(timeout=3)
             except subprocess.TimeoutExpired:
                 self.mpv_process.kill()
-        if self.socket_path and Path(self.socket_path).exists():
+        if (
+            self.socket_path
+            and not self.socket_path.startswith("\\\\.\\pipe\\")
+            and Path(self.socket_path).exists()
+        ):
             Path(self.socket_path).unlink(missing_ok=True)
 
     def _get_episode(
