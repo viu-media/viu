@@ -255,7 +255,7 @@ def test_auth_already_logged_in_relogin_yes(
 
     assert result.exit_code == 0
     selector_instance.confirm.assert_called_with(
-        "You are already logged in as testuser.Would you like to relogin"
+        "You are already logged in as testuser. Would you like to relogin"
     )
     auth_service_instance.save_user_profile.assert_called_with(
         new_profile_mock, "new_token"
