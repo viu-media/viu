@@ -52,7 +52,7 @@ class MpvPlayer(BasePlayer):
         if TORRENT_REGEX.match(params.url) and detect.is_running_in_termux():
             raise ViuError("Unable to play torrents on termux")
         elif params.syncplay and detect.is_running_in_termux():
-            raise ViuError("Unable to play torrents on termux")
+            raise ViuError("Unable to play with syncplay on termux")
         elif detect.is_running_in_termux():
             return self._play_on_mobile(params)
         else:

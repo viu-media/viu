@@ -46,10 +46,11 @@ class VlcPlayer(BasePlayer):
         Returns:
             PlayerResult: Information about the playback session.
         """
-        if not self.executable:
-            raise ViuError("VLC executable not found in PATH.")
-
         if TORRENT_REGEX.match(params.url) and detect.is_running_in_termux():
+            raise ViuError("Unable to play torrents on termux")
+        elif params.syncplay and detect.is_running_in_termux():
+            raise ViuError("Unable to play with syncplay on termux")
+        elif detect.is_running_in_termux():
             return self._play_on_mobile(params)
         else:
             return self._play_on_desktop(params)
@@ -116,6 +117,9 @@ class VlcPlayer(BasePlayer):
         Returns:
             PlayerResult: Information about the playback session.
         """
+        if not self.executable:
+            raise ViuError("VLC executable not found in PATH.")
+
         if TORRENT_REGEX.search(params.url):
             return self._stream_on_desktop_with_webtorrent_cli(params)
 
