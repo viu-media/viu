@@ -1,6 +1,6 @@
 [project]
 name = "viu-media"
-version = "3.3.4"
+version = "3.3.5"
 description = "A browser anime site experience from the terminal"
 license = "UNLICENSE"
 readme = "README.md"
