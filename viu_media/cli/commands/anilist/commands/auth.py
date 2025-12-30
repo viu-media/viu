@@ -29,7 +29,7 @@ def _get_token(feedback, selector, token_input: str | None) -> str | None:
     if open_success:
         feedback.info("Your browser has been opened to obtain an AniList token.")
         feedback.info(
-            f"or you can visit the site manually [magenta][link={ANILIST_AUTH}]here[/link][/magenta]."
+            f"Or you can visit the site manually [magenta][link={ANILIST_AUTH}]here[/link][/magenta]."
         )
     else:
         feedback.warning(
