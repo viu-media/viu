@@ -189,7 +189,7 @@ You can disable this message by turning off the welcome_screen option in the con
             ):
                 import subprocess
 
-                _cli_cmd_name="viu" if not shutil.which("viu-media") else "viu-media"
+                _cli_cmd_name = "viu" if not shutil.which("viu-media") else "viu-media"
                 cmd = [_cli_cmd_name, "config", "--update"]
                 print(f"running '{' '.join(cmd)}'...")
                 subprocess.run(cmd)
