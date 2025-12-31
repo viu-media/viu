@@ -1,9 +1,9 @@
 import json
 import logging
-import sys
 from pathlib import Path
 
 from .....core.constants import APP_CACHE_DIR, SCRIPTS_DIR
+from .....core.utils.detect import get_python_executable
 from .....libs.media_api.params import MediaSearchParams
 from ...session import Context, session
 from ...state import InternalDirective, MediaApiState, MenuName, State
@@ -57,7 +57,7 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
     # Make the search script executable by calling it with python3
     # fzf will pass the query as {q} which becomes the first argument
     search_command_final = (
-        f"{Path(sys.executable).as_posix()} {search_script_file.as_posix()} {{q}}"
+        f"{Path(get_python_executable()).as_posix()} {search_script_file.as_posix()} {{q}}"
     )
 
     try:
