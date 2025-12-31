@@ -184,13 +184,22 @@ def format_score(score: Optional[float]) -> str:
 
 def shell_safe(text: Optional[str]) -> str:
     """
-    Escapes a string for safe inclusion in a shell script,
-    specifically for use within double quotes. It escapes backticks,
-    double quotes, and dollar signs.
+    Escapes a string for safe inclusion in a Python script string literal.
+    This is used when generating Python cache scripts with embedded text content.
+    
+    For Python triple-quoted strings, we need to:
+    - Escape backslashes first (so existing backslashes don't interfere)
+    - Escape triple quotes (to not break the string literal)
+    - Remove or replace problematic characters
     """
     if not text:
         return ""
-    return text.replace("`", "\\`").replace('"', '\\"').replace("$", "\\$")
+    # Escape backslashes first
+    result = text.replace("\\", "\\\\")
+    # Escape triple quotes (both types)
+    result = result.replace('"""', '\\"\\"\\"')
+    result = result.replace("'''", "\\'\\'\\'")
+    return result
 
 
 def extract_episode_number(title: str) -> Optional[float]:
