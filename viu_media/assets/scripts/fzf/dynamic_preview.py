@@ -368,9 +368,9 @@ def main():
 
         studios_list = media.get("studios", {}).get("nodes", [])
         # Studios are those with isAnimationStudio=true
-        studios = ", ".join([s.get("name", "") for s in studios_list if s.get("name") and s.get("isAnimationStudio")]) or "N/A"
+        studios = ", ".join([s["name"] for s in studios_list if s.get("name") and s.get("isAnimationStudio")]) or "N/A"
         # Producers are those with isAnimationStudio=false
-        producers = ", ".join([s.get("name", "") for s in studios_list if s.get("name") and not s.get("isAnimationStudio")]) or "N/A"
+        producers = ", ".join([s["name"] for s in studios_list if s.get("name") and not s.get("isAnimationStudio")]) or "N/A"
 
         synonyms_list = media.get("synonyms", [])
         # Include romaji in synonyms if different from title
