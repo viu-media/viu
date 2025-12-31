@@ -196,9 +196,9 @@ def shell_safe(text: Optional[str]) -> str:
         return ""
     # Escape backslashes first
     result = text.replace("\\", "\\\\")
-    # Escape triple quotes (both types)
-    result = result.replace('"""', '\\"\\"\\"')
-    result = result.replace("'''", "\\'\\'\\'")
+    # Escape triple quotes (both types) for Python triple-quoted string literals
+    result = result.replace('"""', r'\"\"\"')
+    result = result.replace("'''", r"\'\'\'")
     return result
 
 
