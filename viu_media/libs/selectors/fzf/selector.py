@@ -117,7 +117,7 @@ class FzfSelector(BaseSelector):
         lines = result.stdout.strip().splitlines()
         return lines[-1] if lines else (default or "")
 
-    def search(self, prompt, search_command, *, preview=None, header=None):
+    def search(self, prompt, search_command, *, preview=None, header=None, initial_query=None, initial_results=None):
         """Enhanced search using fzf's --reload flag for dynamic search."""
         # Build the header with optional custom header line
         display_header = self.header
@@ -137,12 +137,22 @@ class FzfSelector(BaseSelector):
             "--ansi",
         ]
 
+        # If there's an initial query, set it
+        if initial_query:
+            commands.extend(["--query", initial_query])
+            # Only trigger reload on start if we don't have cached results
+            if not initial_results:
+                commands.extend(["--bind", f"start:reload({search_command})"])
+
         if preview:
             commands.extend(["--preview", preview])
 
+        # Use cached results as initial input if provided (avoids network request)
+        fzf_input = "\n".join(initial_results) if initial_results else ""
+
         result = subprocess.run(
             commands,
-            input="",
+            input=fzf_input,
             stdout=subprocess.PIPE,
             text=True,
             encoding="utf-8",

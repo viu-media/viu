@@ -30,6 +30,7 @@ from _filter_parser import parse_filters
 # --- Template Variables (Injected by Python) ---
 GRAPHQL_ENDPOINT = "{GRAPHQL_ENDPOINT}"
 SEARCH_RESULTS_FILE = Path("{SEARCH_RESULTS_FILE}")
+LAST_QUERY_FILE = Path("{LAST_QUERY_FILE}")
 AUTH_HEADER = "{AUTH_HEADER}"
 
 # The GraphQL query is injected as a properly escaped JSON string
@@ -176,6 +177,9 @@ def main():
     try:
         with open(SEARCH_RESULTS_FILE, "w", encoding="utf-8") as f:
             json.dump(response, f, ensure_ascii=False, indent=2)
+        # Also save the raw query so it can be restored when going back
+        with open(LAST_QUERY_FILE, "w", encoding="utf-8") as f:
+            f.write(RAW_QUERY)
     except IOError as e:
         print(f"❌ Failed to save results: {e}")
         sys.exit(1)
