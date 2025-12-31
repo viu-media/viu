@@ -45,6 +45,15 @@ def format_number(num):
     return f"{num:,}"
 
 
+def format_score_stars(score):
+    """Format score as stars out of 6."""
+    if score is None:
+        return "N/A"
+    # Convert 0-100 score to 0-6 stars, capped at 6 for consistency
+    stars = min(round(score * 6 / 100), 6)
+    return "⭐" * stars + f" ({score}/100)"
+
+
 def format_date(date_obj):
     """Format date object to string."""
     if not date_obj or date_obj == "null":
@@ -342,31 +351,68 @@ def main():
         # Extract data
         status = media.get("status", "Unknown")
         format_type = media.get("format", "Unknown")
-        episodes = media.get("episodes", "?")
+        episodes = media.get("episodes", "??")
         duration = media.get("duration")
-        duration_str = f"{duration} min" if duration else "Unknown"
+        duration_str = f"{duration} min/ep" if duration else "Unknown"
 
         score = media.get("averageScore")
-        score_str = f"{score}/100" if score else "N/A"
+        score_str = format_score_stars(score)
 
         favourites = format_number(media.get("favourites", 0))
         popularity = format_number(media.get("popularity", 0))
 
-        genres = ", ".join(media.get("genres", [])[:5]) or "Unknown"
+        genres = ", ".join(media.get("genres", [])) or "Unknown"
 
         start_date = format_date(media.get("startDate"))
         end_date = format_date(media.get("endDate"))
 
         studios_list = media.get("studios", {}).get("nodes", [])
-        studios = ", ".join([s.get("name", "") for s in studios_list[:3]]) or "Unknown"
+        # Studios are those with isAnimationStudio=true
+        studios = ", ".join([s["name"] for s in studios_list if s.get("name") and s.get("isAnimationStudio")]) or "N/A"
+        # Producers are those with isAnimationStudio=false
+        producers = ", ".join([s["name"] for s in studios_list if s.get("name") and not s.get("isAnimationStudio")]) or "N/A"
 
         synonyms_list = media.get("synonyms", [])
-        synonyms = ", ".join(synonyms_list[:3]) or "N/A"
+        # Include romaji in synonyms if different from title
+        romaji = title_obj.get("romaji")
+        if romaji and romaji != title and romaji not in synonyms_list:
+            synonyms_list = [romaji] + synonyms_list
+        synonyms = ", ".join(synonyms_list) or "N/A"
+
+        # Tags
+        tags_list = media.get("tags", [])
+        tags = ", ".join([t.get("name", "") for t in tags_list if t.get("name")]) or "N/A"
+
+        # Next airing episode
+        next_airing = media.get("nextAiringEpisode")
+        if next_airing:
+            next_ep = next_airing.get("episode", "?")
+            airing_at = next_airing.get("airingAt")
+            if airing_at:
+                from datetime import datetime
+                try:
+                    dt = datetime.fromtimestamp(airing_at)
+                    next_episode_str = f"Episode {next_ep} on {dt.strftime('%A, %d %B %Y at %H:%M')}"
+                except (ValueError, OSError):
+                    next_episode_str = f"Episode {next_ep}"
+            else:
+                next_episode_str = f"Episode {next_ep}"
+        else:
+            next_episode_str = "N/A"
+
+        # User list status
+        media_list_entry = media.get("mediaListEntry")
+        if media_list_entry:
+            user_status = media_list_entry.get("status", "NOT_ON_LIST")
+            user_progress = f"Episode {media_list_entry.get('progress', 0)}"
+        else:
+            user_status = "NOT_ON_LIST"
+            user_progress = "0"
 
         description = media.get("description", "No description available.")
         description = strip_markdown(description)
 
-        # Print sections matching media_info.py structure
+        # Print sections matching media_info.py structure exactly
         rows = [
             ("Score", score_str),
             ("Favorites", favourites),
@@ -376,16 +422,17 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            print_table_row(key, value, HEADER_COLOR, 0, 0)
+            print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
 
         rows = [
             ("Episodes", str(episodes)),
             ("Duration", duration_str),
+            ("Next Episode", next_episode_str),
         ]
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            print_table_row(key, value, HEADER_COLOR, 0, 0)
+            print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
 
         rows = [
             ("Genres", genres),
@@ -394,7 +441,16 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            print_table_row(key, value, HEADER_COLOR, 0, 0)
+            print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
+
+        rows = [
+            ("List Status", user_status),
+            ("Progress", user_progress),
+        ]
+
+        print_rule(SEPARATOR_COLOR)
+        for key, value in rows:
+            print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
 
         rows = [
             ("Start Date", start_date),
@@ -403,15 +459,16 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            print_table_row(key, value, HEADER_COLOR, 0, 0)
+            print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
 
         rows = [
             ("Studios", studios),
+            ("Producers", producers),
         ]
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            print_table_row(key, value, HEADER_COLOR, 0, 0)
+            print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
 
         rows = [
             ("Synonyms", synonyms),
@@ -419,7 +476,15 @@ def main():
 
         print_rule(SEPARATOR_COLOR)
         for key, value in rows:
-            print_table_row(key, value, HEADER_COLOR, 0, 0)
+            print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
+
+        rows = [
+            ("Tags", tags),
+        ]
+
+        print_rule(SEPARATOR_COLOR)
+        for key, value in rows:
+            print_table_row(key, value, HEADER_COLOR, 15, term_width - 20)
 
         print_rule(SEPARATOR_COLOR)
         print(wrap_text(description, term_width))

@@ -67,6 +67,7 @@ for key, value in rows:
 
 rows = [
     ("Studios", "{STUDIOS}"),
+    ("Producers", "{PRODUCERS}"),
 ]
 
 print_rule(SEPARATOR_COLOR)
