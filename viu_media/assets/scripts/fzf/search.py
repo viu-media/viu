@@ -192,7 +192,7 @@ def main():
     if not media_list:
         print("🔍 No results found")
         if PARSED_FILTERS:
-            print(f"   Try adjusting your filters")
+            print("   Try adjusting your filters")
         sys.exit(0)
 
     # Output titles for fzf (one per line)
