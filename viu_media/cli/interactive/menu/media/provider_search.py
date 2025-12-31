@@ -73,6 +73,21 @@ def provider_search(ctx: Context, state: State) -> State | InternalDirective:
             update_user_normalizer_json(
                 chosen_title, media_title, config.general.provider.value
             )
+
+            # Offer to submit the mapping to GitHub
+            if selector.confirm(
+                "Would you like to contribute this mapping to the project on GitHub?"
+            ):
+                from ....service.github import GitHubContribution
+
+                contribution = GitHubContribution(
+                    provider_name=config.general.provider.value,
+                    provider_title=chosen_title,
+                    media_api_title=media_title,
+                    anilist_id=media_item.id if hasattr(media_item, "id") else None,
+                )
+                ctx.github.submit_contribution(contribution)
+
         selected_provider_anime = provider_results_map[chosen_title]
 
     with feedback.progress(

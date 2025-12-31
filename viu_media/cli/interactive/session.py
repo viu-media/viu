@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from ...libs.selectors.base import BaseSelector
     from ..service.auth import AuthService
     from ..service.feedback import FeedbackService
+    from ..service.github import GitHubContributionService
     from ..service.player import PlayerService
     from ..service.registry import MediaRegistryService
     from ..service.session import SessionsService
@@ -92,6 +93,7 @@ class Context:
     _session: Optional["SessionsService"] = None
     _auth: Optional["AuthService"] = None
     _player: Optional["PlayerService"] = None
+    _github: Optional["GitHubContributionService"] = None
 
     @property
     def provider(self) -> "BaseAnimeProvider":
@@ -190,6 +192,17 @@ class Context:
 
             self._auth = AuthService(self.config.general.media_api)
         return self._auth
+
+    @property
+    def github(self) -> "GitHubContributionService":
+        if not self._github:
+            from ..service.github.service import GitHubContributionService
+
+            self._github = GitHubContributionService(
+                selector=self.selector,
+                feedback=self.feedback,
+            )
+        return self._github
 
 
 MenuFunction = Callable[[Context, State], Union[State, InternalDirective]]
