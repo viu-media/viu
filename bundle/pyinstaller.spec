@@ -39,10 +39,18 @@ hiddenimports = [
     'viu_media.cli.interactive.menu.media.servers',
 ] + collect_submodules('viu_media')
 
+
+# Exclude OpenSSL libraries on Linux to avoid version conflicts
+import sys
+binaries = []
+if sys.platform == 'linux':
+    # Remove any bundled libssl or libcrypto
+    binaries = [b for b in binaries if not any(lib in b[0] for lib in ['libssl', 'libcrypto'])]
+
 a = Analysis(
     ['../viu_media/viu.py'],
     pathex=[],
-    binaries=[],
+    binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],
