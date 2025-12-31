@@ -119,13 +119,19 @@ class FzfSelector(BaseSelector):
 
     def search(self, prompt, search_command, *, preview=None, header=None):
         """Enhanced search using fzf's --reload flag for dynamic search."""
+        # Build the header with optional custom header line
+        display_header = self.header
+        if header:
+            display_header = f"{self.header}\n{header}"
+
         commands = [
             self.executable,
             "--prompt",
             f"{prompt.title()}: ",
             "--header",
-            self.header,
+            display_header,
             "--header-first",
+            "--disabled",  # Disable local filtering - rely on external search command
             "--bind",
             f"change:reload({search_command})",
             "--ansi",

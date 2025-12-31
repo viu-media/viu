@@ -1,5 +1,6 @@
 import json
 import logging
+import shutil
 from pathlib import Path
 
 from .....core.constants import APP_CACHE_DIR, SCRIPTS_DIR
@@ -14,6 +15,7 @@ SEARCH_CACHE_DIR = APP_CACHE_DIR / "previews" / "dynamic-search"
 SEARCH_RESULTS_FILE = SEARCH_CACHE_DIR / "current_search_results.json"
 FZF_SCRIPTS_DIR = SCRIPTS_DIR / "fzf"
 SEARCH_TEMPLATE_SCRIPT = (FZF_SCRIPTS_DIR / "search.py").read_text(encoding="utf-8")
+FILTER_PARSER_SCRIPT = FZF_SCRIPTS_DIR / "_filter_parser.py"
 
 
 @session.menu
@@ -54,11 +56,20 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
     search_script_file = SEARCH_CACHE_DIR / "search.py"
     search_script_file.write_text(search_command, encoding="utf-8")
 
+    # Copy the filter parser module to the cache directory
+    # This is required for the search script to import it
+    filter_parser_dest = SEARCH_CACHE_DIR / "_filter_parser.py"
+    if FILTER_PARSER_SCRIPT.exists():
+        shutil.copy2(FILTER_PARSER_SCRIPT, filter_parser_dest)
+
     # Make the search script executable by calling it with python3
     # fzf will pass the query as {q} which becomes the first argument
     search_command_final = (
         f"{Path(get_python_executable()).as_posix()} {search_script_file.as_posix()} {{q}}"
     )
+
+    # Header hint for filter syntax
+    filter_hint = "💡 Filters: @genre:action @status:airing @year:2024 @sort:score (type @help for more)"
 
     try:
         # Prepare preview functionality
@@ -73,11 +84,13 @@ def dynamic_search(ctx: Context, state: State) -> State | InternalDirective:
                     prompt="Search Anime",
                     search_command=search_command_final,
                     preview=preview_command,
+                    header=filter_hint,
                 )
         else:
             choice = ctx.selector.search(
                 prompt="Search Anime",
                 search_command=search_command_final,
+                header=filter_hint,
             )
     except NotImplementedError:
         feedback.error("Dynamic search is not supported by your current selector")
