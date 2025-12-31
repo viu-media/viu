@@ -21,7 +21,7 @@ from rich.progress import (
 )
 from rich.prompt import Confirm
 from ..utils.file import sanitize_filename
-
+from ..utils.detect import get_clean_env
 from ..exceptions import ViuError
 from ..patterns import TORRENT_REGEX
 from ..utils.networking import get_remote_filename
@@ -372,6 +372,7 @@ class DefaultDownloader(BaseDownloader):
                     capture_output=params.silent,  # Only suppress ffmpeg output if silent
                     text=True,
                     check=True,
+                    env=get_clean_env(),
                 )
 
                 final_output_path = video_path.parent / merged_filename

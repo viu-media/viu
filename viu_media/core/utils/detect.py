@@ -83,3 +83,21 @@ def get_python_executable() -> str:
         return "python"
     else:
         return sys.executable
+
+
+def get_clean_env() -> dict[str, str]:
+    """
+    Returns a copy of the environment with LD_LIBRARY_PATH fixed for system subprocesses
+    when running as a PyInstaller frozen application.
+    This prevents system binaries (like mpv, ffmpeg) from loading incompatible
+    libraries from the PyInstaller bundle.
+    """
+    env = os.environ.copy()
+    if is_frozen():
+        # PyInstaller saves the original LD_LIBRARY_PATH in LD_LIBRARY_PATH_ORIG
+        if "LD_LIBRARY_PATH_ORIG" in env:
+            env["LD_LIBRARY_PATH"] = env["LD_LIBRARY_PATH_ORIG"]
+        else:
+            # If orig didn't exist, LD_LIBRARY_PATH shouldn't exist for the subprocess
+            env.pop("LD_LIBRARY_PATH", None)
+    return env

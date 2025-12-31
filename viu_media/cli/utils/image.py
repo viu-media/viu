@@ -9,6 +9,8 @@ import importlib.util
 import click
 import httpx
 
+from viu_media.core.utils import detect
+
 logger = logging.getLogger(__name__)
 
 
@@ -138,6 +140,7 @@ def render(url: str, capture: bool = False, size: str = "30x30") -> Optional[str
             [icat_executable, "--align", "left", url],
             capture_output=capture,
             text=capture,
+            env=detect.get_clean_env(),
         )
         if process.returncode == 0:
             return process.stdout if capture else None

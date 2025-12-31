@@ -103,7 +103,7 @@ class VlcPlayer(BasePlayer):
                 params.title,
             ]
 
-        subprocess.run(args)
+        subprocess.run(args,env=detect.get_clean_env())
 
         return PlayerResult(episode=params.episode)
 
@@ -134,7 +134,7 @@ class VlcPlayer(BasePlayer):
         if self.config.args:
             args.extend(self.config.args.split(","))
 
-        subprocess.run(args, encoding="utf-8")
+        subprocess.run(args, encoding="utf-8",env=detect.get_clean_env())
         return PlayerResult(episode=params.episode)
 
     def _stream_on_desktop_with_webtorrent_cli(
@@ -159,7 +159,7 @@ class VlcPlayer(BasePlayer):
             args.append("--player-args")
             args.extend(self.config.args.split(","))
 
-        subprocess.run(args)
+        subprocess.run(args,env=detect.get_clean_env())
         return PlayerResult(episode=params.episode)
 
 

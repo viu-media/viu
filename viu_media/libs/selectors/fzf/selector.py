@@ -5,6 +5,8 @@ import subprocess
 
 from rich.prompt import Prompt
 
+from viu_media.core.utils import detect
+
 from ....core.config import FzfConfig
 from ....core.exceptions import ViuError
 from ..base import BaseSelector
@@ -49,6 +51,7 @@ class FzfSelector(BaseSelector):
             stdout=subprocess.PIPE,
             text=True,
             encoding="utf-8",
+            env=detect.get_clean_env(),
         )
         if result.returncode != 0:
             return None
@@ -76,6 +79,7 @@ class FzfSelector(BaseSelector):
             stdout=subprocess.PIPE,
             text=True,
             encoding="utf-8",
+            env=detect.get_clean_env(),
         )
         if result.returncode != 0:
             return []
@@ -117,7 +121,16 @@ class FzfSelector(BaseSelector):
         lines = result.stdout.strip().splitlines()
         return lines[-1] if lines else (default or "")
 
-    def search(self, prompt, search_command, *, preview=None, header=None, initial_query=None, initial_results=None):
+    def search(
+        self,
+        prompt,
+        search_command,
+        *,
+        preview=None,
+        header=None,
+        initial_query=None,
+        initial_results=None,
+    ):
         """Enhanced search using fzf's --reload flag for dynamic search."""
         # Build the header with optional custom header line
         display_header = self.header
@@ -156,6 +169,7 @@ class FzfSelector(BaseSelector):
             stdout=subprocess.PIPE,
             text=True,
             encoding="utf-8",
+            env=detect.get_clean_env(),
         )
         if result.returncode != 0:
             return None
