@@ -5,7 +5,7 @@ block_cipher = None
 
 # Collect all required data files
 datas = [
-    ('viu/assets/*', 'viu/assets'),
+    ('../viu_media/assets/*', 'viu_media/assets'),
 ]
 
 # Collect all required hidden imports
@@ -20,7 +20,7 @@ hiddenimports = [
 ] + collect_submodules('viu')
 
 a = Analysis(
-    ['./viu/viu.py'],  # Changed entry point
+    ['../viu_media/viu.py'],  # Changed entry point
     pathex=[],
     binaries=[],
     datas=datas,
@@ -61,5 +61,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='viu/assets/logo.ico'
+    icon='../viu_media/assets/icons/logo.ico'
 )
