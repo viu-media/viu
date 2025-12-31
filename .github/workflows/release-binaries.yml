@@ -1,0 +1,146 @@
+name: Build Release Binaries
+
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: "Tag/version to build (leave empty for latest)"
+                required: false
+                type: string
+
+permissions:
+    contents: write
+
+jobs:
+    build:
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: ubuntu-latest
+                      target: linux
+                      asset_name: viu-linux-x86_64
+                      executable: viu
+                    - os: windows-latest
+                      target: windows
+                      asset_name: viu-windows-x86_64.exe
+                      executable: viu.exe
+                    - os: macos-latest
+                      target: macos
+                      asset_name: viu-macos-x86_64
+                      executable: viu
+
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.inputs.tag || github.ref }}
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                  enable-cache: true
+
+            - name: Install dependencies
+              run: uv sync --all-extras --all-groups
+
+            - name: Build executable with PyInstaller
+              run: uv run pyinstaller bundle/pyinstaller.spec --distpath dist --workpath build/pyinstaller --clean
+
+            - name: Rename executable
+              shell: bash
+              run: mv dist/${{ matrix.executable }} dist/${{ matrix.asset_name }}
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ matrix.asset_name }}
+                  path: dist/${{ matrix.asset_name }}
+                  if-no-files-found: error
+
+            - name: Upload to Release
+              if: github.event_name == 'release'
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: dist/${{ matrix.asset_name }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # Build for macOS ARM (Apple Silicon)
+    build-macos-arm:
+        runs-on: macos-14
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.inputs.tag || github.ref }}
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v3
+              with:
+                  enable-cache: true
+
+            - name: Install dependencies
+              run: uv sync --all-extras --all-groups
+
+            - name: Build executable with PyInstaller
+              run: uv run pyinstaller bundle/pyinstaller.spec --distpath dist --workpath build/pyinstaller --clean
+
+            - name: Rename executable
+              run: mv dist/viu dist/viu-macos-arm64
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: viu-macos-arm64
+                  path: dist/viu-macos-arm64
+                  if-no-files-found: error
+
+            - name: Upload to Release
+              if: github.event_name == 'release'
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: dist/viu-macos-arm64
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # Create checksums after all builds complete
+    checksums:
+        needs: [build, build-macos-arm]
+        runs-on: ubuntu-latest
+        if: github.event_name == 'release'
+
+        steps:
+            - name: Download all artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  path: artifacts
+                  merge-multiple: true
+
+            - name: Generate checksums
+              run: |
+                  cd artifacts
+                  sha256sum * > SHA256SUMS.txt
+                  cat SHA256SUMS.txt
+
+            - name: Upload checksums to Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: artifacts/SHA256SUMS.txt
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
