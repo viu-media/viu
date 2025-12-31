@@ -20,6 +20,21 @@ hiddenimports = [
     'viu_media',
     'viu_media.cli.interactive.menu',
     'viu_media.cli.interactive.menu.media',
+    # Explicit menu modules (PyInstaller doesn't always pick these up)
+    'viu_media.cli.interactive.menu.media.downloads',
+    'viu_media.cli.interactive.menu.media.download_episodes',
+    'viu_media.cli.interactive.menu.media.dynamic_search',
+    'viu_media.cli.interactive.menu.media.episodes',
+    'viu_media.cli.interactive.menu.media.main',
+    'viu_media.cli.interactive.menu.media.media_actions',
+    'viu_media.cli.interactive.menu.media.media_airing_schedule',
+    'viu_media.cli.interactive.menu.media.media_characters',
+    'viu_media.cli.interactive.menu.media.media_review',
+    'viu_media.cli.interactive.menu.media.player_controls',
+    'viu_media.cli.interactive.menu.media.play_downloads',
+    'viu_media.cli.interactive.menu.media.provider_search',
+    'viu_media.cli.interactive.menu.media.results',
+    'viu_media.cli.interactive.menu.media.servers',
 ] + collect_submodules('viu_media')
 
 a = Analysis(
