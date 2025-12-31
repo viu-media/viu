@@ -46,12 +46,12 @@ def format_number(num):
 
 
 def format_score_stars(score):
-    """Format score as stars (matching media_info.py style)."""
+    """Format score as stars out of 6."""
     if score is None:
         return "N/A"
-    # Convert 0-100 score to 0-5 stars
-    stars = round(score / 20)
-    return "★" * stars + "☆" * (5 - stars) + f" ({score}/100)"
+    # Convert 0-100 score to 0-6 stars
+    stars = round(score / 100 * 6)
+    return "⭐" * stars + f" ({score}/100)"
 
 
 def format_date(date_obj):
