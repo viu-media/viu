@@ -645,6 +645,13 @@ This PR updates `{NORMALIZER_FILE_PATH}` with the following mapping:
             AUTH_FILE.unlink()
             logger.info("Cleared GitHub authentication cache")
 
+    @staticmethod
+    def clear_cached_auth_static() -> None:
+        """Clear cached GitHub authentication (static method for CLI use)."""
+        if AUTH_FILE.exists():
+            AUTH_FILE.unlink()
+            logger.info("Cleared GitHub authentication cache")
+
     def _log_info(self, message: str) -> None:
         """Log info message."""
         if self.feedback:

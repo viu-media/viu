@@ -30,6 +30,9 @@ from ...core.config import AppConfig
 \b 
   # view the current contents of your config
   viu config --view
+\b
+  # clear cached GitHub authentication token
+  viu config --clear-github-auth
 """,
 )
 @click.option("--path", "-p", help="Print the config location and exit", is_flag=True)
@@ -60,6 +63,11 @@ from ...core.config import AppConfig
     is_flag=True,
     help="Start the interactive configuration wizard.",
 )
+@click.option(
+    "--clear-github-auth",
+    is_flag=True,
+    help="Clear cached GitHub authentication token.",
+)
 @click.pass_obj
 def config(
     user_config: AppConfig,
@@ -69,12 +77,18 @@ def config(
     generate_desktop_entry,
     update,
     interactive,
+    clear_github_auth,
 ):
     from ...core.constants import USER_CONFIG
     from ..config.editor import InteractiveConfigEditor
     from ..config.generate import generate_config_toml_from_app_model
 
-    if path:
+    if clear_github_auth:
+        from ..service.github import GitHubContributionService
+
+        GitHubContributionService.clear_cached_auth_static()
+        click.echo("GitHub authentication cache cleared.")
+    elif path:
         print(USER_CONFIG)
     elif view:
         from rich.console import Console
