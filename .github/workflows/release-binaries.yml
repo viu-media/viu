@@ -50,6 +50,12 @@ jobs:
               with:
                   enable-cache: true
 
+            - name: Install system dependencies (Linux)
+              if: runner.os == 'Linux'
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y libdbus-1-dev
+
             - name: Install dependencies
               run: uv sync --all-extras --all-groups
 
