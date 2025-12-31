@@ -189,7 +189,12 @@ class PreviewCacheWorker(ManagedBackgroundWorker):
             ),
             "STUDIOS": formatter.shell_safe(
                 formatter.format_list_with_commas(
-                    [t.name for t in media_item.studios if t.name]
+                    [t.name for t in media_item.studios if t.name and t.is_animation_studio]
+                )
+            ),
+            "PRODUCERS": formatter.shell_safe(
+                formatter.format_list_with_commas(
+                    [t.name for t in media_item.studios if t.name and not t.is_animation_studio]
                 )
             ),
             "SYNONYMNS": formatter.shell_safe(

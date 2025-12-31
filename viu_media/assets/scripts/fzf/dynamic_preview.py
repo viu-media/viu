@@ -367,7 +367,10 @@ def main():
         end_date = format_date(media.get("endDate"))
 
         studios_list = media.get("studios", {}).get("nodes", [])
-        studios = ", ".join([s.get("name", "") for s in studios_list if s.get("name")]) or "Unknown"
+        # Studios are those with isAnimationStudio=true
+        studios = ", ".join([s.get("name", "") for s in studios_list if s.get("name") and s.get("isAnimationStudio")]) or "N/A"
+        # Producers are those with isAnimationStudio=false
+        producers = ", ".join([s.get("name", "") for s in studios_list if s.get("name") and not s.get("isAnimationStudio")]) or "N/A"
 
         synonyms_list = media.get("synonyms", [])
         # Include romaji in synonyms if different from title
@@ -460,6 +463,7 @@ def main():
 
         rows = [
             ("Studios", studios),
+            ("Producers", producers),
         ]
 
         print_rule(SEPARATOR_COLOR)
