@@ -5,10 +5,11 @@ block_cipher = None
 
 # Collect all required data files
 datas = [
-    ('../viu_media/assets/*', 'viu_media/assets'),
+    ('../viu_media/assets', 'viu_media/assets'),
 ]
 
 # Collect all required hidden imports
+# Include viu_media and all its submodules to ensure menu modules are bundled
 hiddenimports = [
     'click',
     'rich',
@@ -16,8 +17,10 @@ hiddenimports = [
     'yt_dlp',
     'python_mpv',
     'fuzzywuzzy',
-    'viu',
-] + collect_submodules('viu')
+    'viu_media',
+    'viu_media.cli.interactive.menu',
+    'viu_media.cli.interactive.menu.media',
+] + collect_submodules('viu_media')
 
 a = Analysis(
     ['../viu_media/viu.py'],  # Changed entry point
