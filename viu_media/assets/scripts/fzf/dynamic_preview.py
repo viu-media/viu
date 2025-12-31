@@ -49,8 +49,8 @@ def format_score_stars(score):
     """Format score as stars out of 6."""
     if score is None:
         return "N/A"
-    # Convert 0-100 score to 0-6 stars
-    stars = round(score / 100 * 6)
+    # Convert 0-100 score to 0-6 stars, capped at 6 for consistency
+    stars = min(round(score * 6 / 100), 6)
     return "⭐" * stars + f" ({score}/100)"
 
 
