@@ -3768,8 +3768,10 @@ mpv = [
     { name = "mpv" },
 ]
 notifications = [
-    { name = "dbus-python" },
+    { name = "dbus-python", marker = "sys_platform == 'linux'" },
     { name = "plyer" },
+    { name = "pyobjc", marker = "sys_platform == 'darwin'" },
+    { name = "pypiwin32", marker = "sys_platform == 'win32'" },
 ]
 standard = [
     { name = "dbus-python", marker = "sys_platform == 'linux'" },
@@ -3801,8 +3803,8 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "click", specifier = ">=8.1.7" },
+    { name = "dbus-python", marker = "sys_platform == 'linux' and extra == 'notifications'", specifier = ">=1.4.0" },
     { name = "dbus-python", marker = "sys_platform == 'linux' and extra == 'standard'" },
-    { name = "dbus-python", marker = "extra == 'notifications'", specifier = ">=1.4.0" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "inquirerpy", specifier = ">=0.3.4" },
     { name = "libtorrent", marker = "extra == 'torrent'", specifier = ">=2.0.11" },
@@ -3815,7 +3817,9 @@ requires-dist = [
     { name = "pycryptodomex", marker = "extra == 'download'", specifier = ">=3.23.0" },
     { name = "pycryptodomex", marker = "extra == 'standard'", specifier = ">=3.23.0" },
     { name = "pydantic", specifier = ">=2.11.7" },
+    { name = "pyobjc", marker = "sys_platform == 'darwin' and extra == 'notifications'" },
     { name = "pyobjc", marker = "sys_platform == 'darwin' and extra == 'standard'" },
+    { name = "pypiwin32", marker = "sys_platform == 'win32' and extra == 'notifications'" },
     { name = "pypiwin32", marker = "sys_platform == 'win32' and extra == 'standard'" },
     { name = "pypresence", marker = "extra == 'discord'", specifier = ">=4.3.0" },
     { name = "rich", specifier = ">=13.9.2" },
