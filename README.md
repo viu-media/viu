@@ -66,33 +66,30 @@ For the best experience, please install these external tools:
 
 ### Pre-built Binaries (Recommended for Quick Start)
 
-The easiest way to get started is to download a pre-built, self-contained binary from the [**GitHub Releases page**](https://github.com/viu-media/viu/releases/latest). These binaries include all dependencies and **do not require Python** to be installed.
+The easiest way to get started is to download a pre-built, self-contained binary from the [**releases page**](https://github.com/viu-media/viu/releases/latest). These binaries include all dependencies and **do not require Python** to be installed.
 
 **Available for:**
-*   **Linux** (x86_64)
-*   **Windows** (x86_64)
-*   **macOS** (Intel x86_64 and Apple Silicon ARM64)
+*   **Linux** (x86_64): `viu-linux-x86_64`
+*   **Windows** (x86_64): `viu-windows-x86_64.exe`
+*   **macOS** (Intel x86_64): `viu-macos-x86_64`
+*   **macOS** (Apple Silicon ARM64): `viu-macos-arm64`
 
 **Installation Steps:**
 1.  Download the appropriate binary for your platform from the [releases page](https://github.com/viu-media/viu/releases/latest).
-2.  Make it executable (Linux/macOS):
+2.  **Linux/macOS:** Make it executable and move to PATH:
     ```bash
-    # Replace with the actual binary name you downloaded
-    chmod +x viu-linux-x86_64        # For Linux
-    chmod +x viu-macos-x86_64        # For macOS Intel
-    chmod +x viu-macos-arm64         # For macOS Apple Silicon
-    ```
-3.  Move it to a directory in your `PATH` (optional but recommended):
-    ```bash
-    # Linux/macOS (replace with your binary name)
+    # Example for Linux (adjust binary name for your platform)
+    chmod +x viu-linux-x86_64
     sudo mv viu-linux-x86_64 /usr/local/bin/viu
     
     # Or to a user directory
     mkdir -p ~/.local/bin
+    chmod +x viu-linux-x86_64
     mv viu-linux-x86_64 ~/.local/bin/viu
     # Make sure ~/.local/bin is in your PATH
     ```
-4.  Run Viu:
+    **Windows:** Simply rename `viu-windows-x86_64.exe` to `viu.exe` and place it in a directory in your PATH, or run it directly.
+3.  Verify the installation:
     ```bash
     viu --version
     ```
