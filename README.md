@@ -49,7 +49,7 @@
 
 ## Installation
 
-Viu runs on any platform with Python 3.10+, including Windows, macOS, Linux, and Android (via Termux, see other installation methods).
+Viu runs on Windows, macOS, Linux, and Android (via Termux). Pre-built binaries are available for quick installation without Python, or you can install via Python 3.10+ package managers.
 
 ### Prerequisites
 
@@ -63,6 +63,39 @@ For the best experience, please install these external tools:
 *   **Recommended for Downloads & Advanced Features:**
     *   [**ffmpeg**](https://www.ffmpeg.org/) - Required for downloading HLS streams and merging subtitles.
     *   [**webtorrent-cli**](https://github.com/webtorrent/webtorrent-cli) - For streaming torrents directly.
+
+### Pre-built Binaries (Recommended for Quick Start)
+
+The easiest way to get started is to download a pre-built, self-contained binary from the [**releases page**](https://github.com/viu-media/viu/releases/latest). These binaries include all dependencies and **do not require Python** to be installed.
+
+**Available for:**
+*   **Linux** (x86_64): `viu-linux-x86_64`
+*   **Windows** (x86_64): `viu-windows-x86_64.exe`
+*   **macOS** (Intel x86_64): `viu-macos-x86_64`
+*   **macOS** (Apple Silicon ARM64): `viu-macos-arm64`
+
+**Installation Steps:**
+1.  Download the appropriate binary for your platform from the [**releases page**](https://github.com/viu-media/viu/releases/latest).
+2.  **Linux/macOS:** Make it executable:
+    ```bash
+    # Replace with the actual binary name you downloaded
+    chmod +x viu-linux-x86_64
+    ```
+    Then move it to a directory in your PATH:
+    ```bash
+    # Option 1: System-wide installation (requires sudo)
+    sudo mv viu-linux-x86_64 /usr/local/bin/viu
+    
+    # Option 2: User directory installation
+    mkdir -p ~/.local/bin
+    mv viu-linux-x86_64 ~/.local/bin/viu
+    # Make sure ~/.local/bin is in your PATH
+    ```
+    **Windows:** Simply rename `viu-windows-x86_64.exe` to `viu.exe` and place it in a directory in your PATH, or run it directly.
+3.  Verify the installation:
+    ```bash
+    viu --version
+    ```
 
 ### Recommended Installation (uv)
 
