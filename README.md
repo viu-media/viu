@@ -75,7 +75,7 @@ The easiest way to get started is to download a pre-built, self-contained binary
 *   **macOS** (Apple Silicon ARM64): `viu-macos-arm64`
 
 **Installation Steps:**
-1.  Download the appropriate binary for your platform from the [releases page](https://github.com/viu-media/viu/releases/latest).
+1.  Download the appropriate binary for your platform from the [**releases page**](https://github.com/viu-media/viu/releases/latest).
 2.  **Linux/macOS:** Make it executable and move to PATH:
     ```bash
     # Example for Linux (adjust binary name for your platform)
@@ -83,8 +83,8 @@ The easiest way to get started is to download a pre-built, self-contained binary
     sudo mv viu-linux-x86_64 /usr/local/bin/viu
     
     # Or to a user directory
-    mkdir -p ~/.local/bin
     chmod +x viu-linux-x86_64
+    mkdir -p ~/.local/bin
     mv viu-linux-x86_64 ~/.local/bin/viu
     # Make sure ~/.local/bin is in your PATH
     ```
