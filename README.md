@@ -49,7 +49,7 @@
 
 ## Installation
 
-Viu runs on any platform with Python 3.10+, including Windows, macOS, Linux, and Android (via Termux, see other installation methods).
+Viu runs on Windows, macOS, Linux, and Android (via Termux). Pre-built binaries are available for quick installation without Python, or you can install via Python 3.10+ package managers.
 
 ### Prerequisites
 
@@ -63,6 +63,36 @@ For the best experience, please install these external tools:
 *   **Recommended for Downloads & Advanced Features:**
     *   [**ffmpeg**](https://www.ffmpeg.org/) - Required for downloading HLS streams and merging subtitles.
     *   [**webtorrent-cli**](https://github.com/webtorrent/webtorrent-cli) - For streaming torrents directly.
+
+### Pre-built Binaries (Recommended for Quick Start)
+
+The easiest way to get started is to download a pre-built, self-contained binary from the [**GitHub Releases page**](https://github.com/viu-media/viu/releases/latest). These binaries include all dependencies and **do not require Python** to be installed.
+
+**Available for:**
+*   **Linux** (x86_64)
+*   **Windows** (x86_64)
+*   **macOS** (Intel x86_64 and Apple Silicon ARM64)
+
+**Installation Steps:**
+1.  Download the appropriate binary for your platform from the [releases page](https://github.com/viu-media/viu/releases/latest).
+2.  Make it executable (Linux/macOS):
+    ```bash
+    chmod +x viu-*
+    ```
+3.  Move it to a directory in your `PATH` (optional but recommended):
+    ```bash
+    # Linux/macOS
+    sudo mv viu-* /usr/local/bin/viu
+    
+    # Or to a user directory
+    mkdir -p ~/.local/bin
+    mv viu-* ~/.local/bin/viu
+    # Make sure ~/.local/bin is in your PATH
+    ```
+4.  Run Viu:
+    ```bash
+    viu --version
+    ```
 
 ### Recommended Installation (uv)
 
