@@ -77,16 +77,19 @@ The easiest way to get started is to download a pre-built, self-contained binary
 1.  Download the appropriate binary for your platform from the [releases page](https://github.com/viu-media/viu/releases/latest).
 2.  Make it executable (Linux/macOS):
     ```bash
-    chmod +x viu-*
+    # Replace with the actual binary name you downloaded
+    chmod +x viu-linux-x86_64        # For Linux
+    chmod +x viu-macos-x86_64        # For macOS Intel
+    chmod +x viu-macos-arm64         # For macOS Apple Silicon
     ```
 3.  Move it to a directory in your `PATH` (optional but recommended):
     ```bash
-    # Linux/macOS
-    sudo mv viu-* /usr/local/bin/viu
+    # Linux/macOS (replace with your binary name)
+    sudo mv viu-linux-x86_64 /usr/local/bin/viu
     
     # Or to a user directory
     mkdir -p ~/.local/bin
-    mv viu-* ~/.local/bin/viu
+    mv viu-linux-x86_64 ~/.local/bin/viu
     # Make sure ~/.local/bin is in your PATH
     ```
 4.  Run Viu:
