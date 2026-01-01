@@ -186,19 +186,19 @@ def shell_safe(text: Optional[str]) -> str:
     """
     Escapes a string for safe inclusion in a Python script string literal.
     This is used when generating Python cache scripts with embedded text content.
-    
-    For Python triple-quoted strings, we need to:
+
+    For Python string literals, we need to:
     - Escape backslashes first (so existing backslashes don't interfere)
-    - Escape triple quotes (to not break the string literal)
-    - Remove or replace problematic characters
+    - Escape double quotes (to not break double-quoted string literals)
+    - Escape single quotes (to not break single-quoted string literals)
     """
     if not text:
         return ""
     # Escape backslashes first
     result = text.replace("\\", "\\\\")
-    # Escape triple quotes (both types) for Python triple-quoted string literals
-    result = result.replace('"""', r'\"\"\"')
-    result = result.replace("'''", r"\'\'\'")
+    # Escape both quote types for safe inclusion in any string literal
+    result = result.replace('"', r"\"")
+    result = result.replace("'", r"\'")
     return result
 
 
