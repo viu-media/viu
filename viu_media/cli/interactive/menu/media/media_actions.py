@@ -78,6 +78,9 @@ def media_actions(ctx: Context, state: State) -> State | InternalDirective:
                 ctx, state
             ),
             f"{'⭐ ' if icons else ''}Score Anime": _score_anime(ctx, state),
+            f"{'🌐 ' if icons else ''}Open AniList Page": _open_anilist_page(
+                ctx, state
+            ),
             f"{'ℹ️ ' if icons else ''}View Info": _view_info(ctx, state),
             f"{'📀 ' if icons else ''}Change Provider (Current: {ctx.config.general.provider.value.upper()})": _change_provider(
                 ctx, state
@@ -619,6 +622,26 @@ def _view_info(ctx: Context, state: State) -> MenuAction:
         console.print(description_panel)
 
         ctx.selector.ask("Press Enter to continue...")
+        return InternalDirective.RELOAD
+
+    return action
+
+
+def _open_anilist_page(ctx: Context, state: State) -> MenuAction:
+    def action():
+        media_item = state.media_api.media_item
+
+        if not media_item:
+            return InternalDirective.RELOAD
+
+        from .....libs.media_api.types import MediaType
+
+        base_type = "anime" if media_item.type == MediaType.ANIME else "manga"
+        url = f"https://anilist.co/{base_type}/{media_item.id}"
+
+        from webbrowser import open
+
+        open(url)
         return InternalDirective.RELOAD
 
     return action
