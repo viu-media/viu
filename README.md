@@ -49,7 +49,7 @@
 
 ## Installation
 
-Viu runs on any platform with Python 3.10+, including Windows, macOS, Linux, and Android (via Termux, see other installation methods).
+Viu runs on Windows, macOS, Linux, and Android (via Termux). Pre-built binaries are available for quick installation without Python, or you can install via Python 3.10+ package managers.
 
 ### Prerequisites
 
@@ -63,6 +63,39 @@ For the best experience, please install these external tools:
 *   **Recommended for Downloads & Advanced Features:**
     *   [**ffmpeg**](https://www.ffmpeg.org/) - Required for downloading HLS streams and merging subtitles.
     *   [**webtorrent-cli**](https://github.com/webtorrent/webtorrent-cli) - For streaming torrents directly.
+
+### Pre-built Binaries (Recommended for Quick Start)
+
+The easiest way to get started is to download a pre-built, self-contained binary from the [**releases page**](https://github.com/viu-media/viu/releases/latest). These binaries include all dependencies and **do not require Python** to be installed.
+
+**Available for:**
+*   **Linux** (x86_64): `viu-linux-x86_64`
+*   **Windows** (x86_64): `viu-windows-x86_64.exe`
+*   **macOS** (Intel x86_64): `viu-macos-x86_64`
+*   **macOS** (Apple Silicon ARM64): `viu-macos-arm64`
+
+**Installation Steps:**
+1.  Download the appropriate binary for your platform from the [**releases page**](https://github.com/viu-media/viu/releases/latest).
+2.  **Linux/macOS:** Make it executable:
+    ```bash
+    # Replace with the actual binary name you downloaded
+    chmod +x viu-linux-x86_64
+    ```
+    Then move it to a directory in your PATH:
+    ```bash
+    # Option 1: System-wide installation (requires sudo)
+    sudo mv viu-linux-x86_64 /usr/local/bin/viu
+    
+    # Option 2: User directory installation
+    mkdir -p ~/.local/bin
+    mv viu-linux-x86_64 ~/.local/bin/viu
+    # Make sure ~/.local/bin is in your PATH
+    ```
+    **Windows:** Simply rename `viu-windows-x86_64.exe` to `viu.exe` and place it in a directory in your PATH, or run it directly.
+3.  Verify the installation:
+    ```bash
+    viu --version
+    ```
 
 ### Recommended Installation (uv)
 
@@ -114,38 +147,78 @@ uv tool install "viu-media[notifications]" # For desktop notifications
   ```
   #### Termux
   You may have to have rust installed see this issue: https://github.com/pydantic/pydantic-core/issues/1012#issuecomment-2511269688.
+  
   ```bash
-pkg install python # though uv will probably install python for you, but doesn't hurt to have it :)
-pkg install rust # maybe required cause of pydantic
-
-
 # Recommended (with pip due to more control)
+pkg install python
+pkg install rust # required cause of pydantic
+
+# NOTE: order matters
+
+# get pydantic from the termux user repository
+pip install pydantic --extra-index-url https://termux-user-repository.github.io/pypi/
+
+# the above will take a while if you want to see more output and feel like sth is happening lol
+pip install pydantic --extra-index-url https://termux-user-repository.github.io/pypi/ -v
+
+# now you can install viu
 pip install viu-media
 
-# you may need to install pydantic manually
-python -m pip install pydantic --extra-index-url https://termux-user-repository.github.io/pypi/ # may also be necessary incase the above fails
+# === optional deps ===
+# if you have reach here awesome lol :)
 
-# add yt-dlp by
+# yt-dlp for downloading m3u8 and hls streams
 pip install yt-dlp[default,curl-cffi]
 
-# prefer without standard and manually install the things you need lxml, yt-dlp and
-pip install viu-media[standard]
+# you may also need ffmpeg for processing the videos
+pkg install ffmpeg
 
-# you may need to manually install lxml and plyer manually eg
-python -m pip install lxml --extra-index-url https://termux-user-repository.github.io/pypi/ # may also be necessary incase the above fails
+# tip if you also want yt functionality
+pip install yt-dlp-ejs
 
-# Alternative With Uv may work, no promises
-pkg install uv
+# you require js runtime
+# eg the recommended one
+pkg install deno
 
-uv tool install viu-media
+# for faster fuzzy search
+pip install thefuzz
 
-# and to add yt-dlp only you can do
-uv tool install viu-media --with yt-dlp[default,curl-cffi]
+# if you want faster scraping, though barely noticeable lol
+pip install lxml --extra-index-url https://termux-user-repository.github.io/pypi/
 
-# or though may fail, cause of lxml and plyer, in that case try to install manually
-uv tool install viu-media[standard]
+# if compilation fails you need to have
+pkg install libxml2 libxslt
 
-  ```
+# == ui setup ==
+pkg install fzf
+
+# then enable fzf in the config
+viu --selector fzf config --update
+
+# if you want previews as well specify preview option
+# though images arent that pretty lol, so you can stick to text over full
+viu --preview text config --update
+
+# if you set preview to full you need a terminal image renderer
+pkg install chafa
+
+# == player setup ==
+# for this you need to strictly install from playstore
+# search for mpv or vlc (recommended, since has nicer ui)
+# the only limitation is currently its not possible to pass headers to the android players
+# through android intents
+# so use servers like sharepoint and wixmp
+# though this is not an issue when it comes to downloading ;)
+# if you have installed using 'pkg' uninstall it
+
+# okey now you are all set, i promise the hussle is worth it lol :)
+# posted a video of it working to motivate you
+# note i recorded it from waydroid which is android for linux sought of like an emulator(bluestacks for example)
+```
+
+
+https://github.com/user-attachments/assets/0c628421-a439-4dea-91bb-7153e8f20ccf
+
 
   #### Using pipx (for isolated environments)
   ```bash
@@ -181,7 +254,7 @@ Get up and running in three simple steps:
     ```bash
     viu anilist auth
     ```
-    This will open your browser. Authorize the app and paste the obtained token back into the terminal.
+    This will open your browser. Authorize the app and paste the obtained token back into the terminal. Alternatively, you can pass the token directly as an argument, or provide a path to a text file containing the token.
 
 2.  **Launch the Interactive TUI:**
     ```bash

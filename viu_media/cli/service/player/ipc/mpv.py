@@ -88,6 +88,9 @@ class MPVIPCClient:
 
     def connect(self, timeout: float = 5.0) -> None:
         """Connect to MPV IPC socket and start the reader thread."""
+        if not hasattr(socket, "AF_UNIX"):
+            raise MPVIPCError("Unix domain sockets are unavailable on this platform")
+
         start_time = time.time()
         while time.time() - start_time < timeout:
             try:
@@ -341,6 +344,10 @@ class MpvIPCPlayer(BaseIPCPlayer):
     def _play_with_ipc(self, player: BasePlayer, params: PlayerParams) -> PlayerResult:
         """Play media using MPV IPC."""
         try:
+            if not hasattr(socket, "AF_UNIX"):
+                raise MPVIPCError(
+                    "MPV IPC requires Unix domain sockets, which are unavailable on this platform."
+                )
             self._start_mpv_process(player, params)
             self._connect_ipc()
             self._setup_event_handling()

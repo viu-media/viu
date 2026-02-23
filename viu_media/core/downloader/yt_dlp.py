@@ -11,7 +11,7 @@ from rich.prompt import Confirm
 
 import yt_dlp
 from yt_dlp.utils import sanitize_filename
-
+from ..utils.detect import get_clean_env
 from ..exceptions import ViuError
 from ..patterns import TORRENT_REGEX
 from ..utils.networking import get_remote_filename
@@ -224,7 +224,7 @@ class YtDLPDownloader(BaseDownloader):
 
             # Run the ffmpeg command
             try:
-                subprocess.run(args)
+                subprocess.run(args, env=get_clean_env())
                 final_output_path = video_path.parent / merged_filename
 
                 if final_output_path.exists():

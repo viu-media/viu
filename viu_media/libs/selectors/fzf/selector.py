@@ -5,6 +5,8 @@ import subprocess
 
 from rich.prompt import Prompt
 
+from viu_media.core.utils import detect
+
 from ....core.config import FzfConfig
 from ....core.exceptions import ViuError
 from ..base import BaseSelector
@@ -49,6 +51,7 @@ class FzfSelector(BaseSelector):
             stdout=subprocess.PIPE,
             text=True,
             encoding="utf-8",
+            env=detect.get_clean_env(),
         )
         if result.returncode != 0:
             return None
@@ -76,6 +79,7 @@ class FzfSelector(BaseSelector):
             stdout=subprocess.PIPE,
             text=True,
             encoding="utf-8",
+            env=detect.get_clean_env(),
         )
         if result.returncode != 0:
             return []
@@ -117,29 +121,55 @@ class FzfSelector(BaseSelector):
         lines = result.stdout.strip().splitlines()
         return lines[-1] if lines else (default or "")
 
-    def search(self, prompt, search_command, *, preview=None, header=None):
+    def search(
+        self,
+        prompt,
+        search_command,
+        *,
+        preview=None,
+        header=None,
+        initial_query=None,
+        initial_results=None,
+    ):
         """Enhanced search using fzf's --reload flag for dynamic search."""
+        # Build the header with optional custom header line
+        display_header = self.header
+        if header:
+            display_header = f"{self.header}\n{header}"
+
         commands = [
             self.executable,
             "--prompt",
             f"{prompt.title()}: ",
             "--header",
-            self.header,
+            display_header,
             "--header-first",
+            "--disabled",  # Disable local filtering - rely on external search command
             "--bind",
             f"change:reload({search_command})",
             "--ansi",
         ]
 
+        # If there's an initial query, set it
+        if initial_query:
+            commands.extend(["--query", initial_query])
+            # Only trigger reload on start if we don't have cached results
+            if not initial_results:
+                commands.extend(["--bind", f"start:reload({search_command})"])
+
         if preview:
             commands.extend(["--preview", preview])
 
+        # Use cached results as initial input if provided (avoids network request)
+        fzf_input = "\n".join(initial_results) if initial_results else ""
+
         result = subprocess.run(
             commands,
-            input="",
+            input=fzf_input,
             stdout=subprocess.PIPE,
             text=True,
             encoding="utf-8",
+            env=detect.get_clean_env(),
         )
         if result.returncode != 0:
             return None

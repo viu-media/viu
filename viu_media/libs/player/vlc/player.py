@@ -46,10 +46,11 @@ class VlcPlayer(BasePlayer):
         Returns:
             PlayerResult: Information about the playback session.
         """
-        if not self.executable:
-            raise ViuError("VLC executable not found in PATH.")
-
         if TORRENT_REGEX.match(params.url) and detect.is_running_in_termux():
+            raise ViuError("Unable to play torrents on termux")
+        elif params.syncplay and detect.is_running_in_termux():
+            raise ViuError("Unable to play with syncplay on termux")
+        elif detect.is_running_in_termux():
             return self._play_on_mobile(params)
         else:
             return self._play_on_desktop(params)
@@ -102,7 +103,7 @@ class VlcPlayer(BasePlayer):
                 params.title,
             ]
 
-        subprocess.run(args)
+        subprocess.run(args,env=detect.get_clean_env())
 
         return PlayerResult(episode=params.episode)
 
@@ -116,6 +117,9 @@ class VlcPlayer(BasePlayer):
         Returns:
             PlayerResult: Information about the playback session.
         """
+        if not self.executable:
+            raise ViuError("VLC executable not found in PATH.")
+
         if TORRENT_REGEX.search(params.url):
             return self._stream_on_desktop_with_webtorrent_cli(params)
 
@@ -130,7 +134,7 @@ class VlcPlayer(BasePlayer):
         if self.config.args:
             args.extend(self.config.args.split(","))
 
-        subprocess.run(args, encoding="utf-8")
+        subprocess.run(args, encoding="utf-8",env=detect.get_clean_env())
         return PlayerResult(episode=params.episode)
 
     def _stream_on_desktop_with_webtorrent_cli(
@@ -155,7 +159,7 @@ class VlcPlayer(BasePlayer):
             args.append("--player-args")
             args.extend(self.config.args.split(","))
 
-        subprocess.run(args)
+        subprocess.run(args,env=detect.get_clean_env())
         return PlayerResult(episode=params.episode)
 
 

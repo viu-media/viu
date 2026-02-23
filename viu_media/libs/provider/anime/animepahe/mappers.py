@@ -98,4 +98,6 @@ def map_to_server(
         )
         for link in stream_links
     ]
-    return Server(name="kwik", links=links, episode_title=episode.title, headers=headers)
+    return Server(
+        name="kwik", links=links, episode_title=episode.title, headers=headers
+    )

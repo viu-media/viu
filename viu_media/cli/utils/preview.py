@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 import re
 from hashlib import sha256
-import sys
 from typing import Dict, List, Optional
 
 import httpx
@@ -11,6 +10,7 @@ from viu_media.core.utils import formatter
 
 from ...core.config import AppConfig
 from ...core.constants import APP_CACHE_DIR, SCRIPTS_DIR
+from ...core.utils.detect import get_python_executable
 from ...core.utils.file import AtomicWriter
 from ...libs.media_api.types import (
     AiringScheduleResult,
@@ -327,7 +327,7 @@ def get_anime_preview(
     preview_file.write_text(preview_script, encoding="utf-8")
 
     preview_script_final = (
-        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+        f"{Path(get_python_executable()).as_posix()} {preview_file.as_posix()} {{}}"
     )
     return preview_script_final
 
@@ -387,7 +387,7 @@ def get_episode_preview(
     preview_file.write_text(preview_script, encoding="utf-8")
 
     preview_script_final = (
-        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+        f"{Path(get_python_executable()).as_posix()} {preview_file.as_posix()} {{}}"
     )
     return preview_script_final
 
@@ -435,7 +435,7 @@ def get_character_preview(choice_map: Dict[str, Character], config: AppConfig) -
     preview_file.write_text(preview_script, encoding="utf-8")
 
     preview_script_final = (
-        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+        f"{Path(get_python_executable()).as_posix()} {preview_file.as_posix()} {{}}"
     )
     return preview_script_final
 
@@ -483,7 +483,7 @@ def get_review_preview(choice_map: Dict[str, MediaReview], config: AppConfig) ->
     preview_file.write_text(preview_script, encoding="utf-8")
 
     preview_script_final = (
-        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+        f"{Path(get_python_executable()).as_posix()} {preview_file.as_posix()} {{}}"
     )
     return preview_script_final
 
@@ -599,7 +599,7 @@ def get_dynamic_anime_preview(config: AppConfig) -> str:
 
     # Return the command to execute the preview script
     preview_script_final = (
-        f"{Path(sys.executable).as_posix()} {preview_file.as_posix()} {{}}"
+        f"{Path(get_python_executable()).as_posix()} {preview_file.as_posix()} {{}}"
     )
     return preview_script_final
 

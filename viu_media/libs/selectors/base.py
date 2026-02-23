@@ -88,6 +88,8 @@ class BaseSelector(ABC):
         *,
         preview: Optional[str] = None,
         header: Optional[str] = None,
+        initial_query: Optional[str] = None,
+        initial_results: Optional[List[str]] = None,
     ) -> str | None:
         """
         Provides dynamic search functionality that reloads results based on user input.
@@ -97,6 +99,8 @@ class BaseSelector(ABC):
             search_command: The command to execute for searching/reloading results.
             preview: An optional command or string for a preview window.
             header: An optional header to display above the choices.
+            initial_query: An optional initial query to pre-populate the search.
+            initial_results: Optional list of results to display initially (avoids network request).
 
         Returns:
             The string of the chosen item.

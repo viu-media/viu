@@ -1,6 +1,7 @@
+import importlib
 import importlib.util
 import logging
-import os
+import pkgutil
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Callable, List, Optional, Union
 
@@ -309,30 +310,46 @@ class Session:
         return decorator
 
     def load_menus_from_folder(self, package: str):
-        package_path = MENUS_DIR / package
-        package_name = package_path.name
-        logger.debug(f"Loading menus from '{package_path}'...")
+        """Load menu modules from a subfolder.
+        
+        Uses pkgutil to discover modules for regular Python, and falls back
+        to the package's __all__ list for PyInstaller frozen executables.
+        """
+        full_package_name = f"viu_media.cli.interactive.menu.{package}"
+        logger.debug(f"Loading menus from package '{full_package_name}'...")
 
-        for filename in os.listdir(package_path):
-            if filename.endswith(".py") and not filename.startswith("__"):
-                module_name = filename[:-3]
-                full_module_name = (
-                    f"viu_media.cli.interactive.menu.{package_name}.{module_name}"
+        try:
+            # Import the parent package first
+            parent_package = importlib.import_module(full_package_name)
+        except ImportError as e:
+            logger.error(f"Failed to import menu package '{full_package_name}': {e}")
+            return
+
+        # Try pkgutil first (works in regular Python)
+        package_path = getattr(parent_package, "__path__", None)
+        module_names = []
+        
+        if package_path:
+            module_names = [
+                name for _, name, ispkg in pkgutil.iter_modules(package_path)
+                if not ispkg and not name.startswith("_")
+            ]
+        
+        # Fallback to __all__ for PyInstaller frozen executables
+        if not module_names:
+            module_names = getattr(parent_package, "__all__", [])
+            logger.debug(f"Using __all__ fallback with {len(module_names)} modules")
+
+        for module_name in module_names:
+            full_module_name = f"{full_package_name}.{module_name}"
+            try:
+                # Simply importing the module will execute it,
+                # which runs the @session.menu decorators
+                importlib.import_module(full_module_name)
+            except Exception as e:
+                logger.error(
+                    f"Failed to load menu module '{full_module_name}': {e}"
                 )
-                file_path = package_path / filename
-
-                try:
-                    spec = importlib.util.spec_from_file_location(
-                        full_module_name, file_path
-                    )
-                    if spec and spec.loader:
-                        module = importlib.util.module_from_spec(spec)
-                        # The act of executing the module runs the @session.menu decorators
-                        spec.loader.exec_module(module)
-                except Exception as e:
-                    logger.error(
-                        f"Failed to load menu module '{full_module_name}': {e}"
-                    )
 
 
 # Create a single, global instance of the Session to be imported by menu modules.
