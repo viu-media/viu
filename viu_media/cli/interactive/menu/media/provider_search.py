@@ -1,7 +1,10 @@
 from .....libs.provider.anime.params import AnimeParams, SearchParams
+import logging
 from .....libs.provider.anime.types import SearchResult
 from ...session import Context, session
 from ...state import InternalDirective, MenuName, ProviderState, State
+
+logger = logging.getLogger(__name__)
 
 
 @session.menu
@@ -37,10 +40,35 @@ def provider_search(ctx: Context, state: State) -> State | InternalDirective:
 
     if not provider_search_results or not provider_search_results.results:
         feedback.warning(
-            f"Could not find '{media_title}' on {provider.__class__.__name__}",
-            "Try another provider from the config or go back to search again",
+            f"Could not find any results for '{media_title}' on {config.general.provider.value}\nTrying synonyms..."
         )
-        return InternalDirective.BACK
+        logger.warning(
+            f"Could not find any results for '{media_title}' on {config.general.provider.value}. Trying synonyms..."
+        )
+        for title in media_item.synonymns:
+            feedback.info(f"Trying synonym: {title}")
+            logger.info(f"Trying synonym: {title}")
+            provider_search_results = provider.search(
+                SearchParams(
+                    query=normalize_title(
+                        title, config.general.provider.value, True
+                    ).lower(),
+                    translation_type=config.stream.translation_type,
+                )
+            )
+            if provider_search_results and provider_search_results.results:
+                logger.info(f"Found results for synonym: {title}")
+                feedback.success(f"Found results for synonym: {title}")
+                # FIXME: for some reason the normalizer json is not updating when selecting a synonym, even though the confirm prompt is showing and the update function is being called. Need to investigate further.
+                # if selector.confirm(
+                #     f"Would you like to update your local normalizer json with: {title} for {media_title}"
+                # ):
+                #     update_user_normalizer_json(
+                #         title, media_title, config.general.provider.value
+                #     )
+                break
+        else:
+            return InternalDirective.BACK
 
     provider_results_map: dict[str, SearchResult] = {
         result.title: result for result in provider_search_results.results
