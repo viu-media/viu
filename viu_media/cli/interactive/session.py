@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from ...libs.provider.anime.base import BaseAnimeProvider
     from ...libs.selectors.base import BaseSelector
     from ..service.auth import AuthService
+    from ..service.download.service import DownloadService
     from ..service.feedback import FeedbackService
     from ..service.player import PlayerService
     from ..service.registry import MediaRegistryService
@@ -86,6 +87,7 @@ class Context:
     _selector: Optional["BaseSelector"] = None
     _media_api: Optional["BaseApiClient"] = None
 
+    _download: Optional["DownloadService"] = None
     _feedback: Optional["FeedbackService"] = None
     _media_registry: Optional["MediaRegistryService"] = None
     _watch_history: Optional["WatchHistoryService"] = None
@@ -136,6 +138,16 @@ class Context:
             self._media_api = media_api
 
         return self._media_api
+
+    @property
+    def download(self) -> "DownloadService":
+        if not self._download:
+            from ..service.download.service import DownloadService
+
+            self._download = DownloadService(
+                self.config, self.media_registry, self.media_api, self.provider
+            )
+        return self._download
 
     @property
     def player(self) -> "PlayerService":
