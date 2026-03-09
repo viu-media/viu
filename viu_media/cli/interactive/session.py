@@ -9,6 +9,7 @@ import click
 
 from ...core.config import AppConfig
 from ...core.constants import APP_DIR, USER_CONFIG
+from ...core.utils.concurrency import thread_manager
 from .state import InternalDirective, MenuName, State
 
 if TYPE_CHECKING:
@@ -218,7 +219,12 @@ class Session:
     _history: List[State] = []
     _menus: dict[MenuName, Menu] = {}
 
+    def _shutdown_download_worker(self):
+        if hasattr(self, "_context") and self._context._download:
+            thread_manager.shutdown_worker("download_worker", wait=False, timeout=5.0)
+
     def _load_context(self, config: AppConfig):
+        self._shutdown_download_worker()
         self._context = Context(config)
         logger.info("Application context reloaded.")
 
@@ -255,6 +261,7 @@ class Session:
             self._context.session.create_crash_backup(self._history)
             raise
         finally:
+            self._shutdown_download_worker()
             # Clean up preview workers when session ends
             self._cleanup_preview_workers()
         self._context.session.save_session(self._history)
