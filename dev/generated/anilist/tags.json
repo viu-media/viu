@@ -46,6 +46,16 @@
       "is_adult": false
     },
     {
+      "name": "Gekiga",
+      "description": "An alternative comics movement of mature manga with stylized and cinematic visuals predominantly from the late 1950s through 1970s.",
+      "is_adult": false
+    },
+    {
+      "name": "Graduation Project",
+      "description": "A work made by students in place of an exam, typically at higher levels of education, either as a work for the entire course or as a work for a specific year of a course.",
+      "is_adult": false
+    },
+    {
       "name": "Long Strip",
       "description": "Manga originally published in a vertical, long-strip format, designed for viewing on smartphones. Also known as webtoons.",
       "is_adult": false
@@ -78,6 +88,11 @@
     {
       "name": "Rotoscoping",
       "description": "Animation technique that animators use to trace over motion picture footage, frame by frame, to produce realistic action.",
+      "is_adult": false
+    },
+    {
+      "name": "Single-Page Chapter",
+      "description": "Manga which consists of the chapters only being one page long.",
       "is_adult": false
     },
     {
@@ -399,6 +414,11 @@
       "is_adult": false
     },
     {
+      "name": "Brainwashing",
+      "description": "Centers on one or more characters who are mentally manipulated by others to behave abnormally or act against their own will.",
+      "is_adult": false
+    },
+    {
       "name": "Cannibalism",
       "description": "Prominently features the act of consuming another member of the same species as food.",
       "is_adult": false
@@ -486,6 +506,11 @@
     {
       "name": "Gore",
       "description": "Prominently features graphic bloodshed and violence.",
+      "is_adult": false
+    },
+    {
+      "name": "Human Experimentation",
+      "description": "Features experiments that use human and humanoid beings as test subjects.",
       "is_adult": false
     },
     {
@@ -700,6 +725,11 @@
     {
       "name": "Heterosexual",
       "description": "Prominently features a romance between a man and a woman, not inherently sexual.",
+      "is_adult": false
+    },
+    {
+      "name": "Interspecies",
+      "description": "Romance between characters of different species.",
       "is_adult": false
     },
     {
@@ -1522,7 +1552,7 @@
     },
     {
       "name": "Isekai",
-      "description": "Features characters being transported into an alternate world setting and having to adapt to their new surroundings.",
+      "description": "Features a character from a modern-day setting being transported into an alternate world and has to adapt to their new surroundings.",
       "is_adult": false
     },
     {
@@ -1547,7 +1577,7 @@
     },
     {
       "name": "Reverse Isekai",
-      "description": "Features a character from a fantasy world who is transported into a modern day setting.",
+      "description": "Features a character from a fantasy world who is transported into a modern-day setting.",
       "is_adult": false
     },
     {
