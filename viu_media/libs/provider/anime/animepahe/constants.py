@@ -1,6 +1,6 @@
 import re
 
-ANIMEPAHE = "animepahe.si"
+ANIMEPAHE = "animepahe.pw"
 ANIMEPAHE_BASE = f"https://{ANIMEPAHE}"
 ANIMEPAHE_ENDPOINT = f"{ANIMEPAHE_BASE}/api"
 CDN_PROVIDER = "kwik.cx"
