@@ -15,6 +15,9 @@ console = Console()
 
 def get_key():
     """Read a single keypress (including arrows)."""
+    if sys.platform == "win32":
+        raise NotImplementedError("icat is not supported on Windows.")
+
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
     try:
