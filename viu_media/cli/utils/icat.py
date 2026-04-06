@@ -1,8 +1,6 @@
 import shutil
 import subprocess
 import sys
-import termios
-import tty
 from sys import exit
 
 from rich.align import Align
@@ -17,6 +15,9 @@ def get_key():
     """Read a single keypress (including arrows)."""
     if sys.platform == "win32":
         raise NotImplementedError("icat is not supported on Windows.")
+
+    import termios
+    import tty
 
     fd = sys.stdin.fileno()
     old = termios.tcgetattr(fd)
