@@ -41,7 +41,5 @@ jobs:
       - name: Run type checking
         run: uv run pyright
 
-      # TODO: write tests
-
-      # - name: Run tests
-      #   run: uv run pytest tests
+      - name: Run tests
+        run: uv run pytest tests
