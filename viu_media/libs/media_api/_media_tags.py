@@ -39,6 +39,12 @@ class MediaTag(Enum):
     # Manga that were initially published in full color. (is_adult: False)
     FULL_COLOR = "Full Color"
 
+    # An alternative comics movement of mature manga with stylized and cinematic visuals predominantly from the late 1950s through 1970s. (is_adult: False)
+    GEKIGA = "Gekiga"
+
+    # A work made by students in place of an exam, typically at higher levels of education, either as a work for the entire course or as a work for a specific year of a course. (is_adult: False)
+    GRADUATION_PROJECT = "Graduation Project"
+
     # Manga originally published in a vertical, long-strip format, designed for viewing on smartphones. Also known as webtoons. (is_adult: False)
     LONG_STRIP = "Long Strip"
 
@@ -59,6 +65,9 @@ class MediaTag(Enum):
 
     # Animation technique that animators use to trace over motion picture footage, frame by frame, to produce realistic action. (is_adult: False)
     ROTOSCOPING = "Rotoscoping"
+
+    # Manga which consists of the chapters only being one page long. (is_adult: False)
+    SINGLE_PAGE_CHAPTER = "Single-Page Chapter"
 
     # Animation style characterized by physical objects being moved incrementally between frames to create the illusion of movement. (is_adult: False)
     STOP_MOTION = "Stop Motion"
@@ -262,6 +271,9 @@ class MediaTag(Enum):
     # Features themes of self-esteem concerning perceived defects or flaws in appearance, such as body weight or disfigurement, and may discuss topics such as eating disorders, fatphobia, and body dysmorphia. (is_adult: False)
     BODY_IMAGE = "Body Image"
 
+    # Centers on one or more characters who are mentally manipulated by others to behave abnormally or act against their own will. (is_adult: False)
+    BRAINWASHING = "Brainwashing"
+
     # Prominently features the act of consuming another member of the same species as food. (is_adult: False)
     CANNIBALISM = "Cannibalism"
 
@@ -315,6 +327,9 @@ class MediaTag(Enum):
 
     # Prominently features graphic bloodshed and violence. (is_adult: False)
     GORE = "Gore"
+
+    # Features experiments that use human and humanoid beings as test subjects. (is_adult: False)
+    HUMAN_EXPERIMENTATION = "Human Experimentation"
 
     # Prominently features real-life indigenous cultures. (is_adult: False)
     INDIGENOUS_CULTURES = "Indigenous Cultures"
@@ -449,6 +464,9 @@ class MediaTag(Enum):
 
     # Prominently features a romance between a man and a woman, not inherently sexual. (is_adult: False)
     HETEROSEXUAL = "Heterosexual"
+
+    # Romance between characters of different species. (is_adult: False)
+    INTERSPECIES = "Interspecies"
 
     # Centered around romantic feelings between more than two people. Includes all love polygons. (is_adult: False)
     LOVE_TRIANGLE = "Love Triangle"
@@ -952,7 +970,7 @@ class MediaTag(Enum):
     # Prominently features character or costume transformations which often grant special abilities. (is_adult: False)
     HENSHIN = "Henshin"
 
-    # Features characters being transported into an alternate world setting and having to adapt to their new surroundings. (is_adult: False)
+    # Features a character from a modern-day setting being transported into an alternate world and has to adapt to their new surroundings. (is_adult: False)
     ISEKAI = "Isekai"
 
     # Prominently features giant monsters. (is_adult: False)
@@ -967,7 +985,7 @@ class MediaTag(Enum):
     # When the dead are summoned as spirits, skeletons, or the undead, usually for the purpose of gaining information or to be used as a weapon. (is_adult: False)
     NECROMANCY = "Necromancy"
 
-    # Features a character from a fantasy world who is transported into a modern day setting. (is_adult: False)
+    # Features a character from a fantasy world who is transported into a modern-day setting. (is_adult: False)
     REVERSE_ISEKAI = "Reverse Isekai"
 
     # Features character(s) who changes one's appearance or form. (is_adult: False)
