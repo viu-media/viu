@@ -9,6 +9,7 @@ import click
 
 from ...core.config import AppConfig
 from ...core.constants import APP_DIR, USER_CONFIG
+from ...core.utils.concurrency import thread_manager
 from .state import InternalDirective, MenuName, State
 
 if TYPE_CHECKING:
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
     from ...libs.provider.anime.base import BaseAnimeProvider
     from ...libs.selectors.base import BaseSelector
     from ..service.auth import AuthService
+    from ..service.download.service import DownloadService
     from ..service.feedback import FeedbackService
     from ..service.player import PlayerService
     from ..service.registry import MediaRegistryService
@@ -86,6 +88,7 @@ class Context:
     _selector: Optional["BaseSelector"] = None
     _media_api: Optional["BaseApiClient"] = None
 
+    _download: Optional["DownloadService"] = None
     _feedback: Optional["FeedbackService"] = None
     _media_registry: Optional["MediaRegistryService"] = None
     _watch_history: Optional["WatchHistoryService"] = None
@@ -136,6 +139,16 @@ class Context:
             self._media_api = media_api
 
         return self._media_api
+
+    @property
+    def download(self) -> "DownloadService":
+        if not self._download:
+            from ..service.download.service import DownloadService
+
+            self._download = DownloadService(
+                self.config, self.media_registry, self.media_api, self.provider
+            )
+        return self._download
 
     @property
     def player(self) -> "PlayerService":
@@ -206,7 +219,12 @@ class Session:
     _history: List[State] = []
     _menus: dict[MenuName, Menu] = {}
 
+    def _shutdown_download_worker(self):
+        if hasattr(self, "_context") and self._context._download:
+            thread_manager.shutdown_worker("download_worker", wait=False, timeout=5.0)
+
     def _load_context(self, config: AppConfig):
+        self._shutdown_download_worker()
         self._context = Context(config)
         logger.info("Application context reloaded.")
 
@@ -243,6 +261,7 @@ class Session:
             self._context.session.create_crash_backup(self._history)
             raise
         finally:
+            self._shutdown_download_worker()
             # Clean up preview workers when session ends
             self._cleanup_preview_workers()
         self._context.session.save_session(self._history)

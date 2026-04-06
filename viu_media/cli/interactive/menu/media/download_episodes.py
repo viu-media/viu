@@ -8,7 +8,6 @@ def download_episodes(ctx: Context, state: State) -> State | InternalDirective:
     """Menu to select and download episodes synchronously."""
     from viu_media.cli.utils.search import find_best_match_title
     from .....core.utils.normalizer import normalize_title
-    from ....service.download.service import DownloadService
 
     feedback = ctx.feedback
     selector = ctx.selector
@@ -71,16 +70,11 @@ def download_episodes(ctx: Context, state: State) -> State | InternalDirective:
         feedback.info("No episodes selected for download.")
         return InternalDirective.BACK
 
-    # Step 3: Download episodes synchronously
-    # TODO: move to main ctx
-    download_service = DownloadService(
-        config, ctx.media_registry, ctx.media_api, ctx.provider
-    )
-
+    # Step 3: Download episodes synchronously using the session-scoped service
     feedback.info(
         f"Starting download of {len(selected_episodes)} episodes. This may take a while..."
     )
-    download_service.download_episodes_sync(media_item, selected_episodes)
+    ctx.download.download_episodes_sync(media_item, selected_episodes)
 
     feedback.success(f"Finished downloading {len(selected_episodes)} episodes.")
 
