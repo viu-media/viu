@@ -2,22 +2,21 @@ from viu_media.cli.service.auth.service import AuthService
 from viu_media.libs.media_api.types import UserProfile
 
 
-def test_load_auth_creates_file_when_missing(tmp_path, monkeypatch):
+def test_load_auth_creates_file_when_missing(tmp_path):
     auth_file = tmp_path / "auth.json"
-    monkeypatch.setattr("viu_media.cli.service.auth.service.AUTH_FILE", auth_file)
 
-    service = AuthService(media_api="anilist")
+    service = AuthService(media_api="anilist", auth_file=auth_file)
     profile = service.get_auth()
 
     assert profile is None
     assert auth_file.exists()
+    assert (tmp_path / "auth.lock").exists() is False
 
 
-def test_save_and_get_auth_roundtrip(tmp_path, monkeypatch):
+def test_save_and_get_auth_roundtrip(tmp_path):
     auth_file = tmp_path / "auth.json"
-    monkeypatch.setattr("viu_media.cli.service.auth.service.AUTH_FILE", auth_file)
 
-    service = AuthService(media_api="anilist")
+    service = AuthService(media_api="anilist", auth_file=auth_file)
     user = UserProfile(id=1, name="test-user", avatar_url="https://img/avatar.png")
 
     service.save_user_profile(user, "token-abc")
@@ -28,11 +27,10 @@ def test_save_and_get_auth_roundtrip(tmp_path, monkeypatch):
     assert auth.user_profile.name == "test-user"
 
 
-def test_clear_user_profile_deletes_auth_file(tmp_path, monkeypatch):
+def test_clear_user_profile_deletes_auth_file(tmp_path):
     auth_file = tmp_path / "auth.json"
-    monkeypatch.setattr("viu_media.cli.service.auth.service.AUTH_FILE", auth_file)
 
-    service = AuthService(media_api="anilist")
+    service = AuthService(media_api="anilist", auth_file=auth_file)
     user = UserProfile(id=2, name="clear-me")
     service.save_user_profile(user, "token")
     assert auth_file.exists()
