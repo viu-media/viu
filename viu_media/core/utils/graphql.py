@@ -40,14 +40,9 @@ def execute_graphql_query_with_get_request(
 
 
 def execute_graphql(
-    url: str, httpx_client: Client, graphql_file: Path, variables: dict
+    url: str, httpx_client: Client, graphql_file: Path, variables: dict, headers: dict | None = None
 ) -> Response:
     query = load_graphql_from_file(graphql_file)
     json_body = {"query": query, "variables": variables}
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Content-Type": "application/json",
-        "Origin": "https://allanime.to",
-    }
     response = httpx_client.post(url, json=json_body, headers=headers, timeout=TIMEOUT)
     return response
