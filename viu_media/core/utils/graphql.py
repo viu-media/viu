@@ -40,9 +40,9 @@ def execute_graphql_query_with_get_request(
 
 
 def execute_graphql(
-    url: str, httpx_client: Client, graphql_file: Path, variables: dict
+    url: str, httpx_client: Client, graphql_file: Path, variables: dict, headers: dict | None = None
 ) -> Response:
     query = load_graphql_from_file(graphql_file)
     json_body = {"query": query, "variables": variables}
-    response = httpx_client.post(url, json=json_body, timeout=TIMEOUT)
+    response = httpx_client.post(url, json=json_body, headers=headers, timeout=TIMEOUT)
     return response

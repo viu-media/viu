@@ -1,12 +1,13 @@
 import logging
 from typing import TYPE_CHECKING
 
-from .....core.utils.graphql import execute_graphql_query_with_get_request
+from .....core.utils.graphql import execute_graphql
 from ..base import BaseAnimeProvider
 from ..utils.debug import debug_provider
 from .constants import (
     ANIME_GQL,
     API_GRAPHQL_ENDPOINT,
+    API_GRAPHQL_HEADERS,
     API_GRAPHQL_REFERER,
     EPISODE_GQL,
     SEARCH_GQL,
@@ -26,7 +27,7 @@ class AllAnime(BaseAnimeProvider):
 
     @debug_provider
     def search(self, params):
-        response = execute_graphql_query_with_get_request(
+        response = execute_graphql(
             API_GRAPHQL_ENDPOINT,
             self.client,
             SEARCH_GQL,
@@ -41,16 +42,18 @@ class AllAnime(BaseAnimeProvider):
                 "translationtype": params.translation_type,
                 "countryorigin": params.country_of_origin,
             },
+            headers=API_GRAPHQL_HEADERS
         )
         return map_to_search_results(response)
 
     @debug_provider
     def get(self, params):
-        response = execute_graphql_query_with_get_request(
+        response = execute_graphql(
             API_GRAPHQL_ENDPOINT,
             self.client,
             ANIME_GQL,
             variables={"showId": params.id},
+            headers=API_GRAPHQL_HEADERS
         )
         return map_to_anime_result(response)
 
@@ -58,7 +61,7 @@ class AllAnime(BaseAnimeProvider):
     def episode_streams(self, params):
         from .extractors import extract_server
 
-        episode_response = execute_graphql_query_with_get_request(
+        episode_response = execute_graphql(
             API_GRAPHQL_ENDPOINT,
             self.client,
             EPISODE_GQL,
@@ -67,6 +70,7 @@ class AllAnime(BaseAnimeProvider):
                 "translationType": params.translation_type,
                 "episodeString": params.episode,
             },
+            headers=API_GRAPHQL_HEADERS
         )
         episode: AllAnimeEpisode = episode_response.json()["data"]["episode"]
         for source in episode["sourceUrls"]:
