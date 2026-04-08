@@ -390,6 +390,12 @@ class VlcConfig(OtherConfig):
     args: str = Field(default=defaults.VLC_ARGS, description=desc.VLC_ARGS)
 
 
+class IinaConfig(OtherConfig):
+    """Configuration specific to the IINA player integration."""
+
+    args: str = Field(default=defaults.IINA_ARGS, description=desc.IINA_ARGS)
+
+
 class AnilistConfig(OtherConfig):
     """Configuration for interacting with the AniList API."""
 

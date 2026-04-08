@@ -86,6 +86,10 @@ MPV_PRE_ARGS = ""
 # VlcConfig
 VLC_ARGS = ""
 
+# IinaConfig
+IINA_ARGS = ""
+
+
 # AnilistConfig
 ANILIST_PER_PAGE = 15
 ANILIST_SORT_BY = "SEARCH_MATCH"

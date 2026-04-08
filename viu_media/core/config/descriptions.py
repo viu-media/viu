@@ -96,6 +96,10 @@ MPV_PRE_ARGS = "Comma-separated arguments to prepend before the MPV command."
 # VlcConfig
 VLC_ARGS = "Comma-separated arguments to pass to the Vlc player."
 
+# IinaConfig
+IINA_ARGS = "Comma-separated arguments to pass to the IINA player."
+
+
 # AnilistConfig
 ANILIST_PER_PAGE = "Number of items to fetch per page from AniList."
 ANILIST_SORT_BY = "Default sort order for AniList search results."
