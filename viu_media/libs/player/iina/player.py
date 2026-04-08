@@ -28,11 +28,37 @@ IINA_APP_EXECUTABLES = (
 
 
 class IinaPlayer(BasePlayer):
+    """
+    IINA player implementation for Viu.
+
+    Provides playback functionality using the IINA media player.
+    """
+
     def __init__(self, config: IinaConfig):
+        """
+        Initialize the IINA player with the given configuration.
+
+        Args:
+            config: IinaConfig object containing IINA-specific configuration.
+        """
         self.config = config
         self.executable = self._find_executable()
 
     def play(self, params: PlayerParams) -> PlayerResult:
+        """
+        Play the given media URL using IINA player.
+
+        Args:
+            params: PlayerParams object containing playback parameters.
+
+        Returns:
+            PlayerResult: Information about the playback session.
+
+        Raises:
+            ViuError: If IINA is not supported on the current platform,
+                      if syncplay is requested, if URL is a torrent,
+                      or if IINA executable is not found.
+        """
         if PLATFORM != "darwin":
             raise ViuError("IINA is only supported on macOS.")
 
@@ -55,18 +81,15 @@ class IinaPlayer(BasePlayer):
     def play_with_ipc(self, params: PlayerParams, socket_path: str):
         raise NotImplementedError("play_with_ipc is not implemented for IINA player.")
 
-    def _build_iina_command(self, params: PlayerParams) -> list[str]:
-        args = [self.executable]
-        args.append(params.url)
-
-        if mpv_args := self._create_iina_mpv_options(params):
-            args.append("--")
-            args.extend(mpv_args)
-
-        logger.debug("Starting IINA with args: %s", args)
-        return args
-
     def _find_executable(self) -> str | None:
+        """
+        Find the IINA executable path.
+
+        First checks if 'iina-cli' is in PATH, then checks common macOS application paths.
+
+        Returns:
+            str | None: The path to the IINA executable, or None if not found.
+        """
         executable = shutil.which("iina-cli")
         if executable:
             return executable
@@ -77,7 +100,37 @@ class IinaPlayer(BasePlayer):
 
         return None
 
+    def _build_iina_command(self, params: PlayerParams) -> list[str]:
+        """
+        Build the command line arguments for launching IINA.
+
+        Args:
+            params: PlayerParams object containing playback parameters.
+
+        Returns:
+            list[str]: The command line arguments for IINA.
+        """
+        assert self.executable is not None
+        args = [self.executable]
+        args.append(params.url)
+
+        if mpv_args := self._create_iina_mpv_options(params):
+            args.append("--")
+            args.extend(mpv_args)
+
+        logger.debug("Starting IINA with args: %s", args)
+        return args
+
     def _create_iina_mpv_options(self, params: PlayerParams) -> list[str]:
+        """
+        Create MPV options for IINA based on the player parameters.
+
+        Args:
+            params: PlayerParams object containing playback parameters.
+
+        Returns:
+            list[str]: List of MPV command line options.
+        """
         mpv_args = []
 
         if params.title:

@@ -27,14 +27,14 @@
 
 <details>
 <summary>Rofi</summary>
-  
+
   [viu-showcase-rofi.webm](https://github.com/user-attachments/assets/01f197d9-5ac9-45e6-a00b-8e8cd5ab459c)
 
 </details>
 
 > [!IMPORTANT]
 > This project scrapes public-facing websites for its streaming / downloading capabilities and primarily acts as an anilist, jikan and many other media apis tui client. The developer(s) of this application have no affiliation with these content providers. This application hosts zero content and is intended for educational and personal use only. Use at your own risk.
-> 
+>
 > [**Read the Full Disclaimer**](DISCLAIMER.md)
 
 ## Core Features
@@ -57,6 +57,7 @@ For the best experience, please install these external tools:
 
 *   **Required for Streaming:**
     *   [**mpv**](https://mpv.io/installation/) - The primary and recommended media player.
+    *   [**IINA**](https://iina.io/) - A recommended macOS player if you want a native app built on top of mpv.
 *   **Recommended for UI & Previews:**
     *   [**fzf**](https://github.com/junegunn/fzf) - For the best fuzzy-finder interface.
     *   [**chafa**](https://github.com/hpjansson/chafa) or [**kitty's icat**](https://sw.kovidgoyal.net/kitty/kittens/icat/) - For image previews in the terminal.
@@ -85,7 +86,7 @@ The easiest way to get started is to download a pre-built, self-contained binary
     ```bash
     # Option 1: System-wide installation (requires sudo)
     sudo mv viu-linux-x86_64 /usr/local/bin/viu
-    
+
     # Option 2: User directory installation
     mkdir -p ~/.local/bin
     mv viu-linux-x86_64 ~/.local/bin/viu
@@ -116,7 +117,7 @@ uv tool install "viu-media[notifications]" # For desktop notifications
 
 <details>
   <summary><b>Platform-Specific and Alternative Installers</b></summary>
-  
+
   #### Nix / NixOS
   ##### Ephemeral / One-Off Run (No Installation)
   ```bash
@@ -147,7 +148,7 @@ uv tool install "viu-media[notifications]" # For desktop notifications
   ```
   #### Termux
   You may have to have rust installed see this issue: https://github.com/pydantic/pydantic-core/issues/1012#issuecomment-2511269688.
-  
+
   ```bash
 # Recommended (with pip due to more control)
 pkg install python
@@ -224,7 +225,7 @@ https://github.com/user-attachments/assets/0c628421-a439-4dea-91bb-7153e8f20ccf
   ```bash
   pipx install "viu-media[standard]"
   ```
-  
+
   #### Using pip
   ```bash
   pip install "viu-media[standard]"
@@ -233,7 +234,7 @@ https://github.com/user-attachments/assets/0c628421-a439-4dea-91bb-7153e8f20ccf
 
 <details>
   <summary><b>Building from Source</b></summary>
-  
+
   Requires [Git](https://git-scm.com/), [Python 3.10+](https://www.python.org/), and [uv](https://astral.sh/blog/uv).
   ```bash
   git clone https://github.com/viu-media/Viu.git --depth 1
@@ -366,7 +367,7 @@ auto_select_anime_result = True ; Automatically select the best search match.
 
 # [stream] Section: Controls playback and streaming.
 [stream]
-player = mpv                 ; The media player to use (mpv, vlc).
+player = mpv                 ; The media player to use (mpv, vlc, iina).
 quality = 1080               ; Preferred stream quality (1080, 720, 480, 360).
 translation_type = sub       ; Preferred audio/subtitle type (sub, dub).
 auto_next = False            ; Automatically play the next episode.
@@ -435,7 +436,7 @@ You can run the background worker as a systemd service for persistence.
     systemctl --user daemon-reload
     systemctl --user enable --now viu-worker.service
     ```
-    
+
 ## Project using it
 **[Inazuma](https://github.com/viu-media/Inazuma)** - official gui wrapper over viu built in kivymd
 
