@@ -2,7 +2,6 @@ import logging
 from typing import Optional
 
 from ....core.config import AppConfig
-from ....core.exceptions import ViuError
 from ....libs.media_api.types import MediaItem
 from ....libs.player.base import BasePlayer
 from ....libs.player.params import PlayerParams
@@ -63,5 +62,9 @@ class PlayerService:
             return MpvIPCPlayer(self.app_config.stream).play(
                 self.player, params, self.provider, anime, registry, media_item
             )
-        else:
-            raise ViuError("Not implemented")
+
+        logger.warning(
+            "IPC is only supported for mpv; falling back to standard playback for player %s",
+            self.app_config.stream.player,
+        )
+        return self.player.play(params)
