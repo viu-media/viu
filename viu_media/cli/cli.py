@@ -138,9 +138,9 @@ def cli(ctx: click.Context, **options: "Unpack[Options]"):
 
             if Confirm.ask(f"""\
 [green]How are you, {USER_NAME} 🙂?
-If you enjoy the project and would like to support it, you can buy me a coffee at {SUPPORT_PROJECT_URL}.
-Would you like to open the support page? Select yes to continue — otherwise, enjoy your terminal-anime browsing experience 😁.[/]
-You can disable this message by turning off the welcome_screen option in the config. It only appears once a month.
+If you enjoy the project and would like to support it, you can give it a star at {SUPPORT_PROJECT_URL}.
+Would you like to open the project page? Select yes to continue — otherwise, enjoy your terminal-anime browsing experience 😁.[/]
+You can disable this message by turning off the welcome_screen option in the config, if you don't disable it, the cli will show it again the next month.
 """):
                 from webbrowser import open
 
