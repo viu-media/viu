@@ -32,6 +32,23 @@
 
 </details>
 
+<details>
+  <summary>RICED</summary>
+  
+  *main menu*
+  
+  <img width="1895" height="1007" alt="image" src="https://github.com/user-attachments/assets/e6d8883f-0267-4783-9688-983dea524e78" />
+  
+  *anime preview menu*
+  
+  <img width="1895" height="1007" alt="image" src="https://github.com/user-attachments/assets/3b887bcc-a601-4c04-b477-8328f50c227d" />
+
+  *episode menu*
+
+  <img width="1895" height="1007" alt="image" src="https://github.com/user-attachments/assets/f6284c55-a1a9-4720-83a0-efca0a767c85" />
+
+</details>
+
 > [!IMPORTANT]
 > This project scrapes public-facing websites for its streaming / downloading capabilities and primarily acts as an anilist, jikan and many other media apis tui client. The developer(s) of this application have no affiliation with these content providers. This application hosts zero content and is intended for educational and personal use only. Use at your own risk.
 >

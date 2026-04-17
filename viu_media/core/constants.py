@@ -86,4 +86,4 @@ USER_VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
 USER_CONFIG = APP_DATA_DIR / "config.toml"
 
 LOG_FILE = LOG_FOLDER / "app.log"
-SUPPORT_PROJECT_URL = "https://buymeacoffee.com/benexl"
+SUPPORT_PROJECT_URL = "https://github.com/viu-media/viu"

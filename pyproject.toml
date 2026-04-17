@@ -52,6 +52,7 @@ dev = [
     "pytest>=8.3.3",
     "pytest-httpx>=0.35.0",
     "ruff>=0.6.9",
+    "types-lxml>=2026.2.16",
 ]
 
 [tool.pytest.ini_options]
