@@ -1,3 +1,7 @@
+<b>
+Keeping up with constantly changing APIs requires more time than I currently have available. Thank you to everyone who used and supported this! The repository will remain archived for reference.
+</b>
+
 <p align="center">
   <h1 align="center">Viu</h1>
 </p>
