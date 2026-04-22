@@ -229,7 +229,7 @@ class GeneralConfig(BaseModel):
 class StreamConfig(BaseModel):
     """Configuration specific to video streaming and playback."""
 
-    player: Literal["mpv", "vlc"] = Field(
+    player: Literal["mpv", "vlc", "iina"] = Field(
         default=defaults.STREAM_PLAYER,
         description=desc.STREAM_PLAYER,
     )
@@ -390,6 +390,12 @@ class VlcConfig(OtherConfig):
     args: str = Field(default=defaults.VLC_ARGS, description=desc.VLC_ARGS)
 
 
+class IinaConfig(OtherConfig):
+    """Configuration specific to the IINA player integration."""
+
+    args: str = Field(default=defaults.IINA_ARGS, description=desc.IINA_ARGS)
+
+
 class AnilistConfig(OtherConfig):
     """Configuration for interacting with the AniList API."""
 
@@ -535,6 +541,7 @@ class AppConfig(BaseModel):
     )
     mpv: MpvConfig = Field(default_factory=MpvConfig, description=desc.APP_MPV)
     vlc: VlcConfig = Field(default_factory=VlcConfig, description=desc.APP_VLC)
+    iina: IinaConfig = Field(default_factory=IinaConfig, description=desc.APP_IINA)
     media_registry: MediaRegistryConfig = Field(
         default_factory=MediaRegistryConfig, description=desc.APP_MEDIA_REGISTRY
     )

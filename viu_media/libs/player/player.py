@@ -7,7 +7,7 @@ This module provides a factory for instantiating the correct player implementati
 from ...core.config import AppConfig
 from .base import BasePlayer
 
-PLAYERS = ["mpv", "vlc", "syncplay"]
+PLAYERS = ["mpv", "vlc", "iina", "syncplay"]
 
 
 class PlayerFactory:
@@ -45,6 +45,12 @@ class PlayerFactory:
             from .vlc.player import VlcPlayer
 
             return VlcPlayer(config.vlc)
+
+        elif player_name == "iina":
+            from .iina.player import IinaPlayer
+
+            return IinaPlayer(config.iina)
+
         raise NotImplementedError(
             f"Configuration logic for player '{player_name}' not implemented in factory."
         )

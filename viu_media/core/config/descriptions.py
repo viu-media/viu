@@ -96,6 +96,10 @@ MPV_PRE_ARGS = "Comma-separated arguments to prepend before the MPV command."
 # VlcConfig
 VLC_ARGS = "Comma-separated arguments to pass to the Vlc player."
 
+# IinaConfig
+IINA_ARGS = "Comma-separated arguments to pass to the IINA player."
+
+
 # AnilistConfig
 ANILIST_PER_PAGE = "Number of items to fetch per page from AniList."
 ANILIST_SORT_BY = "Default sort order for AniList search results."
@@ -133,6 +137,7 @@ APP_FZF = "Settings for the FZF selector interface."
 APP_ROFI = "Settings for the Rofi selector interface."
 APP_MPV = "Configuration for the MPV media player."
 APP_VLC = "Configuration for the VLC media player."
+APP_IINA = "Configuration for the IINA media player."
 APP_MEDIA_REGISTRY = "Configuration for the media registry."
 APP_SESSIONS = "Configuration for sessions."
 

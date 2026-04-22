@@ -9,6 +9,7 @@ from .model import (
     RofiConfig,
     StreamConfig,
     VlcConfig,
+    IinaConfig,
 )
 
 __all__ = [
@@ -17,6 +18,7 @@ __all__ = [
     "RofiConfig",
     "VlcConfig",
     "MpvConfig",
+    "IinaConfig",
     "AnilistConfig",
     "StreamConfig",
     "GeneralConfig",
