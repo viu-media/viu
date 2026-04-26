@@ -4,6 +4,7 @@ import pytest
 from click.testing import CliRunner
 
 from viu_media.cli.commands.anilist.commands.auth import auth
+from viu_media.core.constants import ANILIST_AUTH
 
 
 @pytest.fixture
@@ -43,8 +44,8 @@ def mock_api_client():
 
 
 @pytest.fixture
-def mock_webbrowser():
-    with patch("viu_media.cli.commands.anilist.commands.auth.webbrowser") as mock:
+def mock_webbrowser_open():
+    with patch("viu_media.cli.commands.anilist.commands.auth.webbrowser.open") as mock:
         yield mock
 
 
@@ -140,10 +141,10 @@ def test_auth_interactive(
     mock_feedback_service,
     mock_selector,
     mock_api_client,
-    mock_webbrowser,
+    mock_webbrowser_open,
 ):
     """Test 'viu anilist auth' interactive mode."""
-    mock_webbrowser.open.return_value = True
+    mock_webbrowser_open.return_value = True
 
     selector_instance = mock_selector.return_value
     selector_instance.ask.return_value = "interactive_token"
@@ -159,6 +160,7 @@ def test_auth_interactive(
     result = runner.invoke(auth, [], obj=mock_config)
 
     assert result.exit_code == 0
+    mock_webbrowser_open.assert_called_once_with(ANILIST_AUTH, new=2)
     selector_instance.ask.assert_called_with("Enter your AniList Access Token")
     api_client_instance.authenticate.assert_called_with("interactive_token")
     auth_service_instance.save_user_profile.assert_called_with(
@@ -235,6 +237,7 @@ def test_auth_already_logged_in_relogin_yes(
     mock_feedback_service,
     mock_selector,
     mock_api_client,
+    mock_webbrowser_open,
 ):
     """Test 'viu anilist auth' when already logged in and user chooses to relogin."""
     auth_service_instance = mock_auth_service.return_value
@@ -254,6 +257,7 @@ def test_auth_already_logged_in_relogin_yes(
     result = runner.invoke(auth, [], obj=mock_config)
 
     assert result.exit_code == 0
+    mock_webbrowser_open.assert_called_once_with(ANILIST_AUTH, new=2)
     selector_instance.confirm.assert_called_with(
         "You are already logged in as testuser. Would you like to relogin"
     )
@@ -265,7 +269,12 @@ def test_auth_already_logged_in_relogin_yes(
 
 
 def test_auth_already_logged_in_relogin_no(
-    runner, mock_config, mock_auth_service, mock_feedback_service, mock_selector
+    runner,
+    mock_config,
+    mock_auth_service,
+    mock_feedback_service,
+    mock_selector,
+    mock_webbrowser_open,
 ):
     """Test 'viu anilist auth' when already logged in and user chooses not to relogin."""
     auth_service_instance = mock_auth_service.return_value
@@ -279,6 +288,7 @@ def test_auth_already_logged_in_relogin_no(
     result = runner.invoke(auth, [], obj=mock_config)
 
     assert result.exit_code == 0
+    mock_webbrowser_open.assert_not_called()
     auth_service_instance.save_user_profile.assert_not_called()
     feedback_instance = mock_feedback_service.return_value
     feedback_instance.info.assert_not_called()

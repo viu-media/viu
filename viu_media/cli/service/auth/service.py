@@ -1,5 +1,6 @@
 import json
 import logging
+from pathlib import Path
 from typing import Optional
 
 from ....core.constants import APP_DATA_DIR
@@ -13,10 +14,10 @@ AUTH_FILE = APP_DATA_DIR / "auth.json"
 
 
 class AuthService:
-    def __init__(self, media_api: str):
-        self.path = AUTH_FILE
+    def __init__(self, media_api: str, auth_file: Path | None = None):
+        self.path = auth_file or AUTH_FILE
         self.media_api = media_api
-        _lock_file = APP_DATA_DIR / "auth.lock"
+        _lock_file = self.path.with_suffix(".lock")
         self._lock = FileLock(_lock_file)
 
     def get_auth(self) -> Optional[AuthProfile]:

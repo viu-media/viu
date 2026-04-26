@@ -196,11 +196,8 @@ class AniListApi(BaseApiClient):
         )
         entry_data = response.json()
 
-        list_id = (
-            entry_data.get("data", {}).get("MediaList", {}).get("id")
-            if entry_data
-            else None
-        )
+        media_list = entry_data.get("data", {}).get("MediaList") if entry_data else None
+        list_id = media_list.get("id") if isinstance(media_list, dict) else None
         if not list_id:
             return False
         response = execute_graphql(

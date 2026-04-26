@@ -89,7 +89,7 @@ def auth(config: AppConfig, status: bool, logout: bool, token_input: str | None)
 
     if auth_profile := auth_service.get_auth():
         if not selector.confirm(
-            f"You are already logged in as {auth_profile.user_profile.name}.Would you like to relogin"
+            f"You are already logged in as {auth_profile.user_profile.name}. Would you like to relogin"
         ):
             return
     token = _get_token(feedback, selector, token_input)
